@@ -5,20 +5,15 @@ module.exports = {
       colors: {
         "Amethyst": "#7E5BEF",
         "Lavender": "#A994ED",
-        "Bright Sky Blue": "#1FB6FF",
+        "SkyBlue": "#1FB6FF", //Bright Sky Blue
         "White": "#FFFFFF",
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'], // Inter font family
       },
-      fontWeight: {
-        extraBold: '800', // Inter Extra Bold
-        semiBold: '600',  // Inter Semi Bold
-        regular: '400',   // Inter Regular
-      },
-      fontStyle: {
-        italic: 'italic', // Add italic style (to support extra bold italic)
-      },
+      fontSize:{
+        'xxs': '0.5rem',  // Custom size smaller than xs
+      }
     },
   },
   plugins: [
@@ -29,6 +24,23 @@ module.exports = {
           justifyContent: "center", 
           alignItems: "center", 
           minHeight: "100vh", 
+        },
+        '.font-main': {
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: '800',
+          fontStyle: 'italic',
+        },
+        // Custom class for Inter Semi Bold
+        '.font-button': {
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: '600',
+          fontStyle: 'normal',
+        },
+        // Custom class for Inter Regular
+        '.font-body': {
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: '400',
+          fontStyle: 'normal',
         },
       });
     },
