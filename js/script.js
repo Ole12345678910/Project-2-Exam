@@ -56,13 +56,11 @@ function displayListings(listings) {
       <div class="p-3">
           <div>
               <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis">
-              <a href="/auction-details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
+              <a href="/templates/auth/posts/user/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
                   ${listing.title}
               </a>
               </h3>
-              <p class="post-card-meta text-xs text-gray-500 mb-4">
               Tags: ${listing.tags.length ? listing.tags.join(', ') : 'None'}
-              </p>
           </div>
           <div class="post-card-meta text-xs text-gray-500">
               <p>
@@ -214,4 +212,62 @@ async function fetchAuctionListings() {
   
   // Call the function to fetch auction listings when the page loads
   fetchAuctionListings();
+  
+
+
+
+  async function getRandomPosts() {
+      try {
+          // Fetching the data from the API
+          const response = await fetch(`${apiUrl}auction/listings`);
+          const result = await response.json(); // Parsing the JSON response
+  
+          // Check if the 'data' property exists and is an array
+          if (Array.isArray(result.data)) {
+              // Pick 3 random posts from the 'data' array
+              const randomPosts = getRandomItems(result.data, 4);
+  
+              // Display the random posts
+              displayPosts(randomPosts);
+          } else {
+              console.error('Expected an array in the "data" property, but got:', result.data);
+          }
+      } catch (error) {
+          console.error('Error fetching posts:', error);
+      }
+  }
+  
+  // Utility function to get random items from an array
+  function getRandomItems(arr, count) {
+      const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
+      return shuffled.slice(0, count); // Get the first 'count' items
+  }
+  
+  // Display posts on the page
+  function displayPosts(posts) {
+      const postsContainer = document.getElementById('random-posts-container');
+      postsContainer.innerHTML = ''; // Clear any existing content
+      
+      
+  
+      posts.forEach(post => {
+        const imageUrl = post.media && post.media[0] ? post.media[0].url : null;
+        if (imageUrl) {
+            // Create a clickable image link
+            const postElement = document.createElement('div');
+            postElement.className = "flex justify-center items-center"; // Add styling to the parent div
+            postElement.innerHTML = `
+                <a href="/auction-details.html?listingId=${post.id}" 
+                   class="block transform transition-transform hover:scale-110">
+                    <img src="${imageUrl}" alt="${post.title}" class="h-28 w-40 object-cover">
+                </a>
+            `;
+            // Append the created post to the container
+            postsContainer.appendChild(postElement);
+        }
+    });
+}    
+  
+  // Call the function to fetch and display random posts
+  getRandomPosts();
   

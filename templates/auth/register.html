@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/dist/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="images/x-icon" href="/assets/logo.svg" />
+    <title>Diamondbid</title>
+  </head>
+  <body>
+    <header>
+        <a class="button-box" href="/templates/index.html">Back</a>
+    </header>
+    <div class="flex h-screen mx-auto justify-center items-center max-w-9/12">
+        <div class="flex-1 flex flex-col items-center justify-center text-center">
+            <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-ballbid" />
+            <h1 class="font-logo text-4xl text-RoyalBlue mb-5">Diamondbid</h1>
+            <h2 class="text-3xl font-Graduate text-RoyalBlue font-bold">Register to Begin</h2>
+            <h3 class="m-4 text-xs text-black max-w-72">Set up your account to start bidding, keep track of your wins, and become part of the action.</h3>
+        </div>
+        <div class="h-full w-1 bg-RoyalBlue"></div>  
+        <div class="flex-1">
+            <div class="p-6 m-4 flex flex-col items-center h-screen justify-center">
+                <p class="flex justify-center font-Graduate text-center text-RoyalBlue text-2xl mb-5">Create your account</p>
+                <div class="flex flex-col">
+                    <label for="uname"><p class="text-sm text-RoyalBlue font-semibold">Name</p></label>
+                    <input type="text" placeholder="Enter name" name="uname" required class="placeholder:text-xs focus:outline-none">
+                    <hr class="mb-5 border-t-2 border-RoyalBlue">
+
+                    <label for="psw"><p class="text-sm font-semibold text-RoyalBlue">Password</p></label>
+                    <input type="password" placeholder="Enter Password" name="psw" required class="placeholder:text-xs focus:outline-none">
+                    <hr class="mb-5 border-t-2 border-RoyalBlue">
+
+                    <label for="uname"><p class="text-sm text-RoyalBlue font-semibold">E-mail Adress</p></label>
+                    <input type="text" placeholder="Enter e-mail" name="uname" required class="placeholder:text-xs focus:outline-none">
+                    <hr class="mb-5 border-t-2 border-RoyalBlue">
+
+                    <label class="flex items-center my-5">
+                        <input type="checkbox" class="peer hidden" checked="checked" name="remember">
+                        <span class="mx-1 w-3 h-3 text-RoyalBlue border-2 border-RoyalBlue peer-checked:bg-RoyalBlue peer-checked:border-transparent"></span>
+                        <p class="text-sm text-RoyalBlue">Remember this login</p>
+                      </label>                                
+                    <div class="flex justify-center">
+                        <button class="button-box" type="submit">Create</button>
+                    </div>
+                    <p class="text-xs">Already have an account?</p>
+                    <a class="text-xs font-bold text-RoyalBlue" href="/templates/auth/login.html">Login here</a>
+                  </div>
+            </div>
+        </div> 
+    </div>
+    <footer class="">
+      <div class="bg-Gallery text-Boulder">
+        <p class="text-center p-2 text-xxs">
+          © 2024 Diamondbid. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
