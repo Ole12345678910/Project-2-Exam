@@ -1,11 +1,6 @@
 const apiUrl = "https://v2.api.noroff.dev/";
 
-
-
-localStorage.setItem('apiKey', 'fa79110a-db1d-425f-bef6-a5da220f8333');
-localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoib2xlYnVsIiwiZW1haWwiOiJvbGVidWwwMDk5N0BzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTczMjkxMDM3MX0.FHYZ-EUSRUIAOTydHfX1DAyeC3YjFhaklYeNjGa2x5Q');
-
-// Function to get the listing ID from the URL
+// Function to get the listing ID from the URL query parameters
 function getListingIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('listingId');
@@ -13,7 +8,7 @@ function getListingIdFromUrl() {
 
 // Function to fetch and display the listing details
 async function fetchAndDisplayListing() {
-  const listingId = getListingIdFromUrl();
+  const listingId = getListingIdFromUrl(); // Get listingId from URL
   if (!listingId) {
     console.error("No listingId found in URL.");
     return;
@@ -64,6 +59,9 @@ function displayListing(listing) {
     <p><strong>Bids:</strong> ${bidsCount}</p>
   `;
 }
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", fetchAndDisplayListing);
 
 async function placeBid(listingId, bidAmount) {
     const apiKey = localStorage.getItem('apiKey');

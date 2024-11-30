@@ -1,4 +1,5 @@
 const apiUrl = "https://v2.api.noroff.dev/";
+import { apiKey } from "../../constants/config.js";  // Correct path and extension
 
 // Function to get the top 10 newest listings
 function getTop10NewestListing(listings) {
@@ -56,7 +57,7 @@ function displayListings(listings) {
       <div class="p-3">
           <div>
               <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis">
-              <a href="/templates/auth/posts/user/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
+              <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
                   ${listing.title}
               </a>
               </h3>
@@ -271,3 +272,183 @@ async function fetchAuctionListings() {
   // Call the function to fetch and display random posts
   getRandomPosts();
   
+
+//--------------------------------------------------------------------------------------------------------
+
+  // Function to search profiles by name or bio
+// Function to display search results and navigate to the listing page
+async function searchListings(query) {
+  const accessToken = localStorage.getItem('accessToken');
+  if (!accessToken) {
+    alert("You are not logged in. Please log in first.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${apiUrl}auction/listings/search?q=${encodeURIComponent(query)}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Error fetching listings: ${errorData.errors || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    const listings = data.data;
+
+    if (listings.length === 0) {
+      alert("No listings found.");
+      return;
+    }
+
+    // Display search results
+    const searchResultsContainer = document.getElementById('search-results');
+    searchResultsContainer.innerHTML = listings.map(listing => `
+      <div class="listing-result" onclick="window.location.href='/listing?listingId=${listing.id}'">
+        <h3>${listing.title}</h3>
+        <p>${listing.description}</p>
+      </div>
+    `).join('');
+
+  } catch (error) {
+    console.error("Error searching listings:", error);
+    alert("Failed to search listings. Please try again.");
+  }
+}
+
+  
+  // Function to display search results (Profiles + Listings)
+  async function displaySearchResults(query) {
+    const profiles = await searchProfiles(query);
+    const listings = await searchListings(query);
+  
+    const dropdownList = document.getElementById('dropdown-list');
+    const dropdownContainer = document.getElementById('dropdown-container');
+  
+    dropdownList.innerHTML = '';  // Clear previous results
+  
+    if (profiles.length === 0 && listings.length === 0) {
+      dropdownContainer.classList.add('hidden');
+      return;
+    }
+  
+    if (profiles.length > 0) {
+      dropdownList.innerHTML += `<li class="font-bold p-2">Profiles</li>`;
+      profiles.forEach(profile => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('p-2', 'hover:bg-gray-100', 'cursor-pointer');
+        listItem.innerHTML = `<a href="/templates/auth/posts/details.html?id=${profile.id}" class="block px-4 py-2 text-gray-900">${profile.name}</a>`;  // Link to profile
+        dropdownList.appendChild(listItem);
+      });
+    }
+  
+    if (listings.length > 0) {
+      dropdownList.innerHTML += `<li class="font-bold p-2 mt-2">Listings</li>`;
+      listings.forEach(listing => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('p-2', 'hover:bg-gray-100', 'cursor-pointer');
+        listItem.innerHTML = `<a href="/templates/auth/posts/details.html?id=${listing.id}" class="block px-4 py-2 text-gray-900">${listing.title}</a>`;  // Link to listing
+        dropdownList.appendChild(listItem);
+      });
+    }
+  
+    dropdownContainer.classList.remove('hidden');  // Show the dropdown
+  }
+  
+  // Add event listener to the search bar to trigger the search on "Enter" key press
+  document.getElementById('search-bar').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      const query = event.target.value;  // Get the search query
+      displaySearchResults(query);  // Perform the search and update the dropdown
+    }
+  });
+  
+  // Add event listener to the search icon to trigger the search on click
+  document.getElementById('search-btn').addEventListener('click', function() {
+    const query = document.getElementById('search-bar').value;  // Get the search query
+    displaySearchResults(query);  // Perform the search and update the dropdown
+  });
+  
+  // Optional: Hide dropdown if clicked outside
+  document.addEventListener('click', function(event) {
+    const dropdownContainer = document.getElementById('dropdown-container');
+    const searchBar = document.getElementById('search-bar');
+  
+    // If the click is outside the search bar and dropdown, hide the dropdown
+    if (!searchBar.contains(event.target) && !dropdownContainer.contains(event.target)) {
+      dropdownContainer.classList.add('hidden');
+    }
+  });
+  
+
+
+
+  //---------------------------------------------------------------
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userIcon = document.getElementById('user-icon'); // Element for user icon/profile picture
+    const accessToken = localStorage.getItem('accessToken'); // Retrieve token from localStorage
+    const userName = localStorage.getItem('userName'); // Retrieve username
+    const userAvatar = localStorage.getItem('userAvatar'); // Retrieve avatar URL
+
+    // Check if the user is logged in
+    if (!accessToken || !userName) {
+        // Not logged in: Show default icon and link to the login page
+        console.log("No logged-in user detected. Showing default icon.");
+        if (userIcon) {
+            userIcon.innerHTML = `
+                <a href="/templates/auth/login.html">
+                    <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+                </a>
+            `;
+        }
+        return; // Exit function since no user is logged in
+    }
+
+    // User is logged in: Check for avatar
+    if (userAvatar) {
+        console.log("Logged-in user detected. Displaying avatar.");
+        if (userIcon) {
+            userIcon.innerHTML = `
+                <a href="/templates/auth/posts/user/profile.html">
+                  <img src="${userAvatar}" alt="User Profile" 
+                      class="w-8 h-8 rounded-full border-2 hover:border-2 hover:border-RoyalBlue" 
+                      onerror="this.src='/templates/auth/posts/user/default-avatar.jpg';">
+                </a>
+            `;
+        }
+    } else {
+        console.log("User logged in, but no avatar found. Showing default profile icon.");
+        if (userIcon) {
+            userIcon.innerHTML = `
+                <a href="/templates/auth/posts/user/profile.html">
+                    <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+                </a>
+            `;
+        }
+    }
+});
+
+
+
+//-------------------------------------------------------------------------
+
+// Wait for the DOM to load before running the script
+document.addEventListener('DOMContentLoaded', () => {
+  // Get the credits from localStorage
+  const credits = localStorage.getItem('userCredits') || 0; // Default to 0 if not found
+
+  // Get the element where credits should be displayed (the header element)
+  const creditsElement = document.getElementById('user-credits-header');
+
+  // Display the credits in the header
+  if (creditsElement) {
+      creditsElement.textContent = `Credits: ${credits}`;
+  }
+});
