@@ -20,34 +20,67 @@
   </head>
   <body>
     <script defer type="module" src="/js/details/details.js"></script>
+    <script defer type="module" src="/js/auth/logout.js"></script>
     <header class="py-1 mb-4 flex justify-between items-center">
       <a class="flex items-center" href="/templates/index.html">
         <img class="w-14 h-14 p-2" src="/assets/logo.svg" alt="logo-ballbid" />
         <h1 class="font-logo text-2xl text-RoyalBlue">Diamondbid</h1>
       </a>
       <div class="relative flex justify-center">
-        <input
-          class="w-80 px-2 py-1 m-1 bg-Gallery text-black focus:outline-none text-sm"
-          type="text"
-          placeholder="Search for items..."
-        />
-        <i
-          class="fas fa-search px-1 text-base absolute top-1/2 right-3 transform -translate-y-1/2 text-RoyalBlue"
-        ></i>
+        <div class="relative">
+          <!-- Search bar -->
+          <input
+            id="search-bar"
+            class="w-80 px-2 py-1 m-1 bg-Gallery text-black focus:outline-none text-sm"
+            type="text"
+            placeholder="Search for profiles..."
+          />
+        
+          <!-- Search icon button -->
+          <i
+            id="search-btn"
+            class="fas fa-search px-1 text-base absolute top-1/2 right-3 transform -translate-y-1/2 text-RoyalBlue cursor-pointer"
+          ></i>
+        
+          <!-- Dropdown container (Initially hidden) -->
+          <div id="dropdown-container" class="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto">
+            <ul id="dropdown-list" class="list-none m-0 p-0"></ul>
+          </div>
+        </div>
+        
       </div>
       <div class="flex items-center">
-        <i class="text-2xl px-4 text-RoyalBlue fa-regular fa-heart"></i>
-        <a href="/templates/auth/login.html" class="button-box">Sign in</a>
+        <div id="user-credits-header" class="text-RoyalBlue px-2 text-sm">Credits: 0</div>
+        <div id="user-icon">
+            <!-- JavaScript dynamically replaces this content -->
+            <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+          </div>
+          
+
+        <a class="sign-in-btn button-box block" href="/templates/auth/login.html">Sign in</a>
+
+        <!-- Log Out button (Initially hidden) -->
+        <a class="log-out-btn button-box block hidden" href="#">Log Out</a>
       </div>
     </header>
-    <div id="listing-container"></div>
-
-    <!-- Bid Input Form -->
-<label for="bidAmount">Enter your bid amount:</label>
-<input type="number" id="bid-amount" placeholder="Enter your bid amount" />
-<button id="place-bid-btn">Place Bid</button>
 
 
+
+    <div id="listing-container" class="container mx-auto p-6 mt-10 bg-gray-50 rounded-lg shadow-md">
+      <!-- Listing details will be rendered here -->
+    </div>
+    <!-- Add this container somewhere in your HTML where you want the bid form to appear -->
+<div id="bid-form-container"></div>
+
+
+    
+    <div id="bids-container" class="container mx-auto p-6 mt-10 bg-gray-50 rounded-lg shadow-md">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Bids</h3>
+      <p class="text-gray-600">Loading bids...</p>
+    </div>
+    
+    
+    
 
     <footer>
     <hr class="m-3"/>

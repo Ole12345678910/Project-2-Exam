@@ -29,6 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('userAvatar');
             localStorage.removeItem('email');
             localStorage.removeItem('userCredits');
+            localStorage.removeItem('avatarUrl');
+            localStorage.removeItem('banner');
+            localStorage.removeItem('bio');
+            localStorage.removeItem('avatar');
+            localStorage.removeItem('userBanner');
 
             // Log the localStorage state to confirm it's cleared
             console.log('Logged out. Current localStorage:', localStorage);

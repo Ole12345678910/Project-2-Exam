@@ -1,5 +1,5 @@
 const apiUrl = "https://v2.api.noroff.dev/";
-import { apiKey } from "../../constants/config.js";  // Correct path and extension
+import { apiKey } from "../../constants/config.js"; // Ensure correct path
 
 // Function to get the top 10 newest listings
 function getTop10NewestListing(listings) {
@@ -33,63 +33,81 @@ async function fetchAuctionListing() {
 
 // Function to display auction listings in the HTML
 function displayListings(listings) {
-    const listingsContainer = document.getElementById('listings-container');
-    listingsContainer.innerHTML = '';
-  
-    if (!Array.isArray(listings)) {
-      console.error('Expected an array of listings, but got:', listings);
-      return;
-    }
-  
-    listings.forEach(listing => {
-      const listingElement = document.createElement('div');
-      listingElement.classList.add('card', 'cursor-pointer', 'bg-white', 'shadow-lg', 'mb-6', 'w-full', 'max-w-sm', 'flex', 'flex-col', 'h-full');
-      
-      // Creating the HTML structure for the card
-      listingElement.innerHTML = `
+  const listingsContainer = document.getElementById('listings-container');
+  listingsContainer.innerHTML = ''; // Clear previous listings
+
+  if (!Array.isArray(listings)) {
+    console.error("Expected an array of listings, but got:", listings);
+    return;
+  }
+
+  listings.forEach(listing => {
+    const listingElement = document.createElement('div');
+    listingElement.classList.add(
+      'card',
+      'cursor-pointer',
+      'bg-white',
+      'shadow-lg',
+      'mb-6',
+      'w-full',
+      'max-w-sm',
+      'flex',
+      'flex-col',
+      'h-full'
+    );
+
+    // Handle the media property to avoid errors
+    const imageUrl = listing.media?.[0]?.url || null;
+    const imageAlt = listing.media?.[0]?.alt || "Item Image";
+
+    // Creating the HTML structure for the card
+    listingElement.innerHTML = `
       <div class="relative flex justify-center">
           <p class="absolute top-0 left-0 bg-RoyalBlue text-white text-xs font-bold px-4 py-2 shadow">
-          Bids: ${listing._count?.bids || 0}
-          </p>${listing.media && listing.media[0]
-              ? `<img src="${listing.media[0].url}" alt="${listing.media[0].alt || 'Item Image'}" class="w-full h-48 object-cover" />`
-              : '<div class="w-full h-48 bg-gray-300 flex items-center justify-center text-gray-500">No Image Available</div>'}
+              Bids: ${listing._count?.bids || 0}
+          </p>
+          ${
+            imageUrl
+              ? `<img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover" />`
+              : '<div class="w-full h-48 bg-gray-300 flex items-center justify-center text-gray-500">No Image Available</div>'
+          }
       </div>
       <div class="p-3">
           <div>
               <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis">
-              <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
-                  ${listing.title}
-              </a>
+                  <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
+                      ${listing.title}
+                  </a>
               </h3>
-              Tags: ${listing.tags.length ? listing.tags.join(', ') : 'None'}
+              Tags: ${listing.tags?.length ? listing.tags.join(', ') : 'None'}
           </div>
           <div class="post-card-meta text-xs text-gray-500">
               <p>
-              <span>Created: ${new Date(listing.created).toLocaleString()}</span>
-              <span> | Ends At: ${new Date(listing.endsAt).toLocaleString()}</span>
+                  <span>Created: ${new Date(listing.created).toLocaleString()}</span>
+                  <span> | Ends At: ${new Date(listing.endsAt).toLocaleString()}</span>
               </p>
           </div>
       </div>
-      `;
-  
-      // Add the card element to the listings container
-      listingsContainer.appendChild(listingElement);
-  
-      // Add a click event listener to the card
-      listingElement.addEventListener('click', function() {
-        // Find the link inside the card
-        const link = listingElement.querySelector('a');
-        if (link) {
-          // Navigate to the link's href
-          window.location.href = link.href;
-        }
-      });
+    `;
+
+    // Add the card element to the listings container
+    listingsContainer.appendChild(listingElement);
+
+    // Add a click event listener to the card
+    listingElement.addEventListener('click', function () {
+      // Find the link inside the card
+      const link = listingElement.querySelector('a');
+      if (link) {
+        // Navigate to the link's href
+        window.location.href = link.href;
+      }
     });
-  }
-  
+  });
+}
 
 // Call the function to fetch auction listings when the page loads
 fetchAuctionListing();
+
 
 
 // Function to fetch auction listings and top 3 newest listings for carousel
@@ -274,92 +292,7 @@ async function fetchAuctionListings() {
   
 
 //--------------------------------------------------------------------------------------------------------
-
-  // Function to search profiles by name or bio
-// Function to display search results and navigate to the listing page
-async function searchListings(query) {
-  const accessToken = localStorage.getItem('accessToken');
-  if (!accessToken) {
-    alert("You are not logged in. Please log in first.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`${apiUrl}auction/listings/search?q=${encodeURIComponent(query)}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-        'Content-Type': 'application/json',
-      }
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Error fetching listings: ${errorData.errors || 'Unknown error'}`);
-    }
-
-    const data = await response.json();
-    const listings = data.data;
-
-    if (listings.length === 0) {
-      alert("No listings found.");
-      return;
-    }
-
-    // Display search results
-    const searchResultsContainer = document.getElementById('search-results');
-    searchResultsContainer.innerHTML = listings.map(listing => `
-      <div class="listing-result" onclick="window.location.href='/listing?listingId=${listing.id}'">
-        <h3>${listing.title}</h3>
-        <p>${listing.description}</p>
-      </div>
-    `).join('');
-
-  } catch (error) {
-    console.error("Error searching listings:", error);
-    alert("Failed to search listings. Please try again.");
-  }
-}
-
   
-  // Function to display search results (Profiles + Listings)
-  async function displaySearchResults(query) {
-    const profiles = await searchProfiles(query);
-    const listings = await searchListings(query);
-  
-    const dropdownList = document.getElementById('dropdown-list');
-    const dropdownContainer = document.getElementById('dropdown-container');
-  
-    dropdownList.innerHTML = '';  // Clear previous results
-  
-    if (profiles.length === 0 && listings.length === 0) {
-      dropdownContainer.classList.add('hidden');
-      return;
-    }
-  
-    if (profiles.length > 0) {
-      dropdownList.innerHTML += `<li class="font-bold p-2">Profiles</li>`;
-      profiles.forEach(profile => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('p-2', 'hover:bg-gray-100', 'cursor-pointer');
-        listItem.innerHTML = `<a href="/templates/auth/posts/details.html?id=${profile.id}" class="block px-4 py-2 text-gray-900">${profile.name}</a>`;  // Link to profile
-        dropdownList.appendChild(listItem);
-      });
-    }
-  
-    if (listings.length > 0) {
-      dropdownList.innerHTML += `<li class="font-bold p-2 mt-2">Listings</li>`;
-      listings.forEach(listing => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('p-2', 'hover:bg-gray-100', 'cursor-pointer');
-        listItem.innerHTML = `<a href="/templates/auth/posts/details.html?id=${listing.id}" class="block px-4 py-2 text-gray-900">${listing.title}</a>`;  // Link to listing
-        dropdownList.appendChild(listItem);
-      });
-    }
-  
-    dropdownContainer.classList.remove('hidden');  // Show the dropdown
-  }
   
   // Add event listener to the search bar to trigger the search on "Enter" key press
   document.getElementById('search-bar').addEventListener('keypress', function(event) {
@@ -452,3 +385,100 @@ document.addEventListener('DOMContentLoaded', () => {
       creditsElement.textContent = `Credits: ${credits}`;
   }
 });
+
+
+
+
+//-----------------------------------------------------------------------------------
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('search-bar');
+  const searchBtn = document.getElementById('search-btn');
+  const dropdownContainer = document.getElementById('dropdown-container');
+  const dropdownList = document.getElementById('dropdown-list');
+
+  if (!searchInput || !searchBtn) {
+    console.error("Search input or button element not found");
+    return;
+  }
+
+  // Event listener for search icon click
+  searchBtn.addEventListener('click', async () => {
+    const query = searchInput.value.trim(); // Get the trimmed query from input
+
+    // Check if the query is empty
+    if (query === '') {
+      dropdownContainer.classList.add('hidden'); // Hide dropdown if query is empty
+      return;
+    }
+
+    try {
+      const results = await fetchSearchResults(query); // Fetch results from API
+      displaySearchResults(results); // Display the results in the dropdown
+    } catch (error) {
+      console.error("Error in search:", error);
+    }
+  });
+});
+
+// Fetch search results from the API
+async function fetchSearchResults(query) {
+  const apiUrl = `https://v2.api.noroff.dev/auction/listings/search?q=${encodeURIComponent(query)}`;
+
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`API request failed with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Return results only if it's a valid array, otherwise return an empty array silently
+    if (data && Array.isArray(data.data)) {
+      return data.data;
+    }
+
+    // Silently handle invalid data
+    return [];
+
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    return []; // Return empty array in case of any error (e.g., network issue)
+  }
+}
+
+// Display search results (profiles and listings)
+function displaySearchResults(results) {
+  const dropdownList = document.getElementById('dropdown-list');
+  const dropdownContainer = document.getElementById('dropdown-container');
+
+  dropdownList.innerHTML = ''; // Clear previous results
+
+  // Ensure results is an array
+  if (!Array.isArray(results)) {
+    dropdownContainer.classList.add('hidden');
+    return;
+  }
+
+  // Hide dropdown if no results
+  if (results.length === 0) {
+    dropdownContainer.classList.add('hidden');
+    return;
+  }
+
+  // Populate dropdown with results
+  results.forEach(result => {
+    const listItem = document.createElement('li');
+    listItem.classList.add('p-2', 'hover:bg-gray-100', 'cursor-pointer');
+    listItem.innerHTML = `<a href="/templates/auth/posts/details.html?listingId=${result.id}" class="block px-4 py-2 text-gray-900">${result.title || result.name}</a>`;
+    dropdownList.appendChild(listItem);
+  });
+
+  // Show the dropdown with results
+  dropdownContainer.classList.remove('hidden');
+}

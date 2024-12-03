@@ -143,41 +143,111 @@
   </div>
 </div>
 
+
+
+
+
+
+
+
+<!-- Edit Listing Form (Initially hidden) -->
+<div id="edit-form-container" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <h2 class="text-xl font-semibold mb-4">Edit Listing</h2>
+      
+      <form id="edit-form">
+          <!-- Hidden input for listing ID -->
+          <input type="hidden" id="listing-id">
+          
+          <!-- Title Input -->
+          <div class="mb-4">
+              <label for="edit-title" class="block text-sm font-medium text-gray-700">Title</label>
+              <input type="text" id="edit-title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+          </div>
+
+          <!-- Description Input -->
+          <div class="mb-4">
+              <label for="edit-description" class="block text-sm font-medium text-gray-700">Description</label>
+              <textarea id="edit-description" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
+          </div>
+
+          <!-- Media URL Input -->
+          <div class="mb-4">
+              <label for="edit-media" class="block text-sm font-medium text-gray-700">Media URL</label>
+              <input type="url" id="edit-media" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="https://url.com/image.jpg">
+          </div>
+
+          <!-- Save Button -->
+          <button type="button" id="save-edit-button" class="w-full py-2 px-4 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+              Save Changes
+          </button>
+
+          <!-- Cancel Button -->
+          <button type="button" id="cancel-edit-button" class="mt-4 w-full py-2 px-4 bg-gray-500 text-white rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+              Cancel
+          </button>
+      </form>
+  </div>
+</div>
+
+
+<!-- Listings List -->
+<ul id="listings-list">
+  <!-- Listings will be dynamically populated here -->
+</ul>
+
+
+
+<div id="user-container">
+  <!-- User data and wins will be populated here -->
+</div>
+
+
+<div id="wins-container"></div>
+
+
+
+
+
+
+
+
   <!-- Button to open the Create Listing form -->
 <button id="create-listing-btn" class="btn-primary">Create Listing</button>
 
 <!-- Create Listing Modal -->
 <div id="create-listing-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-md shadow-lg">
-        <h2 class="text-xl font-semibold mb-4">Create New Listing</h2>
-        
-        <form id="create-listing-form">
-            <!-- Title -->
-            <label for="title" class="block mb-2">Title:</label>
-            <input type="text" id="title" name="title" class="w-full p-2 border rounded mb-4" required>
+  <div class="bg-white p-6 rounded-md shadow-lg">
+      <h2 class="text-xl font-semibold mb-4">Create New Listing</h2>
+      
+      <form id="create-listing-form">
+          <!-- Title -->
+          <label for="title" class="block mb-2">Title:</label>
+          <input type="text" id="title" name="title" class="w-full p-2 border rounded mb-4" required>
 
-            <!-- Description -->
-            <label for="description" class="block mb-2">Description:</label>
-            <textarea id="description" name="description" class="w-full p-2 border rounded mb-4"></textarea>
+          <!-- Description -->
+          <label for="description" class="block mb-2">Description:</label>
+          <textarea id="description" name="description" class="w-full p-2 border rounded mb-4"></textarea>
 
-            <!-- Tags -->
-            <label for="tags" class="block mb-2">Tags (comma separated):</label>
-            <input type="text" id="tags" name="tags" class="w-full p-2 border rounded mb-4">
+          <!-- Tags -->
+          <label for="tags" class="block mb-2">Tags (comma separated):</label>
+          <input type="text" id="tags" name="tags" class="w-full p-2 border rounded mb-4">
 
-            <!-- Media URL -->
-            <label for="media-url" class="block mb-2">Media URL:</label>
-            <input type="url" id="media-url" name="media-url" class="w-full p-2 border rounded mb-4">
+          <!-- Media URLs (Multiple Images) -->
+          <label for="media-urls" class="block mb-2">Image URLs (enter each URL on a new line):</label>
+          <textarea id="media-urls" name="media-urls" class="w-full p-2 border rounded mb-4" rows="4" placeholder="Enter one image URL per line"></textarea>
 
-            <!-- End Date -->
-            <label for="endsAt" class="block mb-2">End Date:</label>
-            <input type="datetime-local" id="endsAt" name="endsAt" class="w-full p-2 border rounded mb-4" required>
+          <!-- End Date -->
+          <label for="endsAt" class="block mb-2">End Date:</label>
+          <input type="datetime-local" id="endsAt" name="endsAt" class="w-full p-2 border rounded mb-4" required>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn-primary">Create Listing</button>
-            <button type="button" id="close-modal" class="btn-secondary">Close</button>
-        </form>
-    </div>
+          <!-- Submit Button -->
+          <button type="submit" class="btn-primary">Create Listing</button>
+          <button type="button" id="close-modal" class="btn-secondary">Close</button>
+      </form>
+  </div>
 </div>
+
 
 
     <footer>
