@@ -21,6 +21,7 @@
   <body>
     <script defer type="module" src="/js/script.js"></script>
     <script defer type="module" src="/js/auth/logout.js"></script>
+    <!--<script defer type="module" src="/js/ui/header.js"></script>-->
     <header class="py-1 mb-4 flex justify-between items-center">
       <a class="flex items-center" href="/templates/index.html">
         <img class="w-14 h-14 p-2" src="/assets/logo.svg" alt="logo-ballbid" />
@@ -73,12 +74,45 @@
           </div>
     </div>
           <!--kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk-->
-    <div class="bg-Gallery flex justify-center p-4 my-4 shadow">
+    <div class="bg-Gallery flex justify-center p-4 mt-4 shadow">
         <p class="text-black font-main p-4"> 
             <span class="text-black">Sign up now and start bidding on over</span>
             <span class="text-RoyalBlue font-bold">65,000 special objects today!</span>
         </p>
     </div>
+
+
+
+
+
+<div id="filters" class="flex flex-wrap justify-center p-4 border border-gray-200  shadow-md">
+  <label class="flex items-center space-x-2 m-2 p-2 bg-Gallery hover:bg-gray-100 border  shadow-sm transition">
+    <input type="checkbox" id="filter-active" class="filter-checkbox h-4 w-4   ">
+    <span class="text-sm font-medium text-gray-700">Active</span>
+  </label>
+  <label class="flex items-center space-x-2 m-2 p-2 bg-Gallery hover:bg-gray-100 border  shadow-sm transition">
+    <input type="checkbox" id="filter-ended" class="filter-checkbox h-4 w-4   ">
+    <span class="text-sm font-medium text-gray-700">Ended</span>
+  </label>
+  <label class="flex items-center space-x-2 m-2 p-2 bg-Gallery hover:bg-gray-100 border  shadow-sm transition">
+    <input type="checkbox" id="filter-highest-bids" class="filter-checkbox h-4 w-4">
+    <span class="text-sm font-medium text-gray-700">Highest Bids</span>
+  </label>
+  <label class="flex items-center space-x-2 m-2 p-2 bg-Gallery hover:bg-gray-100 border  shadow-sm transition">
+    <input type="checkbox" id="filter-lowest-bids" class="filter-checkbox h-4 w-4 ">
+    <span class="text-sm font-medium text-gray-700">Lowest Bids</span>
+  </label>
+</div>
+
+
+
+    
+    
+
+    
+    
+    
+    
     <div class="flex">
         <div class="p-6 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center" id="listings-container"></div>
         <div class="p-3 m-3 w-1/3 h-96 shadow">
@@ -89,6 +123,9 @@
             </div>
         </div>
     </div>
+    <button id="load-more-button" class="w-full bg-blue-500 text-white py-2 mt-6" style="display:none;">
+      Load More Listings
+    </button>
 
     <footer>
     <hr class="m-3"/>

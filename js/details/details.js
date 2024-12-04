@@ -170,6 +170,7 @@ async function fetchAndDisplayListing() {
 }
 
 // Function to render the listing on the page
+// Function to render the listing with a carousel and bottom buttons
 function displayListing(listing) {
   const listingContainer = document.getElementById("listing-container");
 
@@ -187,35 +188,136 @@ function displayListing(listing) {
 
   // Default image if no images available
   const defaultImage = "default-image.jpg";
-
-  // Render images as a gallery if there are multiple images
-  const imageGallery = listing.media && listing.media.length > 0
-    ? listing.media.map(image => `<img src="${image.url}" alt="${image.alt}" class="gallery-image" />`).join("")
-    : `<img src="${defaultImage}" alt="Image not available" class="gallery-image" />`;
+  const images = listing.media && listing.media.length > 0 
+    ? listing.media 
+    : [{ url: defaultImage, alt: "Image not available" }];
 
   listingContainer.innerHTML = `
-    <h2>${title}</h2>
-    <p>${description}</p>
-    <div class="image-gallery">
-      ${imageGallery}
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
+      <!-- Title and Description -->
+      <div class="mb-6 text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">${title}</h2>
+        <p class="text-gray-600">${description}</p>
+      </div>
+
+      <!-- Carousel -->
+      <div class="relative">
+        <div class="carousel overflow-hidden relative rounded-lg">
+          <div id="carousel-items" class="flex transition-transform duration-500 ease-in-out">
+            ${images
+              .map(
+                (image) => `
+                <div class="flex-shrink-0 w-full flex items-center justify-center">
+                  <img 
+                    src="${image.url}" 
+                    alt="${image.alt || 'Listing Image'}" 
+                    class="w-auto max-h-96"
+                  />
+                </div>
+              `
+              )
+              .join("")}
+          </div>
+        </div>
+
+        <!-- Pagination Buttons (only shown if there are multiple images) -->
+        ${
+          images.length > 1
+            ? `
+          <div id="carousel-pagination" class="flex justify-center mt-4 space-x-2">
+            ${images
+              .map(
+                (_, index) => `
+                <button 
+                  class="pagination-button w-3 h-3 rounded-full bg-gray-300 focus:outline-none" 
+                  data-index="${index}"
+                ></button>
+              `
+              )
+              .join("")}
+          </div>
+          `
+            : ""
+        }
+      </div>
+
+      <!-- Details Section -->
+      <div class="mt-6 space-y-2 text-gray-800">
+        <p><strong>Tags:</strong> ${tags}</p>
+        <p><strong>Created:</strong> ${createdDate}</p>
+        <p><strong>Last Updated:</strong> ${updatedDate}</p>
+        <p><strong>Ends:</strong> ${endDate}</p>
+        <p><strong>Bids:</strong> ${bidsCount}</p>
+        <p><strong>Seller:</strong> ${sellerName}</p>
+        <p><strong>Seller Email:</strong> ${sellerEmail}</p>
+      </div>
     </div>
-    <p><strong>Tags:</strong> ${tags}</p>
-    <p><strong>Created:</strong> ${createdDate}</p>
-    <p><strong>Last Updated:</strong> ${updatedDate}</p>
-    <p><strong>Ends:</strong> ${endDate}</p>
-    <p><strong>Bids:</strong> ${bidsCount}</p>
-    <p><strong>Seller:</strong> ${sellerName}</p>
-    <p><strong>Seller Email:</strong> ${sellerEmail}</p>
   `;
+
+  // Carousel Logic
+  const carouselItems = document.getElementById("carousel-items");
+  const paginationButtons = document.querySelectorAll(".pagination-button");
+
+  let currentIndex = 0;
+
+  function updateCarousel(index) {
+    currentIndex = index;
+    const offset = -currentIndex * 100;
+    carouselItems.style.transform = `translateX(${offset}%)`;
+
+    // Update button styles
+    paginationButtons.forEach((button, idx) => {
+      if (idx === currentIndex) {
+        button.classList.add("bg-gray-800");
+        button.classList.remove("bg-gray-300");
+      } else {
+        button.classList.add("bg-gray-300");
+        button.classList.remove("bg-gray-800");
+      }
+    });
+  }
+
+  // Attach event listeners to pagination buttons if there are multiple images
+  if (images.length > 1) {
+    paginationButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const index = parseInt(button.getAttribute("data-index"));
+        updateCarousel(index);
+      });
+    });
+
+    // Initialize carousel
+    updateCarousel(0);
+  }
 }
 
+
+
+
+// Function to display bids
 // Function to display bids
 function displayBids(listing) {
   const bidsContainer = document.getElementById("bids-container");
 
-  if (listing.bids && listing.bids.length > 0) {
+  if (!listing.bids || listing.bids.length === 0) {
+    bidsContainer.innerHTML = "<p>No bids placed yet for this listing.</p>";
+    return;
+  }
+
+  // Sort bids in descending order (highest bid first)
+  const sortedBids = [...listing.bids].sort((a, b) => b.amount - a.amount);
+
+  let displayedBidsCount = 3; // Number of bids to show initially
+  let showAll = false; // Toggle to track state
+
+  const renderBids = () => {
     bidsContainer.innerHTML = ""; // Clear previous content
-    listing.bids.forEach((bid) => {
+
+    const bidsToDisplay = showAll 
+      ? sortedBids 
+      : sortedBids.slice(0, displayedBidsCount);
+
+    bidsToDisplay.forEach((bid) => {
       const bidElement = document.createElement("div");
       bidElement.classList.add("bid-item");
       bidElement.innerHTML = `
@@ -227,9 +329,31 @@ function displayBids(listing) {
       `;
       bidsContainer.appendChild(bidElement);
     });
-  } else {
-    bidsContainer.innerHTML = "<p>No bids placed yet for this listing.</p>";
-  }
+
+    // Add the toggle button
+    const toggleButton = document.createElement("button");
+    toggleButton.textContent = showAll 
+      ? "Show Less" 
+      : `See More Bids (${Math.min(sortedBids.length - displayedBidsCount, 3)} more)`;
+    toggleButton.classList.add("toggle-btn", "bg-blue-500", "text-white", "py-2", "px-4", "rounded", "hover:bg-blue-700");
+    toggleButton.addEventListener("click", () => {
+      if (showAll) {
+        displayedBidsCount = 3; // Reset to initial count
+        showAll = false; // Collapse back
+      } else {
+        displayedBidsCount += 3; // Extend by 3
+        if (displayedBidsCount >= sortedBids.length) {
+          showAll = true; // If all bids are displayed, switch to "Show Less"
+        }
+      }
+      renderBids(); // Re-render the bids
+    });
+
+    bidsContainer.appendChild(toggleButton);
+  };
+
+  // Initial render of bids
+  renderBids();
 }
 
 // Function to show login prompt
@@ -242,6 +366,9 @@ function showLoginPrompt() {
     </div>
   `;
 }
+
+
+
 
 // On page load, fetch the user's credits from localStorage and update the UI
 document.addEventListener("DOMContentLoaded", () => {

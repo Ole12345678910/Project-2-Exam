@@ -93,7 +93,6 @@ async function handleAvatar() {
 }
 
 // Edit profile functionality
-// Edit profile functionality
 async function editProfile() {
     const editAvatarBtn = document.getElementById('edit-avatar-btn');
     const editProfileModal = document.getElementById('edit-profile-modal');
@@ -551,73 +550,129 @@ async function deleteListing(listingId) {
 
 const apiUrl = "https://v2.api.noroff.dev/";
 
-async function fetchUserProfileData() {
-    try {
-      const token = localStorage.getItem('accessToken'); // Get the access token from localStorage
-      if (!token) {
-        console.error("No access token found in localStorage.");
-        return;
-      }
-  
-      console.log("Access Token:", token);
-  
-      // Attempt the '/me' route or similar endpoint for logged-in user
-      const url = `https://v2.api.noroff.dev/me`; // Endpoint for the logged-in user's profile (replace with correct endpoint if different)
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`, // Bearer token for authentication
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (!response.ok) {
-        const errorResponse = await response.text();
-        console.error(`Failed to fetch user profile data: ${errorResponse}`);
-        return;
-      }
-  
-      const profileData = await response.json();
-      console.log("Full User Profile Data:", profileData);
-  
-      const wins = profileData.data?.wins || [];  // Ensure wins is an array
-      console.log("Wins Data:", wins);
-      displayWins(wins); // Pass wins to the display function
-    } catch (error) {
-      console.error("Error fetching user profile data:", error);
-    }
-  }
-  
-  
-  // Function to display wins
-  function displayWins(wins) {
-    const winsContainer = document.getElementById('wins-container');
-    winsContainer.innerHTML = '';
-  
-    if (!wins || wins.length === 0) {
-      winsContainer.innerHTML = '<p>No wins available.</p>';
+// Function to fetch auction wins by profile name
+async function fetchUserWinsByProfile(profileName, page = 1) {
+  try {
+    const token = localStorage.getItem('accessToken'); // Get the access token from localStorage
+    if (!token) {
+      console.error("No access token found in localStorage.");
+      alert("Please log in to view your wins.");
       return;
     }
-  
-    wins.forEach(win => {
-      const winElement = document.createElement('div');
-      winElement.classList.add('win-card', 'bg-white', 'shadow-lg', 'mb-6', 'p-3');
-  
-      winElement.innerHTML = `
+
+    console.log("Access Token:", token);
+
+    // Construct the URL with pagination support
+    const url = `${apiUrl}auction/profiles/${profileName}/wins?page=${page}`;
+
+    // Fetch the auction wins for the specified profile
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Bearer token for authentication
+        'Content-Type': 'application/json',
+        'X-Noroff-API-Key': apiKey || '', // Assuming apiKey is defined elsewhere if necessary
+      },
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.text();
+      console.error(`Failed to fetch user wins: ${errorResponse}`);
+      
+      if (response.status === 401) {
+        alert("Unauthorized. Please log in again.");
+        // Optionally, redirect to login page or clear stored token
+      } else if (response.status === 404) {
+        alert("Profile not found. Please check the username or log in with the correct account.");
+      }
+      return;
+    }
+
+    const winsData = await response.json();
+    console.log("User Wins Data:", winsData);
+
+    const wins = winsData.data || []; // Ensure wins is an array
+    const meta = winsData.meta || {}; // Meta data for pagination
+
+    // Call the function to display the wins
+    displayWins(wins);
+
+    // Return meta for pagination
+    return meta;
+  } catch (error) {
+    console.error("Error fetching user wins:", error);
+  }
+}
+
+// Function to display auction wins
+function displayWins(wins) {
+  const winsContainer = document.getElementById('wins-container');
+  winsContainer.innerHTML = ''; // Clear any previous content
+
+  if (!wins || wins.length === 0) {
+    winsContainer.innerHTML = '<p>No wins available.</p>';
+    return;
+  }
+
+  wins.forEach(win => {
+    const winElement = document.createElement('div');
+    winElement.classList.add('win-card', 'bg-white', 'shadow-lg', 'mb-6', 'p-3', 'flex', 'flex-col', 'h-full');
+
+    const imageUrl = win.media && win.media[0] ? win.media[0].url : ''; // Handle missing images
+    const imageAlt = win.title || 'Auction Item';
+    const listingId = win.id; // Get the listing ID for the link
+
+    // Dynamically generate the URL
+    const listingUrl = `/templates/auth/posts/details.html?listingId=${listingId}`;
+
+    // Create the HTML structure for each win, wrapped in a clickable link
+    winElement.innerHTML = `
+      <a href="${listingUrl}" class="win-link">
         <div class="relative">
-          <img src="${win.media && win.media[0] ? win.media[0].url : ''}" alt="${win.title}" class="w-full h-48 object-cover" />
-          <div class="win-info">
+          <!-- Won label -->
+          <div class="absolute top-0 left-0 w-full bg-green-500 text-white text-xs font-bold px-4 py-1 text-center">
+            Won!
+          </div>
+          <img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover" />
+          <div class="win-info p-3">
             <h3 class="win-title text-xl font-semibold">${win.title}</h3>
             <p class="win-description">${win.description}</p>
             <span class="win-created text-sm text-gray-500">Won on: ${new Date(win.created).toLocaleDateString()}</span>
           </div>
         </div>
-      `;
-  
-      winsContainer.appendChild(winElement);
-    });
+      </a>
+    `;
+
+    // Append the win card to the wins container
+    winsContainer.appendChild(winElement);
+  });
+}
+
+// Function to load more wins on button click
+let currentPage = 1;
+let totalPages = 1; // Assuming only 1 page at the beginning
+
+document.getElementById('load-more-button').addEventListener('click', async function () {
+  // Check if there are more pages to load
+  if (currentPage < totalPages) {
+    currentPage += 1;
+    const profileName = localStorage.getItem('userName'); // Fetch the profile name from localStorage
+    const meta = await fetchUserWinsByProfile(profileName, currentPage);
+    totalPages = meta.pageCount; // Update total pages for pagination
+  } else {
+    alert('No more wins to load.');
+  }
+});
+
+// Initial fetch of user wins
+document.addEventListener("DOMContentLoaded", async function() {
+  const profileName = localStorage.getItem('userName'); // Retrieve the profile name from localStorage
+  if (!profileName) {
+    console.error("No profile name found in localStorage.");
+    alert("Please log in to view your wins.");
+    return;
   }
   
-// Fetch and display user profile data on page load
-fetchUserProfileData();
+  const meta = await fetchUserWinsByProfile(profileName, currentPage);
+  totalPages = meta ? meta.pageCount : 1; // Set total pages for pagination (in case `meta` is undefined)
+});
