@@ -20,9 +20,8 @@
   </head>
   <body>
     <script defer type="module" src="/js/script.js"></script>
-    <script defer type="module" src="/js/auth/logout.js"></script>
     <!--<script defer type="module" src="/js/ui/header.js"></script>-->
-    <header class="py-1 mb-4 flex justify-between items-center">
+    <header class="py-1 mb-4 flex justify-between items-center shadow">
       <a class="flex items-center" href="/templates/index.html">
         <img class="w-14 h-14 p-2" src="/assets/logo.svg" alt="logo-ballbid" />
         <h1 class="font-logo text-2xl text-RoyalBlue">Diamondbid</h1>
@@ -80,11 +79,6 @@
             <span class="text-RoyalBlue font-bold">65,000 special objects today!</span>
         </p>
     </div>
-
-
-
-
-
 <div id="filters" class="flex flex-wrap justify-center p-4 border border-gray-200  shadow-md">
   <label class="flex items-center space-x-2 m-2 p-2 bg-Gallery hover:bg-gray-100 border  shadow-sm transition">
     <input type="checkbox" id="filter-active" class="filter-checkbox h-4 w-4   ">
@@ -123,7 +117,7 @@
             </div>
         </div>
     </div>
-    <button id="load-more-button" class="w-full bg-blue-500 text-white py-2 mt-6" style="display:none;">
+    <button id="load-more-listings" class="w-auto bg-RoyalBlue text-white px-3 py-2 mx-auto mt-6" style="display:none;">
       Load More Listings
     </button>
 

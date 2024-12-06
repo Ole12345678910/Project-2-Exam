@@ -19,9 +19,8 @@
     <title>Diamondbid</title>
   </head>
   <body>
-    <script defer type="module" src="/js/details/details.js"></script>
-    <script defer type="module" src="/js/auth/logout.js"></script>
-    <header class="py-1 mb-4 flex justify-between items-center">
+    <script defer type="module" src="/js/pages/details.js"></script>
+    <header class="py-1 mb-4 flex justify-between items-center shadow">
       <a class="flex items-center" href="/templates/index.html">
         <img class="w-14 h-14 p-2" src="/assets/logo.svg" alt="logo-ballbid" />
         <h1 class="font-logo text-2xl text-RoyalBlue">Diamondbid</h1>
@@ -66,15 +65,15 @@
 
 
 
-    <div id="listing-container" class="container mx-auto p-6 mt-10 bg-gray-50 rounded-lg shadow-md">
+    <div id="listing-container" class="container mx-auto p-6 mt-10">
       <!-- Listing details will be rendered here -->
     </div>
     <!-- Add this container somewhere in your HTML where you want the bid form to appear -->
-<div id="bid-form-container"></div>
+    <div class="flex justify-center m-4 pt-2" id="bid-form-container"></div>
 
 
     
-    <div id="bids-container" class="container mx-auto p-6 mt-10 bg-gray-50 rounded-lg shadow-md">
+    <div id="bids-container" class="container mx-auto p-6 my-10 bg-gray-50 shadow-md">
       <h3 class="text-xl font-semibold text-gray-800 mb-4">Bids</h3>
       <p class="text-gray-600">Loading bids...</p>
     </div>
