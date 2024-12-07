@@ -2,6 +2,7 @@
   import { apiUrl, apiKey } from "../constants/config.js";
   import { handleErrorInBidForm, fetchListingDetails } from "./details.js";
   import { setupBidSubmissionHandler } from "./details.js";
+  import { deleteListing } from "../modules/api.js";
 
   let listingsArray = []; // Listings array
 
@@ -630,7 +631,8 @@ export async function fetchUserProfile() {
 }
 
 // Function to display auction wins
-export function displayWins(wins) {
+// Function to render auction wins on the page
+export function renderAuctionWins(wins) {
   const winsContainer = document.getElementById('wins-container');
   winsContainer.innerHTML = ''; // Clear any previous content
 
@@ -672,6 +674,7 @@ export function displayWins(wins) {
     winsContainer.appendChild(winElement);
   });
 }
+
 
 //placeholder
 // Open the edit form and populate it with listing data

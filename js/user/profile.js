@@ -1,62 +1,25 @@
+// Import statements
 import { apiKey } from "../constants/config.js"; // Correct path and extension
-import { 
-  deleteListing, 
-  fetchUserProfileFromAPI, 
-  fetchUserProfileData, 
-  updateUserProfile, 
-  createListingApi, 
-  updateListingApi, 
-  fetchUserListingsApi, 
+import {
+  fetchUserProfileData,
+  updateUserProfile,
+  createListingApi,
 } from "../modules/api.js";
+import { fetchUserListings, fetchUserProfile } from "../pages/listings.js";
 
+// Local storage variables
 const accessToken = localStorage.getItem('accessToken');
-const userName = localStorage.getItem('userName');  // Assuming userName is stored in localStorage
+const userName = localStorage.getItem('userName'); // Assuming userName is stored in localStorage
+let listingsArray = []; // Listings array
 
-// Fetch user profile data
-async function fetchUserProfile() {
-  if (!accessToken || !userName) {
-    alert("You are not logged in. Please log in first.");
-    return;
-  }
-
-  try {
-    const profileData = await fetchUserProfileFromAPI(accessToken, userName, apiKey);
-    const { name, bio, avatar, banner, listings, credits } = profileData;
-
-    // Display profile information
-    document.getElementById('user-credits-header').textContent = `Credits: ${credits || 0}`;
-    document.getElementById('user-credits-profile').textContent = `Credits: ${credits || 0}`;
-    document.getElementById('banner-img').src = banner?.url || '/templates/auth/posts/user/default-banner.jpg';
-    document.getElementById('avatar-img').src = avatar?.url || '/templates/auth/posts/user/default-avatar.jpg';
-    document.getElementById('user-name').textContent = name || 'Unknown Name';
-    document.getElementById('user-email').textContent = userName || 'Username not available';
-    document.getElementById('user-bio').textContent = bio || 'No bio available';
-
-    // Handle listings
-    const listingsList = document.getElementById('listings-list');
-    if (listings && listings.length > 0) {
-      listingsList.innerHTML = listings.map(listing => `
-        <li class="listing-item">
-          <div class="listing-title"><strong>${listing.title}</strong></div>
-          <div class="listing-description">${listing.description || 'No description available'}</div>
-          <div class="listing-created">Created: ${new Date(listing.created).toLocaleDateString()}</div>
-          <div class="listing-endsAt">Ends: ${new Date(listing.endsAt).toLocaleDateString()}</div>
-        </li>
-      `).join('');
-    } else {
-      await fetchUserListings();
-    }
-  } catch (error) {
-    console.error("Error:", error.message);
-    alert("There was an error loading your profile. Please try again.");
-  }
-}
-
-// Handle avatar display
+// Profile avatar handling
 async function handleAvatar() {
   const userIcon = document.getElementById('user-icon');
   if (!accessToken || !userName) {
-    userIcon.innerHTML = `<a href="/templates/auth/login.html"><i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i></a>`;
+    userIcon.innerHTML = `
+      <a href="/templates/auth/login.html">
+        <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+      </a>`;
     return;
   }
 
@@ -64,14 +27,22 @@ async function handleAvatar() {
     const profileData = await fetchUserProfileData(accessToken, userName, apiKey);
     const avatarUrl = profileData.avatar?.url || '/templates/auth/posts/user/default-avatar.jpg';
 
-    userIcon.innerHTML = `<a href="/templates/auth/posts/user/profile.html"><img src="${avatarUrl}" alt="User Profile" class="w-8 h-8 rounded-full border-2 hover:border-2 hover:border-RoyalBlue" onerror="this.src='/templates/auth/posts/user/default-avatar.jpg';"></a>`;
-    
+    userIcon.innerHTML = `
+      <a href="/templates/auth/posts/user/profile.html">
+        <img src="${avatarUrl}" alt="User Profile" 
+          class="w-8 h-8 rounded-full border-2 hover:border-2 hover:border-RoyalBlue"
+          onerror="this.src='/templates/auth/posts/user/default-avatar.jpg';">
+      </a>`;
+
     if (profileData.avatar?.url) {
       localStorage.setItem('avatar', profileData.avatar.url);
     }
   } catch (error) {
     console.error("Error:", error.message);
-    userIcon.innerHTML = `<a href="/templates/auth/login.html"><i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i></a>`;
+    userIcon.innerHTML = `
+      <a href="/templates/auth/login.html">
+        <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+      </a>`;
   }
 }
 
@@ -82,25 +53,19 @@ async function editProfile() {
   const closeModalBtn = document.getElementById('close-modal');
   const editProfileForm = document.getElementById('edit-profile-form');
 
-  editAvatarBtn.addEventListener('click', () => {
-    editProfileModal.classList.remove('hidden');
-  });
-
-  closeModalBtn.addEventListener('click', () => {
-    editProfileModal.classList.add('hidden');
-  });
+  editAvatarBtn.addEventListener('click', () => editProfileModal.classList.remove('hidden'));
+  closeModalBtn.addEventListener('click', () => editProfileModal.classList.add('hidden'));
 
   editProfileForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-
     const bio = document.getElementById('bio').value;
     const avatarUrl = document.getElementById('avatar-url').value;
     const bannerUrl = document.getElementById('banner-url').value;
 
     const requestBody = {
-      bio: bio || "", 
+      bio: bio || "",
       avatar: { url: avatarUrl || "", alt: "Updated Avatar" },
-      banner: { url: bannerUrl || "", alt: "Updated Banner" }
+      banner: { url: bannerUrl || "", alt: "Updated Banner" },
     };
 
     try {
@@ -113,7 +78,6 @@ async function editProfile() {
       document.getElementById('banner-img').src = newBannerUrl;
       document.getElementById('user-bio').textContent = updatedProfile.bio || 'No bio available';
 
-      localStorage.removeItem('userAvatar');
       localStorage.setItem('userAvatar', newAvatarUrl);
       localStorage.setItem('userBanner', newBannerUrl);
 
@@ -127,6 +91,32 @@ async function editProfile() {
   });
 }
 
+// Handle credits
+async function fetchAndStoreCredits() {
+  if (!accessToken || !userName) {
+    alert("You are not logged in. Please log in first.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${userName}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    });
+
+    if (!response.ok) throw new Error('Error fetching user profile.');
+    const profileData = await response.json();
+    const { credits } = profileData.data;
+    localStorage.setItem('userCredits', credits || 0);
+  } catch (error) {
+    console.error("Error fetching credits:", error);
+    alert("There was an error fetching credits. Please try again.");
+  }
+}
+
 // Create listing functionality
 async function createListing() {
   const createListingBtn = document.getElementById('create-listing-btn');
@@ -134,13 +124,8 @@ async function createListing() {
   const closeModalBtn = document.getElementById('close-modal');
   const createListingForm = document.getElementById('create-listing-form');
 
-  createListingBtn.addEventListener('click', () => {
-    createListingModal.classList.remove('hidden');
-  });
-
-  closeModalBtn.addEventListener('click', () => {
-    createListingModal.classList.add('hidden');
-  });
+  createListingBtn.addEventListener('click', () => createListingModal.classList.remove('hidden'));
+  closeModalBtn.addEventListener('click', () => createListingModal.classList.add('hidden'));
 
   createListingForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -154,27 +139,19 @@ async function createListing() {
     const currentDate = new Date();
     const maxDate = new Date(currentDate);
     maxDate.setFullYear(currentDate.getFullYear() + 1);
-
     const endsAtDate = new Date(endsAt);
 
     if (endsAtDate <= currentDate || endsAtDate > maxDate) {
-      alert("The 'Ends At' date must be a future date within one year from now.");
+      alert("The 'Ends At' date must be valid and within one year.");
       return;
     }
 
     endsAt = endsAtDate.toISOString();
-
     const media = mediaUrls.length > 0 
       ? mediaUrls.map(url => ({ url, alt: 'Listing Media' })) 
       : [];
 
-    const requestBody = {
-      title,
-      description,
-      tags: tags.length > 0 ? tags : undefined,
-      media,
-      endsAt,
-    };
+    const requestBody = { title, description, tags: tags.length > 0 ? tags : undefined, media, endsAt };
 
     try {
       const result = await createListingApi(accessToken, apiKey, requestBody);
@@ -188,23 +165,60 @@ async function createListing() {
   });
 }
 
-// Initialize all necessary functionalities
+// Edit listing functionality
+async function updateListing(listingId) {
+  const title = document.getElementById('edit-title').value;
+  const description = document.getElementById('edit-description').value;
+  const mediaUrl = document.getElementById('edit-media').value;
+
+  const data = {
+    title,
+    description,
+    media: mediaUrl ? [{ url: mediaUrl, alt: 'Updated Image' }] : [],
+  };
+
+  try {
+    const response = await fetch(`https://v2.api.noroff.dev/auction/listings/${listingId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const responseData = await response.json();
+    if (response.ok) {
+      alert('Listing updated successfully!');
+      closeEditForm();
+      fetchUserListings();
+    } else {
+      alert(`Error: ${responseData.message || 'Unknown error occurred'}`);
+    }
+  } catch (error) {
+    console.error('Error updating listing:', error);
+    alert('An error occurred while updating the listing.');
+  }
+}
+
+function closeEditForm() {
+  document.getElementById('edit-form-container').classList.add('hidden');
+}
+
+// Initialize all functionalities
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("DOM is loaded.");
   fetchUserProfile();
   handleAvatar();
   editProfile();
+  fetchAndStoreCredits();
   createListing();
-});
-
-let listingsArray = [];
-
-document.addEventListener('DOMContentLoaded', function () {
-  console.log("DOM is loaded.");
   fetchUserListings();
 
   const saveButton = document.getElementById('save-edit-button');
   if (saveButton) {
-    saveButton.addEventListener('click', function (event) {
+    saveButton.addEventListener('click', (event) => {
       event.preventDefault();
       const listingId = document.getElementById('listing-id').value;
       updateListing(listingId);
@@ -216,56 +230,3 @@ document.addEventListener('DOMContentLoaded', function () {
     cancelButton.addEventListener('click', closeEditForm);
   }
 });
-
-function openEditForm(listingId) {
-  const listing = listingsArray.find(item => item.id === listingId);
-
-  if (listing) {
-    document.getElementById('listing-id').value = listing.id;
-    document.getElementById('edit-title').value = listing.title;
-    document.getElementById('edit-description').value = listing.description;
-    document.getElementById('edit-tags').value = listing.tags.join(', ');
-    document.getElementById('edit-media-urls').value = listing.mediaUrls.join('\n');
-    document.getElementById('edit-endsAt').value = listing.endsAt;
-    document.getElementById('edit-listing-form').style.display = 'block';
-  }
-}
-
-async function updateListing(listingId) {
-  const updatedListing = {
-    title: document.getElementById('edit-title').value,
-    description: document.getElementById('edit-description').value,
-    tags: document.getElementById('edit-tags').value.split(',').map(tag => tag.trim()),
-    mediaUrls: document.getElementById('edit-media-urls').value.split('\n').map(url => url.trim()).filter(url => url),
-    endsAt: document.getElementById('edit-endsAt').value,
-  };
-
-  try {
-    await updateListingApi(listingId, updatedListing);
-    alert('Listing updated successfully!');
-    location.reload();
-  } catch (error) {
-    alert('Error updating listing: ' + error.message);
-  }
-}
-
-
-async function fetchUserListings() {
-  try {
-    const listings = await fetchUserListingsApi(accessToken, userName);
-    listingsArray = listings; // Store listings for future reference
-    const listingsContainer = document.getElementById('listings-container');
-
-    listingsContainer.innerHTML = listings.map(listing => `
-      <div class="listing-item">
-        <h3>${listing.title}</h3>
-        <p>${listing.description}</p>
-        <p>Ends at: ${new Date(listing.endsAt).toLocaleDateString()}</p>
-        <button onclick="openEditForm(${listing.id})">Edit</button>
-        <button onclick="deleteListing(${listing.id})">Delete</button>
-      </div>
-    `).join('');
-  } catch (error) {
-    alert('Error fetching listings: ' + error.message);
-  }
-}

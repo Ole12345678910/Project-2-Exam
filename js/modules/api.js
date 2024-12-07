@@ -1,5 +1,5 @@
 import { apiUrl, apiKey } from "../constants/config.js";
-import { displayCarousel, displayWins } from "../pages/listings.js";
+import { displayCarousel } from "../pages/listings.js";
 import { accessToken, userName } from "../pages/listings.js";
 
 /**
@@ -311,6 +311,8 @@ export async function fetchUserWins(profileName, accessToken, page = 1) {
 
 // api.js
 
+// api.js
+
 export async function fetchUserProfileFromAPI(accessToken, userName, apiKey) {
   if (!accessToken || !userName) {
       throw new Error("You are not logged in. Please log in first.");
@@ -333,6 +335,7 @@ export async function fetchUserProfileFromAPI(accessToken, userName, apiKey) {
       throw new Error(`Error fetching profile data: ${error.message}`);
   }
 }
+
 
 // api.js
 
@@ -438,59 +441,9 @@ export async function fetchUserListingsApi(userName, accessToken, apiKey) {
   }
 }
 
-// Function to fetch auction wins by profile name
-async function fetchUserWinsByProfile(profileName, page = 1) {
-  try {
-    const token = localStorage.getItem('accessToken'); // Get the access token from localStorage
-    if (!token) {
-      console.error("No access token found in localStorage.");
-      alert("Please log in to view your wins.");
-      return;
-    }
 
-    console.log("Access Token:", token);
 
-    // Construct the URL with pagination support
-    const url = `${apiUrl}auction/profiles/${profileName}/wins?page=${page}`;
-
-    // Fetch the auction wins for the specified profile
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`, // Bearer token for authentication
-        'Content-Type': 'application/json',
-        'X-Noroff-API-Key': apiKey || '', // Assuming apiKey is defined elsewhere if necessary
-      },
-    });
-
-    if (!response.ok) {
-      const errorResponse = await response.text();
-      console.error(`Failed to fetch user wins: ${errorResponse}`);
-      
-      if (response.status === 401) {
-        alert("Unauthorized. Please log in again.");
-        // Optionally, redirect to login page or clear stored token
-      } else if (response.status === 404) {
-        alert("Profile not found. Please check the username or log in with the correct account.");
-      }
-      return;
-    }
-
-    const winsData = await response.json();
-    console.log("User Wins Data:", winsData);
-
-    const wins = winsData.data || []; // Ensure wins is an array
-    const meta = winsData.meta || {}; // Meta data for pagination
-
-    // Call the function to display the wins
-    displayWins(wins);
-
-    // Return meta for pagination
-    return meta;
-  } catch (error) {
-    console.error("Error fetching user wins:", error);
-  }
-}
+// api.js
 
 
 
