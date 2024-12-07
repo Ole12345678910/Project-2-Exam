@@ -4,8 +4,11 @@ import {
   fetchUserProfileData,
   updateUserProfile,
   createListingApi,
+  updateListingApi,
+  fetchUserCreditsApi,
+  fetchUserWins,
 } from "../modules/api.js";
-import { fetchUserListings, fetchUserProfile } from "../pages/listings.js";
+import { fetchUserListings, fetchUserProfile, displayWins } from "../pages/listings.js";
 
 // Local storage variables
 const accessToken = localStorage.getItem('accessToken');
@@ -93,29 +96,19 @@ async function editProfile() {
 
 // Handle credits
 async function fetchAndStoreCredits() {
-  if (!accessToken || !userName) {
-    alert("You are not logged in. Please log in first.");
-    return;
+    if (!accessToken || !userName) {
+      alert('You are not logged in. Please log in first.');
+      return;
+    }
+  
+    try {
+      const credits = await fetchUserCreditsApi(userName, accessToken, apiKey);
+      localStorage.setItem('userCredits', credits || 0);
+    } catch (error) {
+      console.error('Error fetching credits:', error);
+      alert('There was an error fetching credits. Please try again.');
+    }
   }
-
-  try {
-    const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${userName}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-    });
-
-    if (!response.ok) throw new Error('Error fetching user profile.');
-    const profileData = await response.json();
-    const { credits } = profileData.data;
-    localStorage.setItem('userCredits', credits || 0);
-  } catch (error) {
-    console.error("Error fetching credits:", error);
-    alert("There was an error fetching credits. Please try again.");
-  }
-}
 
 // Create listing functionality
 async function createListing() {
@@ -167,41 +160,27 @@ async function createListing() {
 
 // Edit listing functionality
 async function updateListing(listingId) {
-  const title = document.getElementById('edit-title').value;
-  const description = document.getElementById('edit-description').value;
-  const mediaUrl = document.getElementById('edit-media').value;
-
-  const data = {
-    title,
-    description,
-    media: mediaUrl ? [{ url: mediaUrl, alt: 'Updated Image' }] : [],
-  };
-
-  try {
-    const response = await fetch(`https://v2.api.noroff.dev/auction/listings/${listingId}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    const responseData = await response.json();
-    if (response.ok) {
+    const title = document.getElementById('edit-title').value;
+    const description = document.getElementById('edit-description').value;
+    const mediaUrl = document.getElementById('edit-media').value;
+  
+    // Prepare the data object
+    const data = {
+      title,
+      description,
+      media: mediaUrl ? [{ url: mediaUrl, alt: 'Updated Image' }] : [],
+    };
+  
+    try {
+      const responseData = await updateListingApi(listingId, accessToken, apiKey, data);
       alert('Listing updated successfully!');
-      closeEditForm();
-      fetchUserListings();
-    } else {
-      alert(`Error: ${responseData.message || 'Unknown error occurred'}`);
+      closeEditForm(); // Function to close the edit form
+      fetchUserListings(); // Function to refresh the listings on the page
+    } catch (error) {
+      console.error('Error updating listing:', error);
+      alert(`An error occurred: ${error.message}`);
     }
-  } catch (error) {
-    console.error('Error updating listing:', error);
-    alert('An error occurred while updating the listing.');
   }
-}
-
 function closeEditForm() {
   document.getElementById('edit-form-container').classList.add('hidden');
 }
@@ -215,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchAndStoreCredits();
   createListing();
   fetchUserListings();
+
 
   const saveButton = document.getElementById('save-edit-button');
   if (saveButton) {
@@ -230,3 +210,23 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelButton.addEventListener('click', closeEditForm);
   }
 });
+
+
+// Function to display auction wins
+
+
+// Fetch the user wins and display them
+async function loadUserWins() {
+    const accessToken = localStorage.getItem('accessToken');  // Get the access token from localStorage
+    if (!accessToken) {
+        console.error("No access token found");
+        return;
+    }
+
+    const profileName = 'james';  // Example profile name (could be dynamic)
+    const wins = await fetchUserWins(profileName, accessToken);
+    displayWins(wins);  // Display the fetched wins
+}
+
+// Call the function to load and display user wins when the page loads
+loadUserWins();

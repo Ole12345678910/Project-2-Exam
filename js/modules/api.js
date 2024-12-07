@@ -8,41 +8,38 @@ import { accessToken, userName } from "../pages/listings.js";
  */
 async function fetchFromApi(endpoint, options = {}) {
   try {
-    // Check if accessToken and apiKey are available and valid
-    if (!accessToken || !apiKey) {
-      console.error("Missing access token or API key");
-      return;  // Or handle error appropriately
-    }
-
-    // Set headers dynamically, with Authorization and API Key
     const headers = {
-      "Content-Type": "application/json",       // For JSON body
-      "Authorization": `Bearer ${accessToken}`, // Authentication token
-      "X-Noroff-API-Key": apiKey,               // API key for access control
-      ...options.headers,                       // Merge any additional headers passed in options
+      "Content-Type": "application/json",
+      ...options.headers, // Include additional headers from options
     };
 
-    // Make the API call
+    // Add Authorization and API Key headers only if they are available
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    }
+    if (apiKey) {
+      headers["X-Noroff-API-Key"] = apiKey;
+    }
+
     const response = await fetch(`${apiUrl}${endpoint}`, {
-      method: options.method || "GET",          // Default to GET if no method provided
-      headers: headers,                         // Include the constructed headers
-      body: options.body || undefined,          // Include the body (if any) for POST/PUT requests
+      method: options.method || "GET",
+      headers,
+      body: options.body || undefined,
     });
 
-    // Handle non-OK response
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("API response error data:", errorData);
+      console.error("API response error:", errorData);
       throw new Error(errorData.errors?.[0]?.message || `Error: ${response.status}`);
     }
 
-    // Return parsed JSON response
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching ${endpoint}:`, error.message);
-    throw error;
+    console.error(`Error in fetchFromApi(${endpoint}):`, error.message);
+    return null; // Return null to indicate failure
   }
 }
+
 
 
 
@@ -86,7 +83,7 @@ export function displayPosts(posts) {
       if (!imageUrl) return "";
       return `
         <div class="flex justify-center items-center">
-          <a href="/auction-details.html?listingId=${post.id}" class="block transform transition-transform hover:scale-110">
+          <a href="/templates/auth/posts/details.html?listingId=${post.id}" class="block transform transition-transform hover:scale-110">
             <img src="${imageUrl}" alt="${post.title}" class="h-28 w-40 object-cover">
           </a>
         </div>`;
@@ -163,22 +160,7 @@ export async function handleAvatar() {
   }
 }
 
-// Create or update listings
-export async function manageListing(listingId, data, isUpdate = false) {
-  const endpoint = isUpdate
-    ? `auction/listings/${listingId}`
-    : "auction/listings";
-  const method = isUpdate ? "PUT" : "POST";
 
-  return await fetchFromApi(endpoint, {
-    method,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-}
 
 
 // Function to handle login API call
@@ -291,22 +273,25 @@ export async function fetchUserProfile(userName, accessToken) {
 // Fetch user wins
 export async function fetchUserWins(profileName, accessToken, page = 1) {
   try {
-    const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${profileName}/wins?page=${page}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-    });
+      const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${profileName}/wins?page=${page}`, {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'X-Noroff-API-Key': apiKey,  // Make sure apiKey is defined somewhere
+          },
+      });
 
-    if (!response.ok) throw new Error('Error fetching user wins');
-    return await response.json();
+      if (!response.ok) {
+          throw new Error('Error fetching user wins');
+      }
+
+      const winsData = await response.json();
+      return winsData.data || [];  // Return wins data or an empty array if no wins
   } catch (error) {
-    console.error("Error fetching user wins:", error);
-    throw error;
+      console.error("Error fetching user wins:", error);
+      return [];  // Return an empty array on error
   }
 }
-
 
 
 // api.js
@@ -440,6 +425,44 @@ export async function fetchUserListingsApi(userName, accessToken, apiKey) {
       throw new Error(`Error fetching listings: ${error.message}`);
   }
 }
+
+
+// api.js
+export async function fetchUserCreditsApi(userName, accessToken, apiKey) {
+  try {
+    const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${userName}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'X-Noroff-API-Key': apiKey,
+      },
+    });
+
+    if (!response.ok) {
+      const responseData = await response.json();
+      throw new Error(responseData.message || 'Error fetching user profile.');
+    }
+
+    const profileData = await response.json();
+    return profileData.data.credits; // Return only the credits
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error; // Rethrow for the caller to handle
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

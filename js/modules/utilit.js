@@ -67,12 +67,24 @@ export function displayUserCredits() {
 }
 
 export function filterListings(listings) {
+  // Ensure the necessary filter elements are found
+  const filterActiveEl = document.getElementById("filter-active");
+  const filterEndedEl = document.getElementById("filter-ended");
+  const filterHighestBidsEl = document.getElementById("filter-highest-bids");
+  const filterLowestBidsEl = document.getElementById("filter-lowest-bids");
+
+  // If any required elements are missing, return the original listings
+  if (!filterActiveEl || !filterEndedEl || !filterHighestBidsEl || !filterLowestBidsEl) {
+    console.warn("Filter elements not found in the DOM. Returning original listings.");
+    return listings;
+  }
+
   // Get filter selections from the DOM
   const filterOptions = {
-    active: document.getElementById("filter-active").checked,
-    ended: document.getElementById("filter-ended").checked,
-    highestBids: document.getElementById("filter-highest-bids").checked,
-    lowestBids: document.getElementById("filter-lowest-bids").checked,
+    active: filterActiveEl.checked,
+    ended: filterEndedEl.checked,
+    highestBids: filterHighestBidsEl.checked,
+    lowestBids: filterLowestBidsEl.checked,
   };
 
   // Filter listings by Active or Ended status
@@ -103,6 +115,7 @@ export function filterListings(listings) {
   // Apply sorting if necessary
   return filteredByStatus.sort(sortByBids);
 }
+
 
 export function loadMoreListings() {
   const filteredListings = filterListings(allListings); // Get filtered listings
@@ -175,4 +188,8 @@ export function renderBidForm(container) {
     </form>
   `;
 }
+
+
+
+
 

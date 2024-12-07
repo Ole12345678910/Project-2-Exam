@@ -1,60 +1,54 @@
-import { loginApi, fetchUserProfile } from "../modules/api.js";
+import { loginApi, fetchUserProfile, fetchAndStoreCredits } from "../modules/api.js";
 
 async function handleLogin(event) {
-  event.preventDefault();
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  if (!email || !password) {
-    alert("Please enter both email and password.");
-    return;
-  }
-
-  try {
-    const loginResponse = await loginApi(email, password);
-
-    const accessToken = loginResponse.data?.accessToken;
-    const userName = loginResponse.data?.name;
-    const userAvatar = loginResponse.data?.avatar?.url;
-
-    if (!accessToken || !userName) {
-      alert("Login failed. Missing required information.");
+    event.preventDefault();
+  
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+  
+    if (!email || !password) {
+      alert("Please enter both email and password.");
       return;
     }
-
-    // Store login data in localStorage
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("email", email);
-    localStorage.setItem("userName", userName);
-
-    if (userAvatar) {
-      localStorage.setItem("userAvatar", userAvatar);
+  
+    try {
+      const loginResponse = await loginApi(email, password);
+  
+      const accessToken = loginResponse.data?.accessToken;
+      const userName = loginResponse.data?.name;
+      const userAvatar = loginResponse.data?.avatar?.url;
+  
+      if (!accessToken || !userName) {
+        alert("Login failed. Missing required information.");
+        return;
+      }
+  
+      // Store login data in localStorage
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("email", email);
+      localStorage.setItem("userName", userName);
+  
+      if (userAvatar) {
+        localStorage.setItem("userAvatar", userAvatar);
+      }
+  
+      // Fetch and store credits
+      try {
+        await fetchAndStoreCredits(userName, accessToken);
+      } catch (error) {
+        console.error("Failed to fetch credits:", error);
+        alert("Error fetching user credits.");
+      }
+  
+      alert("Login successful!");
+      window.location.href = "/templates/index.html"; // Redirect after login
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(`An error occurred: ${error.message}`);
     }
-
-    // Fetch and store credits
-    await fetchAndStoreCredits(accessToken, userName);
-
-    alert("Login successful!");
-    window.location.href = "/templates/index.html"; // Redirect after login
-  } catch (error) {
-    alert(`An error occurred: ${error.message}`);
   }
-}
+  
 
-async function fetchAndStoreCredits(accessToken, userName) {
-  try {
-    const profileData = await fetchUserProfile(accessToken, userName);
-    const userCredits = profileData?.data?.credits;
-
-    if (userCredits !== undefined) {
-      localStorage.setItem("userCredits", userCredits);
-    }
-  } catch (error) {
-    console.error("Failed to fetch credits:", error);
-    alert("Error fetching user credits.");
-  }
-}
 
 // Event listener for login form submission
 document.addEventListener("DOMContentLoaded", () => {
@@ -63,3 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", handleLogin);
   }
 });
+
+
+

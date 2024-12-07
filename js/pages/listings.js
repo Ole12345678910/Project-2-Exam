@@ -2,7 +2,7 @@
   import { apiUrl, apiKey } from "../constants/config.js";
   import { handleErrorInBidForm, fetchListingDetails } from "./details.js";
   import { setupBidSubmissionHandler } from "./details.js";
-  import { deleteListing } from "../modules/api.js";
+  import { deleteListing,   fetchUserWins } from "../modules/api.js";
 
   let listingsArray = []; // Listings array
 
@@ -312,8 +312,9 @@ function getListingIdFromUrl() {
 
 export async function fetchAndDisplayListing() {
   const listingId = getListingIdFromUrl(); // Get listingId from URL
+  
+  // Check if listingId exists, and if not, log an error and return early
   if (!listingId) {
-    console.error("No listingId found in URL.");
     return;
   }
 
@@ -329,6 +330,7 @@ export async function fetchAndDisplayListing() {
     const result = await response.json();
     const listing = result.data;
 
+    // Only proceed if the listing data is complete
     if (listing && listing.title && listing.description && listing.endsAt && listing.media) {
       displayListing(listing);
 
@@ -347,6 +349,7 @@ export async function fetchAndDisplayListing() {
     console.error("Error fetching listing:", error);
   }
 }
+
 
 // Display the bid form for a specific listing
 async function displayBidForm() {
@@ -631,47 +634,54 @@ export async function fetchUserProfile() {
 }
 
 // Function to display auction wins
-// Function to render auction wins on the page
-export function renderAuctionWins(wins) {
-  const winsContainer = document.getElementById('wins-container');
-  winsContainer.innerHTML = ''; // Clear any previous content
+export function displayWins(wins) {
+  console.log("Rendering wins:", wins);  // Debug the wins array
 
+  const winsContainer = document.getElementById('wins-container');
+  if (!winsContainer) {
+      console.error("Wins container not found in the DOM!");
+      return;
+  }
+
+  // Clear the previous content in the container
+  winsContainer.innerHTML = '';
+
+  // If no wins, display the new personalized message
   if (!wins || wins.length === 0) {
-    winsContainer.innerHTML = '<p>No wins available.</p>';
-    return;
+      winsContainer.innerHTML = '<p>You have no wins yet.</p>';
+      return;
   }
 
   wins.forEach(win => {
-    const winElement = document.createElement('div');
-    winElement.classList.add('win-card', 'bg-white', 'shadow-lg', 'mb-6', 'p-3', 'flex', 'flex-col', 'h-full');
+      const winElement = document.createElement('div');
+      winElement.classList.add('win-card', 'bg-white', 'shadow-lg', 'mb-6', 'p-3', 'flex', 'flex-col', 'h-full');
 
-    const imageUrl = win.media && win.media[0] ? win.media[0].url : ''; // Handle missing images
-    const imageAlt = win.title || 'Auction Item';
-    const listingId = win.id; // Get the listing ID for the link
+      // Handle missing media or fallback image
+      const imageUrl = (win.media && win.media.length > 0) ? win.media[0].url : 'default-image.jpg';
+      const imageAlt = win.title || 'Auction Item';
+      const listingId = win.id; // The listing ID for the link
 
-    // Dynamically generate the URL
-    const listingUrl = `/templates/auth/posts/details.html?listingId=${listingId}`;
+      // Dynamically generate the URL for the listing details page
+      const listingUrl = `/templates/auth/posts/details.html?listingId=${listingId}`;
 
-    // Create the HTML structure for each win, wrapped in a clickable link
-    winElement.innerHTML = `
-      <a href="${listingUrl}" class="win-link">
-        <div class="relative">
-          <!-- Won label -->
-          <div class="absolute top-0 left-0 w-full bg-green-500 text-white text-xs font-bold px-4 py-1 text-center">
-            Won!
-          </div>
-          <img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover" />
-          <div class="win-info p-3">
-            <h3 class="win-title text-xl font-semibold">${win.title}</h3>
-            <p class="win-description">${win.description}</p>
-            <span class="win-created text-sm text-gray-500">Won on: ${new Date(win.created).toLocaleDateString()}</span>
-          </div>
-        </div>
-      </a>
-    `;
+      winElement.innerHTML = `
+          <a href="${listingUrl}" class="win-link">
+              <div class="relative">
+                  <!-- Won label -->
+                  <div class="absolute top-0 left-0 w-full bg-green-500 text-white text-xs font-bold px-4 py-1 text-center">
+                      Won!
+                  </div>
+                  <img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover" />
+                  <div class="win-info p-3">
+                      <h3 class="win-title text-xl font-semibold">${win.title}</h3>
+                      <p class="win-description">${win.description}</p>
+                      <span class="win-created text-sm text-gray-500">Won on: ${new Date(win.created).toLocaleDateString()}</span>
+                  </div>
+              </div>
+          </a>
+      `;
 
-    // Append the win card to the wins container
-    winsContainer.appendChild(winElement);
+      winsContainer.appendChild(winElement);
   });
 }
 
