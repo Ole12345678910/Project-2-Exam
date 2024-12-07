@@ -2,43 +2,50 @@ import { apiUrl, apiKey } from "../constants/config.js";
 import { displayCarousel } from "../pages/listings.js";
 import { accessToken, userName } from "../pages/listings.js";
 
-/**
- * Fetch data from the API.
- * A generic function for API calls to reduce repetitive code.
- */
-async function fetchFromApi(endpoint, options = {}) {
+
+// Fetch data from the API.
+// A generic function for API calls to reduce repetitive code.
+
+export async function fetchFromApi(endpoint, { method = "GET", headers = {}, body, accessToken, apiKey, baseUrl } = {}) {
   try {
-    const headers = {
+    // Base URL configuration
+    const apiUrl = baseUrl || "https://v2.api.noroff.dev/auction";
+
+    // Build headers
+    const requestHeaders = {
       "Content-Type": "application/json",
-      ...options.headers, // Include additional headers from options
+      ...headers,
     };
 
-    // Add Authorization and API Key headers only if they are available
-    if (accessToken) {
-      headers.Authorization = `Bearer ${accessToken}`;
-    }
-    if (apiKey) {
-      headers["X-Noroff-API-Key"] = apiKey;
-    }
+    // Add Authorization and API Key if provided
+    if (accessToken) requestHeaders.Authorization = `Bearer ${accessToken}`;
+    if (apiKey) requestHeaders["X-Noroff-API-Key"] = apiKey;
 
-    const response = await fetch(`${apiUrl}${endpoint}`, {
-      method: options.method || "GET",
-      headers,
-      body: options.body || undefined,
-    });
+    // Prepare request options
+    const requestOptions = {
+      method,
+      headers: requestHeaders,
+      ...(body && { body: JSON.stringify(body) }), // Stringify body if provided
+    };
 
+    // Make the request
+    const response = await fetch(`${apiUrl}${endpoint}`, requestOptions);
+
+    // Handle non-OK responses
     if (!response.ok) {
       const errorData = await response.json();
       console.error("API response error:", errorData);
       throw new Error(errorData.errors?.[0]?.message || `Error: ${response.status}`);
     }
 
+    // Parse and return JSON response
     return await response.json();
   } catch (error) {
     console.error(`Error in fetchFromApi(${endpoint}):`, error.message);
-    return null; // Return null to indicate failure
+    throw error; // Rethrow to let the caller handle the error
   }
 }
+
 
 
 
@@ -49,18 +56,6 @@ export async function fetchSearchResults(query) {
   return Array.isArray(result.data) ? result.data : [];
 }
 
-// Fetch random posts
-export async function getRandomPosts(count = 4) {
-  const result = await fetchFromApi("auction/listings");
-  const listings = Array.isArray(result.data) ? result.data : [];
-  displayPosts(getRandomItems(listings, count));
-}
-
-// Utility function to get random items from an array
-export function getRandomItems(arr, count) {
-  const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
-  return shuffled.slice(0, count); // Get the first 'count' items
-}
 
 
 // Fetch auction listings
@@ -74,22 +69,7 @@ function getTop3NewestListings(listings) {
   return listings.sort((a, b) => new Date(b.created) - new Date(a.created)).slice(0, 3);
 }
 
-// Display posts dynamically
-export function displayPosts(posts) {
-  const postsContainer = document.getElementById("random-posts-container");
-  postsContainer.innerHTML = posts
-    .map((post) => {
-      const imageUrl = post.media?.[0]?.url || null;
-      if (!imageUrl) return "";
-      return `
-        <div class="flex justify-center items-center">
-          <a href="/templates/auth/posts/details.html?listingId=${post.id}" class="block transform transition-transform hover:scale-110">
-            <img src="${imageUrl}" alt="${post.title}" class="h-28 w-40 object-cover">
-          </a>
-        </div>`;
-    })
-    .join("");
-}
+
 
 // Place a bid
 export async function placeBid(listingId, bidAmount) {
@@ -452,401 +432,3 @@ export async function fetchUserCreditsApi(userName, accessToken, apiKey) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// api.js
-
-
-
-/*
-import { apiUrl, apiKey } from "../constants/config.js";
-import { displayCarousel, fetchUserListings, displayWins } from "../pages/listings.js";
-import { accessToken, userName } from "../pages/listings.js";
-
-
-// Fetch search results from the API
-export async function fetchSearchResults(query) {
-  const apiUrl = https://v2.api.noroff.dev/auction/listings/search?q=${encodeURIComponent(query)};
-
-  try {
-    const response = await fetch(apiUrl);
-
-    if (!response.ok) {
-      throw new Error(API request failed with status: ${response.status});
-    }
-
-    const data = await response.json();
-
-    // Return results only if it's a valid array, otherwise return an empty array silently
-    if (data && Array.isArray(data.data)) {
-      return data.data;
-    }
-
-    // Silently handle invalid data
-    return [];
-
-  } catch (error) {
-    console.error("Error fetching search results:", error);
-    return []; // Return empty array in case of any error (e.g., network issue)
-  }
-}
-
-
-export async function getRandomPosts() {
-  try {
-      // Fetching the data from the API
-      const response = await fetch(${apiUrl}auction/listings);
-      const result = await response.json(); // Parsing the JSON response
-
-      // Check if the 'data' property exists and is an array
-      if (Array.isArray(result.data)) {
-          // Pick 3 random posts from the 'data' array
-          const randomPosts = getRandomItems(result.data, 4);
-
-          // Display the random posts
-          displayPosts(randomPosts);
-      } else {
-          console.error('Expected an array in the "data" property, but got:', result.data);
-      }
-  } catch (error) {
-      console.error('Error fetching posts:', error);
-  }
-}
-
-// Function to fetch auction listings and top 3 newest listings for carousel
-export async function fetchAuctionListings() {
-  try {
-    const response = await fetch(${apiUrl}auction/listings);
-
-    if (!response.ok) {
-      throw new Error(HTTP error! Status: ${response.status});
-    }
-
-    const data = await response.json();
-
-    // Get the top 3 newest listings for the carousel
-    const top3NewestForCarousel = getTop3NewestListings(data.data);
-
-    // Display the carousel
-    displayCarousel(top3NewestForCarousel); // Pass top 3 to the carousel display function
-  } catch (error) {
-    console.error("Failed to fetch auction listings:", error);
-  }
-}
-
-// Function to fetch auction listings
-export async function fetchAuctionListing() {
-  const listingsContainer = document.getElementById("listings-container");
-  const loadMoreButton = document.getElementById("load-more-button-list");
-
-  try {
-    const response = await fetch(${apiUrl}auction/listings);
-    if (!response.ok) {
-      throw new Error(HTTP error! Status: ${response.status});
-    }
-
-    const data = await response.json();
-    allListings = data.data; // Save the fetched listings globally
-    currentPage = 1; // Reset page number to 1 when fetching new data
-
-    loadMoreListings(); // Load the first set of listings by default
-
-    loadMoreButton.style.display = "block"; // Show the "Show More" button
-  } catch (error) {
-    console.error("Failed to fetch auction listings:", error);
-    listingsContainer.innerHTML = <p>Error fetching listings: ${error.message}</p>;
-  }
-}
-
-function getTop3NewestListings(listings) {
-  return listings
-    .sort((a, b) => new Date(b.created) - new Date(a.created))
-    .slice(0, 3); // Return the top 3 newest listings
-}
-
-export function displayPosts(posts) {
-  const postsContainer = document.getElementById("random-posts-container");
-  postsContainer.innerHTML = ""; // Clear any existing content
-
-  posts.forEach((post) => {
-    const imageUrl = post.media && post.media[0] ? post.media[0].url : null;
-    if (imageUrl) {
-      // Create a clickable image link
-      const postElement = document.createElement("div");
-      postElement.className = "flex justify-center items-center"; // Add styling to the parent div
-      postElement.innerHTML = 
-                <a href="/auction-details.html?listingId=${post.id}" 
-                   class="block transform transition-transform hover:scale-110">
-                    <img src="${imageUrl}" alt="${post.title}" class="h-28 w-40 object-cover">
-                </a>
-            ;
-      // Append the created post to the container
-      postsContainer.appendChild(postElement);
-    }
-  });
-}
-
-export async function placeBid(listingId, bidAmount, accessToken) {
-  const bidResponse = await fetch(${apiUrl}auction/listings/${listingId}/bids, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: Bearer ${accessToken},
-      "X-Noroff-API-Key": apiKey,
-    },
-    body: JSON.stringify({ amount: bidAmount }),
-  });
-
-  if (!bidResponse.ok) {
-    const errorData = await bidResponse.json();
-    const errorMessage = errorData.errors?.[0]?.message || "An unknown error occurred";
-    throw new Error(Failed to place bid. Status: ${bidResponse.status}, Message: ${errorMessage});
-  }
-}
-
-//placeholder
-// Utility function to get random items from an array 
-export function getRandomItems(arr, count) {
-  const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
-  return shuffled.slice(0, count); // Get the first 'count' items
-}
-
-
-
-
-// Function to delete a listing
-export async function deleteListing(listingId) {
-  const apiUrl = https://v2.api.noroff.dev/auction/listings/${listingId};
-
-  try {
-      const response = await fetch(apiUrl, {
-          method: 'DELETE',
-          headers: {
-              'Authorization': Bearer ${accessToken},
-              'X-Noroff-API-Key': apiKey,
-          }
-      });
-
-      if (response.ok) {
-          alert("Listing deleted successfully!");
-          // Refresh the listings after deletion
-          fetchUserListings();
-      } else {
-          const errorData = await response.json();
-          console.error("Error deleting listing:", errorData);
-          alert("Failed to delete the listing.");
-      }
-  } catch (error) {
-      console.error("Error deleting listing:", error);
-      alert("There was an error deleting the listing. Please try again.");
-  }
-}
-
-
-// Function to fetch auction wins by profile name
-export async function fetchUserWinsByProfile(profileName, page = 1) {
-  try {
-    const token = localStorage.getItem('accessToken'); // Get the access token from localStorage
-    if (!token) {
-      alert("Please log in to view your wins.");
-      return;
-    }
-
-
-    // Construct the URL with pagination support
-    const url = ${apiUrl}auction/profiles/${profileName}/wins?page=${page};
-
-    // Fetch the auction wins for the specified profile
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': Bearer ${token}, // Bearer token for authentication
-        'Content-Type': 'application/json',
-        'X-Noroff-API-Key': apiKey || '', // Assuming apiKey is defined elsewhere if necessary
-      },
-    });
-
-    if (!response.ok) {
-      const errorResponse = await response.text();
-      console.error(Failed to fetch user wins: ${errorResponse});
-      
-      if (response.status === 401) {
-        alert("Unauthorized. Please log in again.");
-        // Optionally, redirect to login page or clear stored token
-      } else if (response.status === 404) {
-        alert("Profile not found. Please check the username or log in with the correct account.");
-      }
-      return;
-    }
-
-    const winsData = await response.json();
-
-    const wins = winsData.data || []; // Ensure wins is an array
-    const meta = winsData.meta || {}; // Meta data for pagination
-
-    // Call the function to display the wins
-    displayWins(wins);
-
-    // Return meta for pagination
-    return meta;
-  } catch (error) {
-    console.error("Error fetching user wins:", error);
-  }
-}
-
-
-
-// Handle credits
-export async function fetchAndStoreCredits() {
-  if (!accessToken || !userName) {
-      alert("You are not logged in. Please log in first.");
-      return;
-  }
-
-  try {
-      const response = await fetch(https://v2.api.noroff.dev/auction/profiles/${userName}, {
-          method: 'GET',
-          headers: {
-              'Authorization': Bearer ${accessToken},
-              'X-Noroff-API-Key': apiKey,
-          },
-      });
-
-      if (!response.ok) throw new Error('Error fetching user profile.');
-      const profileData = await response.json();
-      const { credits } = profileData.data;
-      localStorage.setItem('userCredits', credits || 0);
-  } catch (error) {
-      console.error("Error fetching credits:", error);
-      alert("There was an error fetching credits. Please try again.");
-  }
-}
-
-
-// Profile avatar handling
-export async function handleAvatar() {
-  const userIcon = document.getElementById('user-icon');
-  if (!accessToken || !userName) {
-      userIcon.innerHTML = <a href="/templates/auth/login.html"><i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i></a>;
-      return;
-  }
-
-  try {
-      const response = await fetch(https://v2.api.noroff.dev/auction/profiles/${userName}, {
-          method: 'GET',
-          headers: { 'Authorization': Bearer ${accessToken}, 'X-Noroff-API-Key': apiKey },
-      });
-
-      const profileData = await response.json();
-      const avatarUrl = profileData.data.avatar?.url || '/templates/auth/posts/user/default-avatar.jpg';
-
-      // Update UI with avatar
-      userIcon.innerHTML = <a href="/templates/auth/posts/user/profile.html"><img src="${avatarUrl}" alt="User Profile" class="w-8 h-8 rounded-full border-2 hover:border-2 hover:border-RoyalBlue" onerror="this.src='/templates/auth/posts/user/default-avatar.jpg';"></a>;
-      
-      // Store avatar in localStorage
-      if (profileData.data.avatar?.url) {
-          localStorage.setItem('avatar', profileData.data.avatar.url);
-      }
-  } catch (error) {
-      console.error("Error fetching profile data:", error);
-      userIcon.innerHTML = <a href="/templates/auth/login.html"><i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i></a>;
-  }
-}
-
-
-export async function createListingApi(requestBody) {
-  try {
-      const response = await fetch('https://v2.api.noroff.dev/auction/listings', {
-          method: 'POST',
-          headers: {
-              'Authorization': Bearer ${accessToken},
-              'X-Noroff-API-Key': apiKey,
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-          const errorDetails = await response.json();
-          console.error("Error response:", JSON.stringify(errorDetails, null, 2));
-          throw new Error("Failed to create listing: " + JSON.stringify(errorDetails.errors, null, 2));
-      }
-
-      return await response.json(); // Return the successful response data
-  } catch (error) {
-      console.error("Error in createListingApi:", error);
-      throw error; // Rethrow the error for the caller to handle
-  }
-}
-
-export async function updateProfileApi(userName, requestBody) {
-  try {
-      const response = await fetch(https://v2.api.noroff.dev/auction/profiles/${userName}, {
-          method: 'PUT',
-          headers: {
-              'Authorization': Bearer ${accessToken},
-              'X-Noroff-API-Key': apiKey,
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-          const errorDetails = await response.json();
-          console.error('Error response:', JSON.stringify(errorDetails, null, 2));
-          throw new Error('Failed to update profile: ' + JSON.stringify(errorDetails.errors, null, 2));
-      }
-
-      return await response.json(); // Return the updated profile data
-  } catch (error) {
-      console.error('Error in updateProfileApi:', error);
-      throw error; // Rethrow the error for the caller to handle
-  }
-}
-
-
-// api/updateListing.js
-
-export async function updateListingApi(listingId, title, description, mediaUrl) {
-  const data = {
-      title: title || '',
-      description: description || '',
-      media: mediaUrl ? [{ url: mediaUrl, alt: 'Updated Image' }] : [],
-  };
-
-  try {
-      const response = await fetch(https://v2.api.noroff.dev/auction/listings/${listingId}, {
-          method: 'PUT',
-          headers: {
-              'Authorization': Bearer ${accessToken},
-              'X-Noroff-API-Key': apiKey,
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-      });
-
-      const responseData = await response.json();
-      if (response.ok) {
-          return responseData; // Return updated listing data
-      } else {
-          console.error('Error updating listing:', responseData.message);
-          throw new Error(responseData.message || 'Error updating listing');
-      }
-  } catch (error) {
-      console.error('Network or unexpected error:', error);
-      throw error; // Rethrow error to be handled in UI logic
-  }
-}
-*/

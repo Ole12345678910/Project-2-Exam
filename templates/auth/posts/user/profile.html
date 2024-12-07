@@ -85,16 +85,18 @@
         <h2 id="user-name" class="text-2xl font-semibold text-gray-800">John Doe</h2>
         <p id="user-email" class="text-sm text-gray-600 mt-2">johndoe@example.com</p>
         <p id="user-bio" class="text-gray-500 mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla consequat quam vitae tincidunt venenatis.</p>
-        <p id="user-credits-profile" class="text-gray-800 text-sm mt-4">Credits: 0</p>
+        <p id="user-credits-profile" class="text-RoyalBlue text-sm mt-4">Credits: 0</p>
     </div>
 
     <!-- User Listings -->
     <div id="user-listings" class="mt-10 flex flex-col justify-center ">
-        <h3 class="text-xl font-semibold text-gray-800 mb-4">Your Listings</h3>
+        <h3 class="p-3 text-xl font-semibold mb-4">Your Listings</h3>
         <ul id="listings-list" class="space-y-4"></ul>
     </div>
 </div>
-
+<div class="flex justify-center p-6">
+  <button id="create-listing-btn" class="button-box btn-primary">Create Listing</button>
+</div>
 
 <div id="edit-profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
@@ -213,7 +215,7 @@
 
 
   <!-- Button to open the Create Listing form -->
-<button id="create-listing-btn" class="btn-primary">Create Listing</button>
+
 
 <!-- Create Listing Modal -->
 <div id="create-listing-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">

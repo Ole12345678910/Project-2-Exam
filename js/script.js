@@ -3,11 +3,11 @@ import { apiUrl } from "./constants/config.js";
 import { 
   fetchSearchResults, 
   fetchAuctionListings,
-  getRandomPosts 
+   
 } from "./modules/api.js";
 import { initializeSearch } from "./modules/search.js";
 import { handleAuthButtons } from "./auth/logout.js";
-import { displayListings } from "./pages/listings.js";
+import { displayListings,getRandomPosts } from "./pages/listings.js";
 import { 
   updateUserIcon, 
   displayUserCredits, 

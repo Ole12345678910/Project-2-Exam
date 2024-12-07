@@ -2,37 +2,43 @@
   import { apiUrl, apiKey } from "../constants/config.js";
   import { handleErrorInBidForm, fetchListingDetails } from "./details.js";
   import { setupBidSubmissionHandler } from "./details.js";
-  import { deleteListing,   fetchUserWins } from "../modules/api.js";
+  import { deleteListing,   fetchUserWins, fetchFromApi } from "../modules/api.js";
 
   let listingsArray = []; // Listings array
 
   export const accessToken = localStorage.getItem('accessToken');
   export const userName = localStorage.getItem('userName');  // Assuming userName is stored in localStorage
-  // Display posts on the page
-  export  function displayPosts(posts) {
-    const postsContainer = document.getElementById('random-posts-container');
-    postsContainer.innerHTML = ''; // Clear any existing content
-    
-    
 
-    posts.forEach(post => {
-      const imageUrl = post.media && post.media[0] ? post.media[0].url : null;
-      if (imageUrl) {
-          // Create a clickable image link
-          const postElement = document.createElement('div');
-          postElement.className = "flex justify-center items-center"; // Add styling to the parent div
-          postElement.innerHTML = `
-              <a href="/templates/auth/posts/details.html?listingId=${post.id}" 
-                 class="block transform transition-transform hover:scale-110">
-                  <img src="${imageUrl}" alt="${post.title}" class="h-28 w-40 object-cover">
-              </a>
-          `;
-          // Append the created post to the container
-          postsContainer.appendChild(postElement);
-      }
-  });
-}    
+  
+  // Display posts dynamically
+export function displayPosts(posts) {
+  const postsContainer = document.getElementById("random-posts-container");
+  postsContainer.innerHTML = posts
+    .map((post) => {
+      const imageUrl = post.media?.[0]?.url || null;
+      if (!imageUrl) return "";
+      return `
+        <div class="flex justify-center items-center">
+          <a href="/templates/auth/posts/details.html?listingId=${post.id}" class="block transform transition-transform hover:scale-110">
+            <img src="${imageUrl}" alt="${post.title}" class="h-28 w-40 object-cover">
+          </a>
+        </div>`;
+    })
+    .join("");
+}
 
+// Fetch random posts
+export async function getRandomPosts(count = 4) {
+  const result = await fetchFromApi("auction/listings");
+  const listings = Array.isArray(result.data) ? result.data : [];
+  displayPosts(getRandomItems(listings, count));
+}
+
+// Utility function to get random items from an array
+export function getRandomItems(arr, count) {
+  const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
+  return shuffled.slice(0, count); // Get the first 'count' items
+}
 
 
 
@@ -522,7 +528,7 @@ export async function fetchUserListings() {
           const listingUrl = `/templates/auth/posts/details.html?listingId=${listing.id}`;
 
           return `
-          <li class="bg-white shadow-md rounded-lg overflow-hidden mb-6 border border-gray-200" id="listing-${listing.id}">
+          <li class="bg-white shadow-md overflow-hidden mb-6 border border-gray-200" id="listing-${listing.id}">
               <a href="${listingUrl}" class="block p-4" style="text-decoration: none; color: inherit;">
                   <h3 class="listing-title text-lg font-semibold text-gray-800 mb-2">${listing.title}</h3>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 listing-media-container">
@@ -536,13 +542,13 @@ export async function fetchUserListings() {
               </a>
               <div class="flex justify-between p-4">
                   <button 
-                      class="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600"
+                      class="bg-RoyalBlue text-white px-4 py-2 mt-2 hover:bg-blue-700"
                       id="edit-btn-${listing.id}"
                   >
                       Edit
                   </button>
                   <button 
-                      class="bg-red-500 text-white px-4 py-2 rounded mt-2 hover:bg-red-600"
+                      class="bg-red-500 text-white px-4 py-2 mt-2 hover:bg-red-600"
                       id="delete-btn-${listing.id}"
                   >
                       Delete
