@@ -2,7 +2,7 @@
   import { apiUrl, apiKey } from "../constants/config.js";
   import { handleErrorInBidForm, fetchListingDetails } from "./details.js";
   import { setupBidSubmissionHandler } from "./details.js";
-  import { deleteListing,   fetchUserWins, fetchFromApi } from "../modules/api.js";
+  import { deleteListing, fetchFromApi } from "../modules/api.js";
 
   let listingsArray = []; // Listings array
 
@@ -53,7 +53,6 @@ export function getTop3NewestListings(listings) {
 
 // Function to display the carousel for top 3 newest listings
 // listings.js
-
 export function displayCarousel(listings) {
   const carouselWrapper = document.querySelector('.carousel-wrapper');
   const carouselDots = document.getElementById('carousel-dots');
@@ -65,13 +64,50 @@ export function displayCarousel(listings) {
 
   listings.forEach((listing, index) => {
     const carouselItem = document.createElement('div');
-    carouselItem.classList.add('carousel-item', 'flex', 'flex-row', 'flex-shrink-0', 'w-full', 'justify-between');
+    carouselItem.classList.add(
+      'carousel-item',
+      'flex',
+      'flex-shrink-0',
+      'w-full',
+      'transition-transform',
+      'duration-500',
+      'ease-in-out',
+      'md:flex-row',  // Side-by-side layout on large screens (md and above)
+      'flex-col',     // Stack vertically on small screens (default behavior)
+      'space-y-4',    // Space between elements on small screens
+      'items-center', // Center elements on small screens
+      'max-w-full'    // Prevent overflow on larger screens
+    );
 
+    // Text Container
     const textContainer = document.createElement('div');
-    textContainer.classList.add('w-1/2', 'p-6', 'flex', 'flex-col', 'text-left');
+    textContainer.classList.add(
+      'w-full',
+      'p-6',
+      'flex',
+      'flex-col',
+      'text-left',
+      'md:w-1/2',    // Text takes up 50% of the container on large screens
+      'text-center',  // Center text for small screens
+      'md:text-left', // Align text to the left for larger screens
+      'space-y-4',    // Space between title and description
+      'max-w-full',   // Prevent text container from overflowing
+      'overflow-hidden', // Prevent overflow of text
+      'break-words',  // Allow text to break onto the next line if needed
+      'whitespace-normal', // Ensure text wraps naturally within the container
+      'text-ellipsis' // Prevent text from overflowing and clipping
+    );
 
     const titleElement = document.createElement('h3');
-    titleElement.classList.add('text-4xl', 'font-semibold', 'mb-2', 'font-Graduate');
+    titleElement.classList.add(
+      'font-semibold',
+      'mb-4',
+      'font-Graduate',
+      'text-lg',      // Default text size for small screens
+      'md:text-4xl',  // Larger text size for large screens
+      'text-[clamp(1.5rem,5vw,3rem)]', // Use clamp to adjust the font size responsively
+      'max-w-full'    // Ensure title doesn't exceed container width
+    );
     titleElement.innerHTML = `
       <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline">
         ${listing.title}
@@ -79,20 +115,45 @@ export function displayCarousel(listings) {
     `;
 
     const descriptionElement = document.createElement('p');
-    descriptionElement.classList.add('text-sm', 'px-4', 'text-gray-700', 'mb-4');
+    descriptionElement.classList.add(
+      'text-sm',      // Default text size for small screens
+      'text-gray-700',
+      'mb-4',
+      'md:text-base', // Larger text size for large screens
+      'text-[clamp(0.875rem,2.5vw,1.25rem)]', // Responsive description size
+      'max-w-full',   // Prevent text overflow
+      'break-words',  // Break words that are too long to fit
+      'whitespace-normal', // Ensure wrapping within the container
+      'overflow-hidden' // Prevent text overflow
+    );
     descriptionElement.textContent = listing.description || "No description available";
 
     textContainer.appendChild(titleElement);
     textContainer.appendChild(descriptionElement);
 
+    // Image Container
     const imageContainer = document.createElement('div');
-    imageContainer.classList.add('w-1/2', 'flex', 'justify-center', 'm-4', 'items-center', 'overflow-hidden');
+    imageContainer.classList.add(
+      'w-full',
+      'flex',
+      'justify-center',
+      'items-center',
+      'overflow-hidden',
+      'md:w-1/2',  // Image takes up 50% width on larger screens
+      'm-4'        // Margin around the image
+    );
 
     if (listing.media && listing.media[0]) {
       const imageElement = document.createElement('img');
       imageElement.src = listing.media[0]?.url;
       imageElement.alt = listing.media[0]?.alt || "Item Image";
-      imageElement.classList.add('w-full', 'h-64', 'object-cover', 'px-3', 'rounded-lg');
+      imageElement.classList.add(
+        'w-full',    // Make image responsive
+        'max-h-64',  // Limit max height of image
+        'object-cover', // Ensure image covers container without stretching
+        'px-3',
+        'rounded-lg'
+      );
       imageContainer.appendChild(imageElement);
     }
 
@@ -101,6 +162,7 @@ export function displayCarousel(listings) {
 
     carouselWrapper.appendChild(carouselItem);
 
+    // Dot for pagination
     const dot = document.createElement('button');
     dot.classList.add('w-12', 'h-1.5', 'bg-RoyalBlue', 'hover:bg-PersianBlue');
     dot.setAttribute('data-index', index);
@@ -118,6 +180,8 @@ export function displayCarousel(listings) {
 
   updateCarouselPosition();
 }
+
+
 
 
 // Function to display auction listings in the HTML
@@ -222,7 +286,7 @@ export function displayListing(listing) {
 
       <!-- Carousel -->
       <div class="relative">
-        <div class="carousel overflow-hidden relative rounded-lg">
+        <div class="carousel overflow-hidden relative">
           <div id="carousel-items" class="flex transition-transform duration-500 ease-in-out">
             ${images
               .map(

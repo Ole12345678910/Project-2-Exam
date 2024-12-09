@@ -1,25 +1,28 @@
-import { apiKey, apiUrl } from "../constants/config.js";
+import { apiUrl } from "../constants/config.js";
 import { 
   updateUserIcon, 
-  renderAuctionEndedMessage, 
-  displayUserCredits 
+  displayUserCredits,
+  initMobileMenu 
 } from "../modules/utilit.js";
-import { displayListing, displayBids, fetchAndDisplayListing } from "./listings.js";
+import { fetchAndDisplayListing } from "./listings.js";
 import { placeBid } from "../modules/api.js";
 import { initializeSearch  } from "../modules/search.js";
 import { handleAuthButtons } from "../auth/logout.js";
 
+// Move the error handler function to the top of the file
+function handleErrorInBidSubmission(error) {
+  console.error("Error placing bid:", error);
+  alert("There was an error placing your bid. Please try again.");
+}
+
+initMobileMenu();
+
 // Get the listing ID from the URL query parameters
-
-
-// Check if the auction has ended
 export function hasAuctionEnded(endsAt) {
   const currentDate = new Date();
   const endDate = new Date(endsAt);
   return currentDate >= endDate;
 }
-
-
 
 // Fetch listing details
 export async function fetchListingDetails(listingId) {
@@ -31,9 +34,6 @@ export async function fetchListingDetails(listingId) {
   return result.data;
 }
 
-
-
-
 // Handle errors when fetching or displaying the bid form
 export function handleErrorInBidForm(error, container) {
   console.error("Error fetching listing:", error);
@@ -43,34 +43,29 @@ export function handleErrorInBidForm(error, container) {
 // Set up bid submission handler
 export function setupBidSubmissionHandler(listingId, listing) {
   const placeBidForm = document.getElementById("place-bid-form");
-
   placeBidForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const bidAmount = getBidAmount();
-
     if (!validateBidAmount(bidAmount)) {
       alert("Please enter a valid bid amount between 1 and 1000.");
       return;
     }
-
     const accessToken = getAccessToken();
     if (!accessToken) {
       alert("You must be logged in to place a bid.");
       return;
     }
-
     try {
       const currentHighestBid = getCurrentHighestBid(listing);
       if (!isBidHigherThanCurrent(bidAmount, currentHighestBid)) {
         alert(`Your bid must be higher than the current bid of ${currentHighestBid}.`);
         return;
       }
-
-      await placeBid(listingId, bidAmount, accessToken);
+      await placeBid(listingId, bidAmount, accessToken); // This will trigger the API call to place the bid
       alert("Your bid has been placed successfully!");
       fetchAndDisplayListing(listingId); // Refresh listing details
     } catch (error) {
-      handleErrorInBidSubmission(error);
+      handleErrorInBidSubmission(error);  // Ensure this is used correctly
     }
   });
 }
@@ -103,15 +98,6 @@ function isBidHigherThanCurrent(bidAmount, currentHighestBid) {
   return bidAmount > currentHighestBid;
 }
 
-// Place the bid by making an API call
-
-
-// Handle errors during bid submission
-function handleErrorInBidSubmission(error) {
-  console.error("Error placing bid:", error);
-  alert("There was an error placing your bid. Please try again.");
-}
-
 // Update user credits display
 function updateUserCreditsDisplay(updatedCredits) {
   const userCreditsHeader = document.getElementById("user-credits-header");
@@ -120,24 +106,16 @@ function updateUserCreditsDisplay(updatedCredits) {
   }
 }
 
-
-
-
 // Initialize UI updates and fetch listing details
 displayUserCredits();
 updateUserIcon();
-
-
 document.addEventListener("DOMContentLoaded", () => {
   const userCredits = localStorage.getItem("userCredits") || "0";
   updateUserCreditsDisplay(parseFloat(userCredits));
-
   fetchAndDisplayListing();
 });
-
 handleAuthButtons();
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeSearch("search-bar", "search-btn", "dropdown-container", "dropdown-list");
 });
-

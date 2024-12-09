@@ -11,9 +11,14 @@ import { displayListings,getRandomPosts } from "./pages/listings.js";
 import { 
   updateUserIcon, 
   displayUserCredits, 
-  filterListings 
+  filterListings, 
+  initMobileMenu 
 } from "./modules/utilit.js";
 
+
+
+  
+  
 // Global variables
 let allListings = []; // Store all the listings globally
 let currentPage = 1; // Track the current page
@@ -44,6 +49,7 @@ function loadMoreListings() {
 // Initialize user interface
 displayUserCredits();
 updateUserIcon();
+initMobileMenu();
 
 // Function to fetch auction listings
 async function fetchAuctionListing() {

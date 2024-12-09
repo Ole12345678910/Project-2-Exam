@@ -16,31 +16,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="images/x-icon" href="/assets/logo.svg" />
-    <title>Diamondbid</title>
+    <title>Diamondbid - Register</title>
   </head>
   <body class="flex flex-col min-h-screen">
     <script defer type="module" src="/js/auth/register.js"></script>
     <header class="bg-Gallery py-3">
       <a class="button-box" href="/templates/index.html">Back</a>
     </header>
-
-    <!-- Main content area -->
-    <div class="flex flex-1 mx-auto justify-center items-center max-w-9/12 space-x-4 relative">
-      <!-- Left content -->
-      <div class="flex-1 flex flex-col items-center justify-center text-center">
-        <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-ballbid" />
+    <div class="flex flex-col sm:flex-row flex-1">
+      <!-- Top Content: Logo, Title, and Text (Always on top) -->
+      <div class="flex-1 flex flex-col items-center justify-center text-center mt-4 sm:mt-0">
+        <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-diamondbid" />
         <h1 class="font-logo text-4xl text-RoyalBlue mb-5">Diamondbid</h1>
         <h2 class="text-3xl font-Graduate text-RoyalBlue font-bold">Register to Begin</h2>
         <h3 class="m-4 text-xs text-black max-w-72">Set up your account to start bidding, keep track of your wins, and become part of the action.</h3>
       </div>
 
-      <!-- Vertical divider -->
-      <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-1 bg-RoyalBlue z-10"></div>  
+      <!-- Divider Line between top content and form (Visible only on large screens) -->
+      <div class="hidden sm:block w-1 bg-RoyalBlue"></div>
 
-      <!-- Right content -->
-      <div class="flex-1">
+      <!-- Register Form Section -->
+      <div class="flex-1 flex flex-col items-center justify-center">
         <div class="p-6 m-4 flex flex-col items-center justify-center">
-          <p class="flex justify-center font-Graduate text-center text-RoyalBlue text-2xl mb-5">Create your account</p>
+          <p class="flex justify-center font-Graduate text-RoyalBlue text-2xl mb-5">Create your account</p>
           <div class="flex flex-col">
             <form id="register-form">
               <!-- Name -->
@@ -116,4 +114,3 @@
     </footer>
   </body>
 </html>
-

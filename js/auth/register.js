@@ -1,3 +1,4 @@
+import { handleLogin } from "./login.js";
 import { apiUrl } from "../constants/config.js";
 
 // register.js
@@ -19,6 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Validate required fields
         if (!name || !email || !password) {
             alert("Name, email, and password are required!");
+            return;
+        }
+
+        // Validate password length (at least 8 characters)
+        if (password.length < 8) {
+            alert("Password must be at least 8 characters long.");
             return;
         }
     
@@ -45,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Register Data:", registerData); // Log data for debugging
     
         try {
-            const response = await fetch(`${apiUrl}auth/register`, { // Ensure the URL is correctly formatted
+            const response = await fetch(`${apiUrl}auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -56,21 +63,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json(); // Get the response data
     
             if (response.ok) {
-                alert("Registration successful! You can now log in.");
+                alert("Registration successful! Logging you in now...");
                 console.log("User registered:", data);
-                window.location.href = "/templates/auth/login.html";
+                
+                // Now automatically log the user in
+                // Call handleLogin function with the registered email and password
+                await handleLogin({
+                    preventDefault: () => {}, // Mimic the event.preventDefault() function
+                });
+
+                // Redirect to the logged-in page
+                window.location.href = "/templates/index.html"; // or any other page you'd like to redirect to
             } else {
-                console.error("Full error response:", data); // Log the full error response
-                if (data.errors) {
-                    data.errors.forEach((error) => {
-                        // Check for specific error
-                        if (error.message.includes("already exists")) {
-                            alert("This email is already in use. Please try another one.");
-                        } else {
-                            console.error(`Error: ${error.message}`); // Log each error message
-                        }
-                    });
-                }
+                console.error("Error response:", data); // Log the full error response
+                handleErrors(data.errors || data.message);
                 alert(`Registration failed: ${data.message || "Unknown error"}`);
             }
         } catch (error) {
@@ -78,34 +84,46 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("An error occurred. Please try again later.");
         }
     });
-    
-    
-    
-    
 });
 
-// api.js
-export async function registerUser(registerData) {
-
-    try {
-        // Make the POST request to the register endpoint
-        const response = await fetch(`${apiUrl}auth/register`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(registerData),
-        });
-  
-        if (response.ok) {
-            const data = await response.json();
-            return { success: true, data };
+// Function to handle errors and show user-friendly messages
+function handleErrors(errors) {
+    if (typeof errors === 'string') {
+        // Handle single message error
+        const userFriendlyMessage = getUserFriendlyMessage(errors.toLowerCase());
+        if (userFriendlyMessage) {
+            alert(userFriendlyMessage);
         } else {
-            const errorData = await response.json();
-            return { success: false, message: errorData.message || "Unknown error" };
+            console.error(`Error: ${errors}`);
         }
-    } catch (error) {
-        console.error("Error during registration:", error);
-        return { success: false, message: "An error occurred. Please try again later." };
+    } else if (Array.isArray(errors)) {
+        // Handle array of errors
+        errors.forEach((error) => {
+            const errorMessage = error.message.toLowerCase(); // Normalize error message to handle case insensitivity
+            console.log("Handling Error:", errorMessage); // Debug log for each error
+            
+            const userFriendlyMessage = getUserFriendlyMessage(errorMessage);
+            if (userFriendlyMessage) {
+                alert(userFriendlyMessage);
+            } else {
+                console.error(`Error: ${error.message}`); // Log any other error message
+            }
+        });
     }
-  }
+}
+
+// Function to map error messages to user-friendly messages
+function getUserFriendlyMessage(errorMessage) {
+    // Add mapping for specific error messages
+    const errorMessages = {
+        "profile already exists": "This profile (username or email) already exists. Please try another one.",
+        "password too short": "Password must be at least 8 characters long."
+    };
+    
+    for (const [key, message] of Object.entries(errorMessages)) {
+        if (errorMessage.includes(key)) {
+            return message;
+        }
+    }
+    return null; // No matching error found
+}

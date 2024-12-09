@@ -10,61 +10,56 @@ const listingsPerPage = 10; // Number of listings to display per page
  * Updates the user icon based on login status and avatar.
  */
 export function updateUserIcon() {
-  const userIcon = document.getElementById("user-icon");
-  const accessToken = localStorage.getItem("accessToken");
-  const userName = localStorage.getItem("userName");
-  const userAvatar = localStorage.getItem("userAvatar");
+    const userIconDesktop = document.getElementById("user-icon");
+    const userIconMobile = document.getElementById("mobile-user-icon");
 
-  // Check if the user is logged in
-  if (!accessToken || !userName) {
-    // Not logged in: Show default icon and link to the login page
-    if (userIcon) {
-      userIcon.innerHTML = `
-          <a href="/templates/auth/login.html">
-            <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
-          </a>
-        `;
-    }
-    return; // Exit function since no user is logged in
-  }
+    const accessToken = localStorage.getItem("accessToken");
+    const userName = localStorage.getItem("userName");
+    const userAvatar = localStorage.getItem("userAvatar");
 
-  // User is logged in: Check for avatar
-  if (userAvatar) {
-    if (userIcon) {
-      userIcon.innerHTML = `
-          <a href="/templates/auth/posts/user/profile.html">
-            <img src="${userAvatar}" alt="User Profile" 
-                class="w-8 h-8 rounded-full border-2 hover:border-2 hover:border-RoyalBlue" 
-                onerror="this.src='/templates/auth/posts/user/default-avatar.jpg';">
-          </a>
-        `;
+    if (!accessToken || !userName) {
+        // If not logged in, display login link
+        const loginHTML = `
+            <a href="/templates/auth/login.html">
+                <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+            </a>`;
+        if (userIconDesktop) userIconDesktop.innerHTML = loginHTML;
+        if (userIconMobile) userIconMobile.innerHTML = loginHTML;
+        return;
     }
-  } else {
-    console.log(
-      "User logged in, but no avatar found. Showing default profile icon."
-    );
-    if (userIcon) {
-      userIcon.innerHTML = `
-          <a href="/templates/auth/posts/user/profile.html">
-            <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
-          </a>
-        `;
-    }
-  }
+
+    // Display avatar if available, or fallback to default
+    const userIconHTML = userAvatar
+        ? `<a href="/templates/auth/posts/user/profile.html">
+              <img src="${userAvatar}" alt="User Profile"
+                   class="w-10 h-10 rounded-full border-2 hover:border-RoyalBlue"
+                   onerror="this.src='/templates/auth/posts/user/default-avatar.jpg';">
+           </a>`
+        : `<a href="/templates/auth/posts/user/profile.html">
+              <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+           </a>`;
+
+    if (userIconDesktop) userIconDesktop.innerHTML = userIconHTML;
+    if (userIconMobile) userIconMobile.innerHTML = userIconHTML;
 }
 
-/**
- * Displays user credits in the header.
- */
 export function displayUserCredits() {
-  const credits = localStorage.getItem("userCredits") || 0; // Default to 0 if not found
-  const creditsElement = document.getElementById("user-credits-header");
+    const credits = localStorage.getItem("userCredits") || 0;
 
-  // Display the credits in the header
-  if (creditsElement) {
-    creditsElement.textContent = `Credits: ${credits}`;
-  }
+    const creditsElementDesktop = document.getElementById("user-credits-header");
+    const creditsElementMobile = document.getElementById("mobile-user-credits");
+
+    if (creditsElementDesktop) {
+        creditsElementDesktop.textContent = `Credits: ${credits}`;
+    }
+    if (creditsElementMobile) {
+        creditsElementMobile.textContent = `Credits: ${credits}`;
+    }
 }
+
+
+
+  
 
 export function filterListings(listings) {
   // Ensure the necessary filter elements are found
@@ -193,3 +188,34 @@ export function renderBidForm(container) {
 
 
 
+// hamburgerMenu.js
+
+// Get elements for the hamburger menu
+// Get elements for the hamburger menu
+const hamburgerIcon = document.getElementById('hamburger-icon');
+const mobileMenu = document.getElementById('mobile-menu');
+const closeMenu = document.getElementById('close-menu');
+
+// Function to open the mobile menu (slide in from the right)
+export function openMobileMenu() {
+  if (hamburgerIcon && mobileMenu) { // Check if elements exist
+    hamburgerIcon.addEventListener('click', () => {
+      mobileMenu.style.right = '0'; // Slide menu in
+    });
+  }
+}
+
+// Function to close the mobile menu (slide out to the right)
+export function closeMobileMenu() {
+  if (closeMenu && mobileMenu) { // Check if elements exist
+    closeMenu.addEventListener('click', () => {
+      mobileMenu.style.right = '-100%'; // Slide menu out
+    });
+  }
+}
+
+// Function to initialize the mobile menu functionality
+export function initMobileMenu() {
+  openMobileMenu();
+  closeMobileMenu();
+}

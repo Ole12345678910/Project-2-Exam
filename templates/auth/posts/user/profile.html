@@ -12,270 +12,481 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="icon" type="images/x-icon" href="/assets/logo.svg" />
     <title>Diamondbid</title>
   </head>
   <body>
     <script defer type="module" src="/js/user/profile.js"></script>
     <script defer type="module" src="/js/auth/logout.js"></script>
-    <header class="py-1 mb-4 flex justify-between items-center shadow">
-      <a class="flex items-center" href="/templates/index.html">
+    <header
+      class="grid grid-cols-3 py-1 mb-4 items-center shadow md:grid-cols-3 md:grid-rows-1"
+    >
+      <!-- Column 1: Logo -->
+      <a
+        class="flex items-center col-span-1 row-start-1 md:row-start-1"
+        href="/templates/index.html"
+      >
         <img class="w-14 h-14 p-2" src="/assets/logo.svg" alt="logo-ballbid" />
         <h1 class="font-logo text-2xl text-RoyalBlue">Diamondbid</h1>
       </a>
-      <div class="relative flex justify-center">
-        <div class="relative">
-          <!-- Search bar -->
+
+      <!-- Hamburger Icon (Only on small screens) -->
+      <div class="sm:hidden flex justify-end col-span-2 px-5">
+        <button id="hamburger-icon" class="text-RoyalBlue">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- Column 2: Search Bar -->
+      <div
+        class="relative flex justify-center col-span-3 md:col-span-1 md:mt-0 mt-2 row-start-2 md:row-start-auto"
+      >
+        <div class="w-full max-w-[20rem] relative w-full">
           <input
             id="search-bar"
-            class="w-80 px-2 py-1 m-1 bg-Gallery text-black focus:outline-none text-sm"
+            class="w-full px-4 py-1 pr-12 m-1 bg-Gallery text-black focus:outline-none text-md"
             type="text"
             placeholder="Search for profiles..."
           />
-        
-          <!-- Search icon button -->
           <i
             id="search-btn"
-            class="fas fa-search px-1 text-base absolute top-1/2 right-3 transform -translate-y-1/2 text-RoyalBlue cursor-pointer"
+            class="fas fa-search text-base absolute top-1/2 right-4 transform -translate-y-1/2 text-RoyalBlue cursor-pointer"
           ></i>
-        
-          <!-- Dropdown container (Initially hidden) -->
-          <div id="dropdown-container" class="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto">
+          <div
+            id="dropdown-container"
+            class="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto"
+          >
             <ul id="dropdown-list" class="list-none m-0 p-0"></ul>
           </div>
         </div>
-        
       </div>
-      <div class="flex items-center">
-        <div id="user-credits-header" class="text-RoyalBlue px-2 text-sm">Credits: 0</div>
+
+      <!-- Column 3: User Info (Always visible on medium and larger screens) -->
+      <div
+        class="flex justify-end items-center col-span-3 md:col-span-1 sm:col-span-2 sm:justify-end sm:mt-0 mt-2 row-start-1 sm:row-start-auto hidden sm:flex"
+      >
+        <div id="user-credits-header" class="text-RoyalBlue px-2 text-sm">
+          Credits: 0
+        </div>
         <div id="user-icon">
-            <!-- JavaScript dynamically replaces this content -->
-            <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
-          </div>
-          
-
-        <a class="sign-in-btn button-box block" href="/templates/auth/login.html">Sign in</a>
-
-        <!-- Log Out button (Initially hidden) -->
-        <a class="log-out-btn button-box block hidden" href="#">Log Out</a>
+          <i class="text-xl px-4 text-RoyalBlue fa-regular fa-user"></i>
+        </div>
+        <a
+          class="sign-in-btn button-box block sm:w-auto sm:text-center sm:mt-2"
+          href="/templates/auth/login.html"
+          >Sign in</a
+        >
+        <a
+          class="log-out-btn button-box block hidden sm:w-auto sm:text-center sm:mt-2"
+          href="#"
+          >Log Out</a
+        >
       </div>
     </header>
 
+    <!-- Mobile Navbar (hamburger menu) -->
+    <div
+      id="mobile-menu"
+      class="md:hidden fixed top-0 right-[-100%] h-screen w-1/2 bg-white shadow-md z-50 transition-all duration-300 ease-in-out"
+    >
+      <!-- Close Button -->
+      <div class="flex justify-end p-4">
+        <button id="close-menu" class="text-RoyalBlue text-2xl">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
 
-
-
-<!-- User Profile Page -->
-<div id="profile-container" class=" mx-auto bg-white shadow-lg mt-1">
-    <!-- Profile Banner -->
-    <div id="profile-banner" class=" h-64 overflow-hidden">
-        <img id="banner-img"  alt="Banner Image" class="w-full h-full object-cover">
-        
-        <!-- Profile Avatar with Border -->
-        <div class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <img id="avatar-img"  alt="Avatar Image" class="w-36 h-36 rounded-full border-4 border-white shadow object-cover">
-            <i id="edit-avatar-btn" class="absolute left-2 text-RoyalBlue text-2xl fa-solid fa-pen-to-square cursor-pointer"></i>
+      <!-- User Info Section -->
+      <div class="flex flex-col items-center space-y-4 py-8">
+        <div class="flex flex-col items-center space-y-4">
+          <!-- User Avatar -->
+          <div id="mobile-user-icon">
+            <!-- Avatar will be inserted here -->
+          </div>
+          <!-- User Credits -->
+          <div id="mobile-user-credits" class="text-RoyalBlue text-sm">
+            Credits: 0
+          </div>
         </div>
+        <a
+          href="/templates/index.html"
+          class="text-lg font-semibold text-RoyalBlue hover:underline text-center"
+        >
+          Home
+        </a>
+        <a
+          class="sign-in-btn button-box block text-center mt-2"
+          href="/templates/auth/login.html"
+          >Sign in</a
+        >
+        <a class="log-out-btn button-box block hidden text-center mt-2" href="#"
+          >Log Out</a
+        >
+      </div>
     </div>
 
-    <!-- User Info Section -->
-    <div id="user-info" class="text-center mt-24">
-        <h2 id="user-name" class="text-2xl font-semibold text-gray-800">John Doe</h2>
-        <p id="user-email" class="text-sm text-gray-600 mt-2">johndoe@example.com</p>
-        <p id="user-bio" class="text-gray-500 mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla consequat quam vitae tincidunt venenatis.</p>
-        <p id="user-credits-profile" class="text-RoyalBlue text-sm mt-4">Credits: 0</p>
-    </div>
+    <!-- User Profile Page -->
+    <div class="mx-auto bg-white shadow-lg mt-1">
+      <!-- Profile Banner -->
+      <div id="profile-banner" class="h-64 overflow-hidden">
+        <img
+          id="banner-img"
+          alt="Banner Image"
+          class="w-full h-full object-cover"
+        />
 
-    <!-- User Listings -->
-    <div id="user-listings" class="mt-10 flex flex-col justify-center ">
+        <!-- Profile Avatar with Border -->
+        <div
+          class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        >
+          <img
+            id="avatar-img"
+            alt="Avatar Image"
+            class="w-36 h-36 rounded-full border-4 border-white shadow object-cover"
+          />
+          <i
+            id="edit-avatar-btn"
+            class="absolute left-2 text-RoyalBlue text-2xl fa-solid fa-pen-to-square cursor-pointer"
+          ></i>
+        </div>
+      </div>
+
+      <!-- User Info Section -->
+      <div id="user-info" class="text-center mt-24">
+        <h2 id="user-name" class="text-2xl font-semibold text-gray-800">
+          John Doe
+        </h2>
+        <p id="user-email" class="text-sm text-gray-600 mt-2">
+          johndoe@example.com
+        </p>
+        <p id="user-bio" class="text-gray-500 mt-4">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+          consequat quam vitae tincidunt venenatis.
+        </p>
+        <p id="user-credits-profile" class="text-RoyalBlue text-sm mt-4">
+          Credits: 0
+        </p>
+      </div>
+
+      <!-- User Listings -->
+      <div id="user-listings" class="mt-10 flex flex-col justify-center">
         <h3 class="p-3 text-xl font-semibold mb-4">Your Listings</h3>
         <ul id="listings-list" class="space-y-4"></ul>
+      </div>
     </div>
-</div>
-<div class="flex justify-center p-6">
-  <button id="create-listing-btn" class="button-box btn-primary">Create Listing</button>
-</div>
+    <div class="flex justify-center p-6">
+      <button id="create-listing-btn" class="button-box btn-primary">
+        Create Listing
+      </button>
+    </div>
 
-<div id="edit-profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
-    <h2 class="text-2xl font-semibold text-gray-800">Edit Profile</h2>
-    <!-- Form for updating bio, avatar, and banner -->
-    <form id="edit-profile-form">
-      <div class="mb-4">
-        <label for="bio" class="text-sm text-gray-600">Bio</label>
-        <textarea id="bio" class="w-full p-2 border border-gray-300 rounded-lg mt-2" placeholder="Enter your bio"></textarea>
+    <div
+      id="edit-profile-modal"
+      class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
+        <h2 class="text-2xl font-semibold text-gray-800">Edit Profile</h2>
+        <!-- Form for updating bio, avatar, and banner -->
+        <form id="edit-profile-form">
+          <div class="mb-4">
+            <label for="bio" class="text-sm text-gray-600">Bio</label>
+            <textarea
+              id="bio"
+              class="w-full p-2 border border-gray-300 rounded-lg mt-2"
+              placeholder="Enter your bio"
+            ></textarea>
+          </div>
+          <div class="mb-4">
+            <label for="avatar-url" class="text-sm text-gray-600"
+              >Avatar URL</label
+            >
+            <input
+              type="text"
+              id="avatar-url"
+              class="w-full p-2 border border-gray-300 rounded-lg mt-2"
+              placeholder="Enter avatar image URL"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="banner-url" class="text-sm text-gray-600"
+              >Banner URL</label
+            >
+            <input
+              type="text"
+              id="banner-url"
+              class="w-full p-2 border border-gray-300 rounded-lg mt-2"
+              placeholder="Enter banner image URL"
+            />
+          </div>
+          <div class="flex justify-between items-center">
+            <button
+              type="submit"
+              class="px-4 py-2 bg-RoyalBlue text-white rounded-lg"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              id="close-modal"
+              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
-      <div class="mb-4">
-        <label for="avatar-url" class="text-sm text-gray-600">Avatar URL</label>
-        <input type="text" id="avatar-url" class="w-full p-2 border border-gray-300 rounded-lg mt-2" placeholder="Enter avatar image URL">
+    </div>
+
+    <div
+      id="edit-modal"
+      class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-2xl font-semibold text-RoyalBlue mb-4">Edit Profile</h2>
+        <!-- Edit Form -->
+        <form id="edit-form">
+          <label class="block text-sm text-gray-700">Name</label>
+          <input
+            type="text"
+            id="edit-name"
+            value="John Doe"
+            class="w-full p-2 border border-gray-300 rounded mb-4"
+          />
+
+          <label class="block text-sm text-gray-700">Email</label>
+          <input
+            type="email"
+            id="edit-email"
+            value="johndoe@example.com"
+            class="w-full p-2 border border-gray-300 rounded mb-4"
+          />
+
+          <label class="block text-sm text-gray-700">Bio</label>
+          <textarea
+            id="edit-bio"
+            class="w-full p-2 border border-gray-300 rounded mb-4"
+          >
+Lorem ipsum dolor sit amet</textarea
+          >
+
+          <div class="flex justify-between">
+            <button
+              type="button"
+              class="bg-gray-500 text-white py-2 px-4 rounded"
+              id="close-modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="bg-RoyalBlue text-white py-2 px-4 rounded"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
       </div>
-      <div class="mb-4">
-        <label for="banner-url" class="text-sm text-gray-600">Banner URL</label>
-        <input type="text" id="banner-url" class="w-full p-2 border border-gray-300 rounded-lg mt-2" placeholder="Enter banner image URL">
-      </div>
-      <div class="flex justify-between items-center">
-        <button type="submit" class="px-4 py-2 bg-RoyalBlue text-white rounded-lg">Save</button>
-        <button type="button" id="close-modal" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 
-<div id="edit-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-2xl font-semibold text-RoyalBlue mb-4">Edit Profile</h2>
-    <!-- Edit Form -->
-    <form id="edit-form">
-      <label class="block text-sm text-gray-700">Name</label>
-      <input type="text" id="edit-name" value="John Doe" class="w-full p-2 border border-gray-300 rounded mb-4">
+    <!-- Edit Listing Form (Initially hidden) -->
+    <div
+      id="edit-form-container"
+      class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <h2 class="text-xl font-semibold mb-4">Edit Listing</h2>
 
-      <label class="block text-sm text-gray-700">Email</label>
-      <input type="email" id="edit-email" value="johndoe@example.com" class="w-full p-2 border border-gray-300 rounded mb-4">
-
-      <label class="block text-sm text-gray-700">Bio</label>
-      <textarea id="edit-bio" class="w-full p-2 border border-gray-300 rounded mb-4">Lorem ipsum dolor sit amet</textarea>
-
-      <div class="flex justify-between">
-        <button type="button" class="bg-gray-500 text-white py-2 px-4 rounded" id="close-modal">Cancel</button>
-        <button type="submit" class="bg-RoyalBlue text-white py-2 px-4 rounded">Save Changes</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-<!-- Edit Listing Form (Initially hidden) -->
-<div id="edit-form-container" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-  <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-      <h2 class="text-xl font-semibold mb-4">Edit Listing</h2>
-      
-      <form id="edit-form">
+        <form id="edit-form">
           <!-- Hidden input for listing ID -->
-          <input type="hidden" id="listing-id">
-          
+          <input type="hidden" id="listing-id" />
+
           <!-- Title Input -->
           <div class="mb-4">
-              <label for="edit-title" class="block text-sm font-medium text-gray-700">Title</label>
-              <input type="text" id="edit-title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+            <label
+              for="edit-title"
+              class="block text-sm font-medium text-gray-700"
+              >Title</label
+            >
+            <input
+              type="text"
+              id="edit-title"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              required
+            />
           </div>
 
           <!-- Description Input -->
           <div class="mb-4">
-              <label for="edit-description" class="block text-sm font-medium text-gray-700">Description</label>
-              <textarea id="edit-description" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
+            <label
+              for="edit-description"
+              class="block text-sm font-medium text-gray-700"
+              >Description</label
+            >
+            <textarea
+              id="edit-description"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              required
+            ></textarea>
           </div>
 
           <!-- Media URL Input -->
           <div class="mb-4">
-              <label for="edit-media" class="block text-sm font-medium text-gray-700">Media URL</label>
-              <input type="url" id="edit-media" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="https://url.com/image.jpg">
+            <label
+              for="edit-media"
+              class="block text-sm font-medium text-gray-700"
+              >Media URL</label
+            >
+            <input
+              type="url"
+              id="edit-media"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="https://url.com/image.jpg"
+            />
           </div>
 
           <!-- Save Button -->
-          <button type="button" id="save-edit-button" class="w-full py-2 px-4 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-              Save Changes
+          <button
+            type="button"
+            id="save-edit-button"
+            class="w-full py-2 px-4 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Save Changes
           </button>
 
           <!-- Cancel Button -->
-          <button type="button" id="cancel-edit-button" class="mt-4 w-full py-2 px-4 bg-gray-500 text-white rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-              Cancel
+          <button
+            type="button"
+            id="cancel-edit-button"
+            class="mt-4 w-full py-2 px-4 bg-gray-500 text-white rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          >
+            Cancel
           </button>
-      </form>
-  </div>
-</div>
+        </form>
+      </div>
+    </div>
 
+    <!-- Listings List -->
+    <ul id="listings-list">
+      <!-- Listings will be dynamically populated here -->
+    </ul>
 
-<!-- Listings List -->
-<ul id="listings-list">
-  <!-- Listings will be dynamically populated here -->
-</ul>
+    <div id="user-container">
+      <!-- User data and wins will be populated here -->
+    </div>
 
+    <div class="flex justify-center flex-col" id="wins-container"></div>
 
+    <!-- Button to open the Create Listing form -->
 
-<div id="user-container">
-  <!-- User data and wins will be populated here -->
-</div>
+    <!-- Create Listing Modal -->
+    <div
+      id="create-listing-modal"
+      class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center"
+    >
+      <div class="bg-white p-6 rounded-md shadow-lg">
+        <h2 class="text-xl font-semibold mb-4">Create New Listing</h2>
 
-
-<div id="wins-container"></div>
-
-
-
-
-
-
-
-
-  <!-- Button to open the Create Listing form -->
-
-
-<!-- Create Listing Modal -->
-<div id="create-listing-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
-  <div class="bg-white p-6 rounded-md shadow-lg">
-      <h2 class="text-xl font-semibold mb-4">Create New Listing</h2>
-      
-      <form id="create-listing-form">
+        <form id="create-listing-form">
           <!-- Title -->
           <label for="title" class="block mb-2">Title:</label>
-          <input type="text" id="title" name="title" class="w-full p-2 border rounded mb-4" required>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            class="w-full p-2 border rounded mb-4"
+            required
+          />
 
           <!-- Description -->
           <label for="description" class="block mb-2">Description:</label>
-          <textarea id="description" name="description" class="w-full p-2 border rounded mb-4"></textarea>
+          <textarea
+            id="description"
+            name="description"
+            class="w-full p-2 border rounded mb-4"
+          ></textarea>
 
           <!-- Tags -->
           <label for="tags" class="block mb-2">Tags (comma separated):</label>
-          <input type="text" id="tags" name="tags" class="w-full p-2 border rounded mb-4">
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            class="w-full p-2 border rounded mb-4"
+          />
 
           <!-- Media URLs (Multiple Images) -->
-          <label for="media-urls" class="block mb-2">Image URLs (enter each URL on a new line):</label>
-          <textarea id="media-urls" name="media-urls" class="w-full p-2 border rounded mb-4" rows="4" placeholder="Enter one image URL per line"></textarea>
+          <label for="media-urls" class="block mb-2"
+            >Image URLs (enter each URL on a new line):</label
+          >
+          <textarea
+            id="media-urls"
+            name="media-urls"
+            class="w-full p-2 border rounded mb-4"
+            rows="4"
+            placeholder="Enter one image URL per line"
+          ></textarea>
 
           <!-- End Date -->
           <label for="endsAt" class="block mb-2">End Date:</label>
-          <input type="datetime-local" id="endsAt" name="endsAt" class="w-full p-2 border rounded mb-4" required>
+          <input
+            type="datetime-local"
+            id="endsAt"
+            name="endsAt"
+            class="w-full p-2 border rounded mb-4"
+            required
+          />
 
           <!-- Submit Button -->
           <button type="submit" class="btn-primary">Create Listing</button>
-          <button type="button" id="close-modal" class="btn-secondary">Close</button>
-      </form>
-  </div>
-</div>
-
-
+          <button type="button" id="close-modal" class="btn-secondary">
+            Close
+          </button>
+        </form>
+      </div>
+    </div>
 
     <footer>
-    <hr class="m-3"/>
+      <hr class="m-3" />
       <div class="flex items-center text-white justify-between h-full">
         <div>
-            <!-- Sign In button -->
-            <a class="sign-in-btn button-box block" href="/templates/auth/login.html">Sign in</a>
-            <a class="log-out-btn button-box block hidden" href="#">Log Out</a>
+          <!-- Sign In button -->
+          <a
+            class="sign-in-btn button-box block"
+            href="/templates/auth/login.html"
+            >Sign in</a
+          >
+          <a class="log-out-btn button-box block hidden" href="#">Log Out</a>
 
-            <!-- Register button -->
-            <a href="/templates/auth/register.html" class="button-box block">Register</a>
-
+          <!-- Register button -->
+          <a href="/templates/auth/register.html" class="button-box block"
+            >Register</a
+          >
         </div>
         <p class="m-4 text-xs text-black">
           Discover and bid on thousands of unique items weekly, curated by top
           experts worldwide
         </p>
       </div>
-      <hr class="m-3"/>
+      <hr class="m-3" />
       <div class="flex items-center justify-start">
         <a class="inline-flex items-center space-x-2" href="index.html">
-          <img class="w-14 h-14 p-2" src="/assets/logo.svg" alt="logo-ballbid" />
+          <img
+            class="w-14 h-14 p-2"
+            src="/assets/logo.svg"
+            alt="logo-ballbid"
+          />
           <p class="font-logo text-2xl text-RoyalBlue">Diamondbid</p>
         </a>
-      </div>      
+      </div>
       <div class="flex justify-center text-Boulder mb-4">
         <i class="fa-brands fa-facebook-f px-5"></i>
         <i class="fa-brands fa-twitter px-5"></i>

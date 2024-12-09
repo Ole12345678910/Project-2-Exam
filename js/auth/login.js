@@ -1,10 +1,12 @@
 import { loginApi, fetchUserProfile, fetchAndStoreCredits } from "../modules/api.js";
 
+// login.js
+
 async function handleLogin(event) {
-    event.preventDefault();
+    event?.preventDefault(); // Only prevent default if the event is provided
   
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const email = document.getElementById("email")?.value.trim();
+    const password = document.getElementById("password")?.value.trim();
   
     if (!email || !password) {
       alert("Please enter both email and password.");
@@ -47,7 +49,9 @@ async function handleLogin(event) {
       alert(`An error occurred: ${error.message}`);
     }
   }
-  
+
+export { handleLogin }; // Export the handleLogin function
+
 
 
 // Event listener for login form submission
