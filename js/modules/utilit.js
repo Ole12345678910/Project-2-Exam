@@ -1,5 +1,7 @@
 import { apiUrl } from "../constants/config.js";
-import { displayListings } from "../pages/listings.js";
+import { displayListings, displayPosts } from "../pages/listings.js";
+import { fetchFromApi } from "./api.js";
+
 // userUtils.js
 
 let allListings = []; // Store all the listings globally
@@ -219,3 +221,17 @@ export function initMobileMenu() {
   openMobileMenu();
   closeMobileMenu();
 }
+
+
+// Fetch random posts
+export async function getRandomPosts(count = 4) {
+    const result = await fetchFromApi("auction/listings");
+    const listings = Array.isArray(result.data) ? result.data : [];
+    displayPosts(getRandomItems(listings, count));
+  }
+  
+  // Utility function to get random items from an array
+  export function getRandomItems(arr, count) {
+    const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
+    return shuffled.slice(0, count); // Get the first 'count' items
+  }

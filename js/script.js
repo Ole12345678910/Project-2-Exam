@@ -7,17 +7,31 @@ import {
 } from "./modules/api.js";
 import { initializeSearch } from "./modules/search.js";
 import { handleAuthButtons } from "./auth/logout.js";
-import { displayListings,getRandomPosts } from "./pages/listings.js";
+import { displayListings } from "./pages/listings.js";
 import { 
   updateUserIcon, 
   displayUserCredits, 
-  filterListings, 
-  initMobileMenu 
+  filterListings,
+  getRandomItems,
+  getRandomPosts
 } from "./modules/utilit.js";
 
 
+  // JavaScript to toggle mobile menu visibility
+const hamburgerIcon = document.getElementById('hamburger-icon');
+const mobileMenu = document.getElementById('mobile-menu');
+const closeMenu = document.getElementById('close-menu');
 
-  
+// Open the mobile menu
+hamburgerIcon.addEventListener('click', () => {
+  mobileMenu.classList.remove('hidden'); // Show the menu
+});
+
+// Close the mobile menu
+closeMenu.addEventListener('click', () => {
+  mobileMenu.classList.add('hidden'); // Hide the menu
+});
+
   
 // Global variables
 let allListings = []; // Store all the listings globally
@@ -49,7 +63,6 @@ function loadMoreListings() {
 // Initialize user interface
 displayUserCredits();
 updateUserIcon();
-initMobileMenu();
 
 // Function to fetch auction listings
 async function fetchAuctionListing() {

@@ -2,7 +2,7 @@
   import { apiUrl, apiKey } from "../constants/config.js";
   import { handleErrorInBidForm, fetchListingDetails } from "./details.js";
   import { setupBidSubmissionHandler } from "./details.js";
-  import { deleteListing, fetchFromApi } from "../modules/api.js";
+  import { deleteListing } from "../modules/api.js";
 
   let listingsArray = []; // Listings array
 
@@ -27,18 +27,7 @@ export function displayPosts(posts) {
     .join("");
 }
 
-// Fetch random posts
-export async function getRandomPosts(count = 4) {
-  const result = await fetchFromApi("auction/listings");
-  const listings = Array.isArray(result.data) ? result.data : [];
-  displayPosts(getRandomItems(listings, count));
-}
 
-// Utility function to get random items from an array
-export function getRandomItems(arr, count) {
-  const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
-  return shuffled.slice(0, count); // Get the first 'count' items
-}
 
 
 
@@ -62,115 +51,44 @@ export function displayCarousel(listings) {
   carouselWrapper.innerHTML = '';
   carouselDots.innerHTML = '';
 
-  listings.forEach((listing, index) => {
-    const carouselItem = document.createElement('div');
-    carouselItem.classList.add(
-      'carousel-item',
-      'flex',
-      'flex-shrink-0',
-      'w-full',
-      'transition-transform',
-      'duration-500',
-      'ease-in-out',
-      'md:flex-row',  // Side-by-side layout on large screens (md and above)
-      'flex-col',     // Stack vertically on small screens (default behavior)
-      'space-y-4',    // Space between elements on small screens
-      'items-center', // Center elements on small screens
-      'max-w-full'    // Prevent overflow on larger screens
-    );
-
-    // Text Container
-    const textContainer = document.createElement('div');
-    textContainer.classList.add(
-      'w-full',
-      'p-6',
-      'flex',
-      'flex-col',
-      'text-left',
-      'md:w-1/2',    // Text takes up 50% of the container on large screens
-      'text-center',  // Center text for small screens
-      'md:text-left', // Align text to the left for larger screens
-      'space-y-4',    // Space between title and description
-      'max-w-full',   // Prevent text container from overflowing
-      'overflow-hidden', // Prevent overflow of text
-      'break-words',  // Allow text to break onto the next line if needed
-      'whitespace-normal', // Ensure text wraps naturally within the container
-      'text-ellipsis' // Prevent text from overflowing and clipping
-    );
-
-    const titleElement = document.createElement('h3');
-    titleElement.classList.add(
-      'font-semibold',
-      'mb-4',
-      'font-Graduate',
-      'text-lg',      // Default text size for small screens
-      'md:text-4xl',  // Larger text size for large screens
-      'text-[clamp(1.5rem,5vw,3rem)]', // Use clamp to adjust the font size responsively
-      'max-w-full'    // Ensure title doesn't exceed container width
-    );
-    titleElement.innerHTML = `
-      <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline">
+  // Build HTML for carousel items
+  const carouselItemsHTML = listings.map((listing, index) => `
+  <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="carouselContainerMain">
+    <!-- Text Container -->
+    <div class="textContainer">
+      <h3 class="titleStylingCarousel">
         ${listing.title}
-      </a>
-    `;
+      </h3>
+      <p class="textStylingCarousel">
+        ${listing.description || "No description available"}
+      </p>
+    </div>
+    <!-- Image Container -->
+    <div class="w-full flex justify-center items-center overflow-hidden md:w-1/2 m-4">
+      ${listing.media && listing.media[0] 
+        ? `<img src="${listing.media[0].url}" alt="${listing.media[0].alt || 'Item Image'}" class="imageCarousel" />`
+        : ''}
+    </div>
+  </a>
+`).join('');
 
-    const descriptionElement = document.createElement('p');
-    descriptionElement.classList.add(
-      'text-sm',      // Default text size for small screens
-      'text-gray-700',
-      'mb-4',
-      'md:text-base', // Larger text size for large screens
-      'text-[clamp(0.875rem,2.5vw,1.25rem)]', // Responsive description size
-      'max-w-full',   // Prevent text overflow
-      'break-words',  // Break words that are too long to fit
-      'whitespace-normal', // Ensure wrapping within the container
-      'overflow-hidden' // Prevent text overflow
-    );
-    descriptionElement.textContent = listing.description || "No description available";
 
-    textContainer.appendChild(titleElement);
-    textContainer.appendChild(descriptionElement);
+  // Build HTML for carousel dots
+  const carouselDotsHTML = listings.map((_, index) => `
+    <button class="w-12 h-1.5 bg-RoyalBlue hover:bg-PersianBlue" data-index="${index}"></button>
+  `).join('');
 
-    // Image Container
-    const imageContainer = document.createElement('div');
-    imageContainer.classList.add(
-      'w-full',
-      'flex',
-      'justify-center',
-      'items-center',
-      'overflow-hidden',
-      'md:w-1/2',  // Image takes up 50% width on larger screens
-      'm-4'        // Margin around the image
-    );
+  // Set the HTML for the carousel and dots
+  carouselWrapper.innerHTML = carouselItemsHTML;
+  carouselDots.innerHTML = carouselDotsHTML;
 
-    if (listing.media && listing.media[0]) {
-      const imageElement = document.createElement('img');
-      imageElement.src = listing.media[0]?.url;
-      imageElement.alt = listing.media[0]?.alt || "Item Image";
-      imageElement.classList.add(
-        'w-full',    // Make image responsive
-        'max-h-64',  // Limit max height of image
-        'object-cover', // Ensure image covers container without stretching
-        'px-3',
-        'rounded-lg'
-      );
-      imageContainer.appendChild(imageElement);
-    }
-
-    carouselItem.appendChild(textContainer);
-    carouselItem.appendChild(imageContainer);
-
-    carouselWrapper.appendChild(carouselItem);
-
-    // Dot for pagination
-    const dot = document.createElement('button');
-    dot.classList.add('w-12', 'h-1.5', 'bg-RoyalBlue', 'hover:bg-PersianBlue');
-    dot.setAttribute('data-index', index);
+  // Attach click event listeners to the dots
+  const dots = Array.from(carouselDots.children);
+  dots.forEach((dot, index) => {
     dot.addEventListener('click', () => {
       currentIndex = index;
       updateCarouselPosition();
     });
-    carouselDots.appendChild(dot);
   });
 
   function updateCarouselPosition() {
@@ -184,6 +102,7 @@ export function displayCarousel(listings) {
 
 
 
+
 // Function to display auction listings in the HTML
 export function displayListings(listings) {
   const listingsContainer = document.getElementById('listings-container');
@@ -191,10 +110,10 @@ export function displayListings(listings) {
   // Utility function to format the status bar based on listing status
   const getStatusBar = (isActive, isEnded) => {
     if (isActive) {
-      return `<div class="absolute bottom-0 left-0 w-full bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 text-white text-xs font-bold px-4 py-1 text-center">Active</div>`;
+      return `<div class="isActive">Active</div>`;
     }
     if (isEnded) {
-      return `<div class="absolute bottom-0 left-0 w-full bg-red-600 text-white text-xs font-bold px-4 py-1 text-center">Ended</div>`;
+      return `<div class="isEnded">Ended</div>`;
     }
     return '';
   };
@@ -211,8 +130,8 @@ export function displayListings(listings) {
   listings.forEach(listing => {
     const listingElement = document.createElement('div');
     listingElement.classList.add(
-      'card', 'cursor-pointer', 'bg-white', 'shadow-lg', 'mb-6', 
-      'w-full', 'max-w-sm', 'flex', 'flex-col', 'h-full'
+      'shadow-lg', 'mb-6', 
+      'w-full', 'max-w-sm', 'h-full'
     );
 
     const imageUrl = listing.media?.[0]?.url || null;
@@ -224,10 +143,10 @@ export function displayListings(listings) {
     const imageMarkup = getImageMarkup(imageUrl, imageAlt);
 
     listingElement.innerHTML = `
-    <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
+    <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="block text-RoyalBlue break-words">
       <div class="relative flex justify-center">
         ${statusBar}
-        <p class="absolute top-0 left-0 bg-RoyalBlue text-white text-xs font-bold px-4 py-2 shadow">
+        <p class="BidBox">
           Bids: ${listing._count?.bids || 0}
         </p>
         ${imageMarkup}
@@ -235,21 +154,20 @@ export function displayListings(listings) {
       <div class="p-3">
         <div>
           <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis">
-            <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="text-blue-600 hover:underline break-words">
-              ${listing.title}
-            </a>
+            ${listing.title}
           </h3>
-          Tags: ${listing.tags?.length ? listing.tags.join(', ') : 'None'}
+          <p class="text-xs text-black mb-2">Tags: ${listing.tags?.length ? listing.tags.join(', ') : 'None'}</p>
         </div>
-        <div class="post-card-meta text-xs text-gray-500">
+        <div class=" text-xs text-Boulder">
           <p>
             <span>Created: ${new Date(listing.created).toLocaleString()}</span>
             <span> | Ends At: ${new Date(listing.endsAt).toLocaleString()}</span>
           </p>
         </div>
       </div>
-      </a>
+    </a>
     `;
+    
 
     listingsContainer.appendChild(listingElement);
   });

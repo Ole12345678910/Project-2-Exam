@@ -1,5 +1,9 @@
 module.exports = {
-  content: ["./**/*.html", "./**/*.js"], // Ensure TailwindCSS purges unused styles by looking through all HTML and JS files
+  content: [
+    './**/*.html',    // Ensure all HTML files are included
+    './**/*.js',      // Ensure all JS files are included
+    './**/*.jsx',     // If you're using React or JSX files
+  ],
   theme: {
     extend: {
       colors: {
@@ -11,11 +15,12 @@ module.exports = {
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'], // Inter font family
-        Graduate: ['Graduate', 'serif'], // Inter font family
+        Graduate: ['Graduate', 'serif'], // Graduate font family
       },
-      fontSize:{
+      fontSize: {
         'xxs': '0.5rem',  // Custom size smaller than xs
-      }
+        'md': '1rem',     // Custom medium size (optional, if you need text-md)
+      },
     },
   },
   plugins: [
