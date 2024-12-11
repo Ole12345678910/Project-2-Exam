@@ -244,13 +244,7 @@ export async function createListing(accessToken, listingData) {
   }
 }
 
-export async function fetchUserListings(userName, accessToken) {
-  return await fetchFromApi(`auction/listings?user=${userName}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-}
+
 
 export async function fetchAndStoreCredits(userName, accessToken) {
   const profile = await fetchUserProfile(userName, accessToken);
@@ -426,33 +420,7 @@ export async function updateListingApi(listingId, accessToken, apiKey, data) {
   }
 }
 
-// api.js
 
-export async function fetchUserListingsApi(userName, accessToken, apiKey) {
-  const apiUrl = `https://v2.api.noroff.dev/auction/profiles/${userName}/listings`;
-
-  try {
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "X-Noroff-API-Key": apiKey,
-      },
-    });
-
-    const responseBody = await response.json();
-
-    if (!response.ok) {
-      throw new Error(responseBody.message || "Unknown error occurred");
-    }
-
-    return responseBody.data || responseBody;
-  } catch (error) {
-    throw new Error(`Error fetching listings: ${error.message}`);
-  }
-}
-
-// api.js
 export async function fetchUserCreditsApi(userName, accessToken, apiKey) {
   try {
     const response = await fetch(
@@ -478,3 +446,4 @@ export async function fetchUserCreditsApi(userName, accessToken, apiKey) {
     throw error; // Rethrow for the caller to handle
   }
 }
+

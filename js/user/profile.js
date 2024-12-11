@@ -2,17 +2,15 @@
 import { apiKey } from "../constants/config.js"; // Correct path and extension
 import {
   fetchUserProfileData,
+  fetchUserWins,
   updateUserProfile,
   createListingApi,
   updateListingApi,
   fetchUserCreditsApi,
-  fetchUserWins,
   handleAvatar,
 } from "../modules/api.js";
 import {
   fetchUserListings,
-  fetchUserProfile,
-  displayWins,
 } from "../pages/listings.js";
 import { initMobileMenu } from "../modules/utilit.js";
 
@@ -194,7 +192,6 @@ function closeEditForm() {
 
 // Initialize all functionalities
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM is loaded.");
   fetchUserProfile();
   handleAvatar();
   editProfile();
@@ -229,6 +226,114 @@ async function loadUserWins() {
   const wins = await fetchUserWins(profileName, accessToken);
   displayWins(wins); // Display the fetched wins
 }
+
+// Function to display auction wins
+export function displayWins(wins) {
+  
+    const winsContainer = document.getElementById('wins-container');
+    if (!winsContainer) {
+        console.error("Wins container not found in the DOM!");
+        return;
+    }
+  
+    // Clear the previous content in the container
+    winsContainer.innerHTML = '';
+  
+    // If no wins, display the new personalized message
+    if (!wins || wins.length === 0) {
+        winsContainer.innerHTML = '<p>You have no wins yet.</p>';
+        return;
+    }
+  
+    wins.forEach(win => {
+        const winElement = document.createElement('div');
+        winElement.classList.add('win-card', 'bg-white', 'shadow-lg', 'mb-6', 'p-3', 'flex', 'flex-col', 'h-full');
+  
+        // Handle missing media or fallback image
+        const imageUrl = (win.media && win.media.length > 0) ? win.media[0].url : 'default-image.jpg';
+        const imageAlt = win.title || 'Auction Item';
+        const listingId = win.id; // The listing ID for the link
+  
+        // Dynamically generate the URL for the listing details page
+        const listingUrl = `/templates/auth/posts/details.html?listingId=${listingId}`;
+  
+        winElement.innerHTML = `
+            <a href="${listingUrl}" class="win-link">
+                <div class="relative">
+                    <!-- Won label -->
+                    <div class="absolute top-0 left-0 w-full bg-green-500 text-white text-xs font-bold px-4 py-1 text-center">
+                        Won!
+                    </div>
+                    <img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover" />
+                    <div class="win-info p-3">
+                        <h3 class="win-title text-xl font-semibold">${win.title}</h3>
+                        <p class="win-description">${win.description}</p>
+                        <span class="win-created text-sm text-gray-500">Won on: ${new Date(win.created).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            </a>
+        `;
+  
+        winsContainer.appendChild(winElement);
+    });
+  }
+
+
+  export async function fetchUserProfile() {
+    if (!accessToken || !userName) {
+        alert("You are not logged in. Please log in first.");
+        return;
+    }
+  
+    try {
+        // Fetch profile data
+        const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${userName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'X-Noroff-API-Key': apiKey,
+            },
+        });
+  
+        if (!response.ok) throw new Error('Error fetching user profile.');
+  
+        const profileData = await response.json();
+  
+  
+        const { name, bio, avatar, banner, listings, credits } = profileData.data;
+  
+        // Display the profile info
+        document.getElementById('user-credits-header').textContent = `Credits: ${credits || 0}`;
+        document.getElementById('user-credits-profile').textContent = `Credits: ${credits || 0}`;
+        document.getElementById('banner-img').src = banner?.url || '/templates/auth/posts/user/default-banner.jpg';
+        document.getElementById('avatar-img').src = avatar?.url || '/templates/auth/posts/user/default-avatar.jpg';
+        document.getElementById('user-name').textContent = name || 'Unknown Name';
+        document.getElementById('user-email').textContent = userName || 'Username not available';
+        document.getElementById('user-bio').textContent = bio || 'No bio available';
+  
+        // If listings are included in profile data, use them, else fetch them separately
+        const listingsList = document.getElementById('listings-list');
+        if (listings && listings.length > 0) {
+            listingsList.innerHTML = listings.map(listing => `
+                <li class="listing-item">
+                    <div class="listing-title"><strong>${listing.title}</strong></div>
+                    <div class="listing-description">${listing.description || 'No description available'}</div>
+                    <div class="listing-created">Created: ${new Date(listing.created).toLocaleDateString()}</div>
+                    <div class="listing-endsAt">Ends: ${new Date(listing.endsAt).toLocaleDateString()}</div>
+                </li>
+            `).join('');
+        } else {
+            // If listings are not found, fetch them separately
+            await fetchUserListings();
+        }
+    } catch (error) {
+        console.error("Error fetching profile data:", error);
+        alert("There was an error loading your profile. Please try again.");
+    }
+  }
+
+  
+  
 
 // Call the function to load and display user wins when the page loads
 loadUserWins();

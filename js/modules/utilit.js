@@ -235,3 +235,13 @@ export async function getRandomPosts(count = 4) {
     const shuffled = arr.sort(() => 0.5 - Math.random()); // Shuffle the array
     return shuffled.slice(0, count); // Get the first 'count' items
   }
+
+  function showLoginPrompt() {
+  const bidsContainer = document.getElementById("bids-container");
+  bidsContainer.innerHTML = `
+    <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg text-center">
+      <p class="text-yellow-700 text-lg">Log in to view the bids for this listing.</p>
+      <a href="/templates/auth/login.html" class="text-yellow-600 hover:text-yellow-800">Click here to log in</a>
+    </div>
+  `;
+}

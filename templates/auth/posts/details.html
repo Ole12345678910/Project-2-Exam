@@ -35,18 +35,28 @@
       </div>
     
       <!-- Column 2: Search Bar -->
-      <div class="search-bar-container">
+      <div
+      class="relative flex justify-center col-span-3 md:col-span-1 md:mt-0 mt-2 row-start-2 md:row-start-auto"
+    >
+      <div class="w-full max-w-[20rem] relative w-full">
         <input
           id="search-bar"
-          class="search-bar"
+          class="w-full px-4 py-1 pr-12 m-1 bg-Gallery text-black focus:outline-none text-md"
           type="text"
           placeholder="Search for profiles..."
         />
-        <i id="search-btn" class="fas fa-search search-icon"></i>
-        <div id="dropdown-container" class="dropdown">
-          <ul id="dropdown-list" class="dropdown-list"></ul>
+        <i
+          id="search-btn"
+          class="fas fa-search text-base absolute top-1/2 right-4 transform -translate-y-1/2 text-RoyalBlue cursor-pointer"
+        ></i>
+        <div
+          id="dropdown-container"
+          class="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto"
+        >
+          <ul id="dropdown-list" class="list-none m-0 p-0"></ul>
         </div>
       </div>
+    </div>
     
       <!-- Column 3: User Info -->
       <div class="user-info">
@@ -56,8 +66,8 @@
         <div id="user-icon" class="user-icon">
           <i class="fa-regular fa-user"></i>
         </div>
-        <a href="/templates/auth/login.html" class="sign-in-btn">Sign in</a>
-        <a href="#" class="log-out-btn">Log Out</a>
+        <a class="sign-in-btn button-box block sm:w-auto sm:text-center sm:mt-2" href="/templates/auth/login.html">Sign in</a>
+        <a class="log-out-btn button-box block hidden sm:w-auto sm:text-center sm:mt-2" href="#">Log Out</a>
       </div>
     </header>
     
