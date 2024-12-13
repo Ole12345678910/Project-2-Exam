@@ -1,7 +1,7 @@
 import { apiUrl, apiKey } from "../constants/config.js";
 import { displayCarousel } from "../pages/listings.js";
 import { accessToken, userName } from "../pages/listings.js";
-
+import { fetchUserListings } from "../pages/listings.js";
 
 // Fetch data from the API.
 // A generic function for API calls to reduce repetitive code.
@@ -94,7 +94,7 @@ export async function placeBid(listingId, bidAmount, accessToken) {
   }
 }
 
-// Delete a listing
+
 // Function to delete a listing
 export async function deleteListing(listingId) {
   const apiUrl = `https://v2.api.noroff.dev/auction/listings/${listingId}`;
@@ -300,9 +300,7 @@ export async function fetchUserWins(profileName, accessToken, page = 1) {
   }
 }
 
-// api.js
 
-// api.js
 
 export async function fetchUserProfileFromAPI(accessToken, userName, apiKey) {
   if (!accessToken || !userName) {

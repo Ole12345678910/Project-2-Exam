@@ -63,103 +63,11 @@ export function displayUserCredits() {
 
   
 
-export function filterListings(listings) {
-  // Ensure the necessary filter elements are found
-  const filterActiveEl = document.getElementById("filter-active");
-  const filterEndedEl = document.getElementById("filter-ended");
-  const filterHighestBidsEl = document.getElementById("filter-highest-bids");
-  const filterLowestBidsEl = document.getElementById("filter-lowest-bids");
-
-  // If any required elements are missing, return the original listings
-  if (!filterActiveEl || !filterEndedEl || !filterHighestBidsEl || !filterLowestBidsEl) {
-    console.warn("Filter elements not found in the DOM. Returning original listings.");
-    return listings;
-  }
-
-  // Get filter selections from the DOM
-  const filterOptions = {
-    active: filterActiveEl.checked,
-    ended: filterEndedEl.checked,
-    highestBids: filterHighestBidsEl.checked,
-    lowestBids: filterLowestBidsEl.checked,
-  };
-
-  // Filter listings by Active or Ended status
-  const filteredByStatus = listings.filter((listing) => {
-    const isActive = new Date(listing.endsAt) > new Date();
-    const isEnded = new Date(listing.endsAt) < new Date();
-
-    return (
-      (filterOptions.active && isActive) ||
-      (filterOptions.ended && isEnded) ||
-      (!filterOptions.active && !filterOptions.ended)
-    );
-  });
-
-  // Sort listings by Bids (Highest or Lowest)
-  const sortByBids = (a, b) => {
-    const bidCountA = a._count?.bids || 0;
-    const bidCountB = b._count?.bids || 0;
-
-    if (filterOptions.highestBids) {
-      return bidCountB - bidCountA; // Sort by highest number of bids (descending)
-    } else if (filterOptions.lowestBids) {
-      return bidCountA - bidCountB; // Sort by lowest number of bids (ascending)
-    }
-    return 0; // No sorting if neither bid filter is active
-  };
-
-  // Apply sorting if necessary
-  return filteredByStatus.sort(sortByBids);
-}
 
 
-export function loadMoreListings() {
-  const filteredListings = filterListings(allListings); // Get filtered listings
-  const listingsToShow = filteredListings.slice(
-    (currentPage - 1) * listingsPerPage,
-    currentPage * listingsPerPage
-  );
 
-  displayListings(listingsToShow); // Append the current set of listings to the existing ones
-  currentPage++; // Increment the page for the next set of listings
 
-  // If we've shown all listings, hide the "Show More" button
-  if (currentPage * listingsPerPage >= filteredListings.length) {
-    document.getElementById("load-more-button").style.display = "none";
-  }
-}
 
-// ------------------------------------------------------------
-// Function to fetch auction listings
-// ------------------------------------------------------------
-export async function fetchAuctionListing() {
-    const listingsContainer = document.getElementById("listings-container");
-    const loadMoreButton = document.getElementById("load-more-button");
-  
-    // Only proceed if both the elements exist in the DOM
-    if (!listingsContainer || !loadMoreButton) {
-      console.log("Required elements are not found on this page.");
-      return; // Exit the function if the elements are not present
-    }
-  
-    try {
-      const response = await fetch(`${apiUrl}auction/listings`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      allListings = data.data;
-      currentPage = 1;
-  
-      loadMoreListings(); // Call the function to load listings
-      loadMoreButton.style.display = "block"; // Show "Load More" button
-    } catch (error) {
-      console.error("Failed to fetch auction listings:", error);
-      listingsContainer.innerHTML = `<p>Error fetching listings: ${error.message}</p>`;
-    }
-  }
   
 const loadMoreButton = document.getElementById("load-more-button");
 

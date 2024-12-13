@@ -100,7 +100,6 @@ export function displayCarousel(listings) {
   updateCarouselPosition();
 }
 
-// Function to display auction listings in the HTML
 export function displayListings(listings) {
   const listingsContainer = document.getElementById("listings-container");
 
@@ -179,11 +178,11 @@ export function displayListings(listings) {
 }
 
 
+
 function initializeCarousel(carouselId, paginationId) {
   const carouselItems = document.getElementById(carouselId);
   const paginationButtons = document.querySelectorAll(`#${paginationId} .pagination-button`);
 
-  // Debugging checks for carousel initialization
   if (!carouselItems) {
     console.error(`Carousel items not found: #${carouselId}`);
     return;
@@ -198,10 +197,9 @@ function initializeCarousel(carouselId, paginationId) {
 
   function updateCarousel(index) {
     currentIndex = index;
-    const offset = -currentIndex * 100; // Move carousel by 100% for each index
+    const offset = -currentIndex * 100;
     carouselItems.style.transform = `translateX(${offset}%)`;
 
-    // Update button styles
     paginationButtons.forEach((button, idx) => {
       if (idx === currentIndex) {
         button.classList.add("bg-RoyalBlue");
@@ -213,7 +211,6 @@ function initializeCarousel(carouselId, paginationId) {
     });
   }
 
-  // Attach event listeners to pagination buttons
   paginationButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const index = parseInt(button.getAttribute("data-index"));
@@ -221,22 +218,18 @@ function initializeCarousel(carouselId, paginationId) {
     });
   });
 
-  // Initialize carousel
   updateCarousel(0);
 }
 
-// Helper to format date
 function formatDate(date) {
   return date ? new Date(date).toLocaleString() : "Date not available";
 }
 
-// Helper to get default image or media
 function getImages(media) {
   const defaultImage = "default-image.jpg";
   return media && media.length > 0 ? media : [{ url: defaultImage, alt: "Image not available" }];
 }
 
-// Helper to render carousel
 function renderCarousel(images, listingId) {
   return `
     <div class="relative">
@@ -268,8 +261,7 @@ function renderCarousel(images, listingId) {
   `;
 }
 
-// Helper to render listing details
-function renderListingDetails(listing) {
+function renderListingDetails(listing, isUserListing = false) {
   const title = listing.title || "No title available";
   const description = listing.description || "No description available";
   const tags = listing.tags && listing.tags.length > 0 ? listing.tags.join(", ") : "No tags available";
@@ -278,16 +270,12 @@ function renderListingDetails(listing) {
   const createdDate = formatDate(listing.created);
   const updatedDate = formatDate(listing.updated);
 
-  const sellerName = listing.seller?.name || "Seller information not available";
-  const sellerEmail = listing.seller?.email || "Email not available";
-
   return `
     <div class="p-6 shadow-lg max-w-4xl mx-auto">
-      <!-- Title and Description -->
-      <div class="mb-6 text-center">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">${title}</h2>
-        <p class="text-gray-600">${description}</p>
-      </div>
+      <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="block mb-6 text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2 break-words line-clamp-2">${title}</h2>
+        <p class="text-gray-600 break-words line-clamp-2">${description}</p>
+      </a>
 
       ${renderCarousel(getImages(listing.media), listing.id)}
 
@@ -297,15 +285,16 @@ function renderListingDetails(listing) {
         <p><strong>Last Updated:</strong> ${updatedDate}</p>
         <p><strong>Ends:</strong> ${endDate}</p>
         <p><strong>Bids:</strong> ${bidsCount}</p>
-        <p><strong>Seller:</strong> ${sellerName}</p>
-        <p><strong>Seller Email:</strong> ${sellerEmail}</p>
       </div>
     </div>
   `;
 }
 
-// Helper to render Edit/Delete Buttons
-function renderEditDeleteButtons(listing) {
+function renderEditDeleteButtons(listing, shouldRender = false) {
+  if (!shouldRender) {
+    return "";
+  }
+
   return `
     <div class="flex justify-between p-4">
       <button 
@@ -326,27 +315,14 @@ function renderEditDeleteButtons(listing) {
 
 export function displayListing(listing) {
   const listingContainer = document.getElementById("listing-container");
-  listingContainer.innerHTML = renderListingDetails(listing) + renderEditDeleteButtons(listing);
+  listingContainer.innerHTML = renderListingDetails(listing) + renderEditDeleteButtons(listing, false);
 
-  // Initialize carousel if there are multiple images
   if (listing.media && listing.media.length > 1) {
     initializeCarousel(
       `carousel-items-${listing.id}`,
       `carousel-pagination-${listing.id}`
     );
   }
-
-  // Event listeners for edit and delete buttons
-  document.getElementById(`edit-btn-${listing.id}`).addEventListener("click", function () {
-    openEditForm(listing.id);
-  });
-
-  document.getElementById(`delete-btn-${listing.id}`).addEventListener("click", function () {
-    const confirmed = confirm("Are you sure you want to delete this listing?");
-    if (confirmed) {
-      deleteListing(listing.id);
-    }
-  });
 }
 
 export async function fetchUserListings() {
@@ -379,10 +355,9 @@ export async function fetchUserListings() {
 
     const listingContainer = document.getElementById("listings-list");
     listingContainer.innerHTML = listingsArray
-      .map((listing) => renderListingDetails(listing) + renderEditDeleteButtons(listing))
+      .map((listing) => renderListingDetails(listing, true) + renderEditDeleteButtons(listing, true))
       .join("");
 
-    // Re-attach event listeners and initialize carousels
     listingsArray.forEach((listing) => {
       document.getElementById(`edit-btn-${listing.id}`).addEventListener("click", function () {
         openEditForm(listing.id);
@@ -395,7 +370,6 @@ export async function fetchUserListings() {
         }
       });
 
-      // Initialize carousel for listings with multiple images
       if (listing.media && listing.media.length > 1) {
         initializeCarousel(
           `carousel-items-${listing.id}`,
@@ -405,9 +379,7 @@ export async function fetchUserListings() {
     });
   } catch (error) {
     console.error("Error fetching user listings:", error);
-    alert(
-      "There was an error fetching listings for this user. Please try again."
-    );
+    alert("There was an error fetching listings for this user. Please try again.");
   }
 }
 
@@ -427,4 +399,5 @@ function openEditForm(listingId) {
     alert("Listing not found!");
   }
 }
+
 
