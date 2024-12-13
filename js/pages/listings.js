@@ -296,7 +296,7 @@ function renderEditDeleteButtons(listing, shouldRender = false) {
   }
 
   return `
-    <div class="flex justify-between p-4">
+    <div class="flex justify-between max-w-4xl mx-auto p-6 shadow-lg">
       <button 
         class="bg-RoyalBlue text-white px-4 py-2 mt-2 hover:bg-blue-700"
         id="edit-btn-${listing.id}"

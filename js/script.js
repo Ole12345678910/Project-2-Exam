@@ -39,9 +39,6 @@ closeMenu.addEventListener('click', () => {
 
 
 
-
-
-
 // Event listener for the "Load More" button
 document
   .getElementById("load-more-listings")
@@ -49,17 +46,6 @@ document
 
 
 
-
-
-// Add event listener for page load to fetch auction listings
-document.addEventListener("DOMContentLoaded", function () {
-  fetchAuctionListing();
-});
-
-// Add event listener for the "Show More" button
-document
-  .getElementById("load-more-listings")
-  .addEventListener("click", loadMoreListings);
 
 // Fetch auction listings and call top 3 newest listings (if implemented)
 fetchAuctionListings();
@@ -137,10 +123,11 @@ handleAuthButtons();
 
 
 
-let allListings = []; // Store all listings globally
+let allListings = []; // Store all fetched listings globally
 let filteredListings = []; // Store filtered listings globally
-let currentPage = 1; // Track the current page
+let currentPage = 1; // Track the current page (pagination)
 const listingsPerPage = 10; // Number of listings to show per page
+const totalListings = 100; // Total number of listings to fetch initially
 
 // Function to fetch auction listings
 async function fetchAuctionListing() {
@@ -148,7 +135,7 @@ async function fetchAuctionListing() {
   const loadMoreButton = document.getElementById("load-more-listings");
 
   try {
-    const response = await fetch(`${apiUrl}auction/listings`);
+    const response = await fetch(`${apiUrl}auction/listings?limit=${totalListings}`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -182,7 +169,7 @@ function filterListings(listings) {
   const now = new Date();
 
   // Filter listings based on active/ended status
-  const filteredByStatus = listings.filter((listing) => {
+  let filteredByStatus = listings.filter((listing) => {
     const isActive = new Date(listing.endsAt) > now;
     const isEnded = new Date(listing.endsAt) < now;
 
@@ -194,7 +181,7 @@ function filterListings(listings) {
   });
 
   // Sort listings based on the number of bids
-  const sortedListings = filteredByStatus.sort((a, b) => {
+  filteredByStatus = filteredByStatus.sort((a, b) => {
     const bidCountA = a._count?.bids || 0;
     const bidCountB = b._count?.bids || 0;
 
@@ -207,27 +194,34 @@ function filterListings(listings) {
     return 0; // No sorting if neither bid filter is selected
   });
 
-  return sortedListings;
+  return filteredByStatus;
 }
 
 // Function to load listings (filtered and paginated)
 function loadMoreListings() {
-  const listingsToShow = filteredListings.slice(
-    (currentPage - 1) * listingsPerPage,
-    currentPage * listingsPerPage
-  );
+  const listingsContainer = document.getElementById("listings-container");
+
+  // Calculate how many listings are left to show
+  const totalShownSoFar = (currentPage - 1) * listingsPerPage;
+  const remainingListings = filteredListings.slice(totalShownSoFar);
+
+  // Determine the number of listings to load this time
+  const listingsToShow = remainingListings.slice(0, listingsPerPage);
 
   // Display the listings
   displayListings(listingsToShow);
 
-  // Increment page number for the next set of listings
+  // Update the current page
   currentPage++;
 
-  // If we've reached the end of the filtered listings, hide the "Load More" button
-  if (currentPage * listingsPerPage >= filteredListings.length) {
+  // Check if there are more listings to load
+  if (remainingListings.length <= listingsPerPage) {
     document.getElementById("load-more-listings").style.display = "none";
+  } else {
+    document.getElementById("load-more-listings").style.display = "block";
   }
 }
+
 
 // Add event listeners for checkboxes to filter the listings
 const checkboxes = document.querySelectorAll(".filter-checkbox");
@@ -236,10 +230,10 @@ checkboxes.forEach((checkbox) => {
     // Apply the filter to the global listings and update filtered listings
     filteredListings = filterListings(allListings);
 
-    // Reset page to 1, but DO NOT clear listings from the container yet
+    // Reset page to 1 when applying a filter
     currentPage = 1;
 
-    // Clear current listings in the container
+    // Clear current listings in the container if you are filtering
     document.getElementById("listings-container").innerHTML = "";
 
     // Load the first set of filtered listings

@@ -95,12 +95,6 @@ export function renderBidForm(container) {
 }
 
 
-
-
-
-// hamburgerMenu.js
-
-// Get elements for the hamburger menu
 // Get elements for the hamburger menu
 const hamburgerIcon = document.getElementById('hamburger-icon');
 const mobileMenu = document.getElementById('mobile-menu');
@@ -135,8 +129,46 @@ export function initMobileMenu() {
 export async function getRandomPosts(count = 4) {
     const result = await fetchFromApi("auction/listings");
     const listings = Array.isArray(result.data) ? result.data : [];
-    displayPosts(getRandomItems(listings, count));
+  
+    // Filter listings to include only those with images
+    const listingsWithImages = listings.filter(listing => 
+      listing.media?.length && listing.media[0]?.url
+    );
+  
+    // Select random items from filtered listings
+    const randomListings = getRandomItems(listingsWithImages, count);
+  
+    // Validate that images load successfully
+    const validListings = await validateImages(randomListings);
+  
+    // Display the validated posts
+    displayPosts(validListings);
   }
+  
+  // Function to check if images can be loaded
+  async function validateImages(listings) {
+    const loadImage = (url) =>
+      new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+  
+    const validListings = [];
+    for (const listing of listings) {
+      const imageUrl = listing.media?.[0]?.url;
+      if (imageUrl) {
+        const isValid = await loadImage(imageUrl);
+        if (isValid) {
+          validListings.push(listing);
+        }
+      }
+    }
+  
+    return validListings;
+  }
+  
   
   // Utility function to get random items from an array
   export function getRandomItems(arr, count) {
