@@ -4,11 +4,10 @@ import {
   displayUserCredits,
   initMobileMenu 
 } from "../modules/utilit.js";
-import { placeBid } from "../modules/api.js";
+import { placeBid, fetchUserCreditsApi } from "../modules/api.js";
 import { initializeSearch  } from "../modules/search.js";
 import { handleAuthButtons } from "../auth/logout.js";
-import { accessToken } from "./listings.js";
-import { displayListing } from "./listings.js";
+import { accessToken, displayListing } from "./listings.js";
 
 // Move the error handler function to the top of the file
 function handleErrorInBidSubmission(error) {
@@ -66,13 +65,12 @@ export function setupBidSubmissionHandler(listingId, listing) {
         return;
       }
       await placeBid(listingId, bidAmount, accessToken); // This will trigger the API call to place the bid
-      alert("Your bid has been placed successfully!");
-      fetchAndDisplayListing(listingId); // Refresh listing details
     } catch (error) {
       handleErrorInBidSubmission(error);  // Ensure this is used correctly
     }
   });
 }
+
 
 
 // Get bid amount from input field
@@ -308,4 +306,39 @@ handleAuthButtons();
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeSearch("search-bar", "search-btn", "dropdown-container", "dropdown-list");
+});
+
+
+
+
+
+
+
+// Handle credits fetching and storage
+async function fetchAndStoreCredits() {
+  const accessToken = localStorage.getItem("accessToken");
+  const userName = localStorage.getItem("userName");
+
+  if (!accessToken || !userName) {
+    return;
+  }
+
+  try {
+    // Fetch credits from the API
+    const credits = await fetchUserCreditsApi(userName, accessToken, apiKey);
+
+    // Store the credits in localStorage
+    localStorage.setItem("userCredits", credits || 0);
+
+    // Update the UI with the fetched credits
+    document.getElementById('user-credits-header').textContent = `Credits: ${credits || 0}`;
+  } catch (error) {
+    console.error("Error fetching credits:", error);
+    alert("There was an error fetching credits. Please try again.");
+  }
+}
+
+// Call fetchAndStoreCredits when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+  fetchAndStoreCredits(); // Fetch and update credits on page load
 });

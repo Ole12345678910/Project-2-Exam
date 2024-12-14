@@ -96,16 +96,20 @@ async function fetchAndStoreCredits() {
 async function createListing() {
   const createListingBtn = document.getElementById("create-listing-btn");
   const createListingModal = document.getElementById("create-listing-modal");
-  const closeModalBtn = document.getElementById("close-modal");
+  const closeCreateListingModalBtn = document.getElementById("close-create-listing-modal");
   const createListingForm = document.getElementById("create-listing-form");
 
+  // Open modal
   createListingBtn.addEventListener("click", () =>
     createListingModal.classList.remove("hidden")
   );
-  closeModalBtn.addEventListener("click", () =>
+
+  // Close modal
+  closeCreateListingModalBtn.addEventListener("click", () =>
     createListingModal.classList.add("hidden")
   );
 
+  // Form submission logic
   createListingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -158,37 +162,42 @@ async function createListing() {
   });
 }
 
+
 // Edit listing functionality
 async function updateListing(listingId) {
-  const title = document.getElementById("edit-title").value;
-  const description = document.getElementById("edit-description").value;
-  const mediaUrl = document.getElementById("edit-media").value;
-
-  // Prepare the data object
-  const data = {
-    title,
-    description,
-    media: mediaUrl ? [{ url: mediaUrl, alt: "Updated Image" }] : [],
-  };
-
-  try {
-    const responseData = await updateListingApi(
-      listingId,
-      accessToken,
-      apiKey,
-      data
-    );
-    alert("Listing updated successfully!");
-    closeEditForm(); // Function to close the edit form
-    fetchUserListings(); // Function to refresh the listings on the page
-  } catch (error) {
-    console.error("Error updating listing:", error);
-    alert(`An error occurred: ${error.message}`);
+    const title = document.getElementById("edit-title").value;
+    const description = document.getElementById("edit-description").value;
+  
+    // Split media URLs into an array
+    const mediaUrls = document.getElementById("edit-media").value
+      .split("\n")
+      .map((url) => url.trim())
+      .filter((url) => url);
+  
+    // Prepare the data object
+    const data = {
+      title,
+      description,
+      media: mediaUrls.map((url) => ({ url, alt: "Updated Image" })),
+    };
+  
+    try {
+      const responseData = await updateListingApi(listingId, accessToken, apiKey, data);
+      alert("Listing updated successfully!");
+      closeEditForm(); // Close the edit form
+      fetchUserListings(); // Refresh the listings on the page
+    } catch (error) {
+      console.error("Error updating listing:", error);
+      alert(`An error occurred: ${error.message}`);
+    }
   }
-}
-function closeEditForm() {
-  document.getElementById("edit-form-container").classList.add("hidden");
-}
+  
+  
+  // Function to close the edit form
+  function closeEditForm() {
+    document.getElementById("edit-form-container").classList.add("hidden");
+  }
+  
 
 // Initialize all functionalities
 document.addEventListener("DOMContentLoaded", () => {

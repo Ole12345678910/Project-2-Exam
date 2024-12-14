@@ -1,26 +1,15 @@
 // Imports
 import { apiUrl } from "./constants/config.js";
-import { 
-  fetchSearchResults, 
-  fetchAuctionListings,
-   
-} from "./modules/api.js";
+import { fetchSearchResults, fetchAuctionListings } from "./modules/api.js";
 import { initializeSearch } from "./modules/search.js";
 import { handleAuthButtons } from "./auth/logout.js";
-//import { displayListings } from "./pages/listings.js";
-import { 
-  updateUserIcon, 
-  displayUserCredits, 
-  getRandomItems,
-  getRandomPosts
-} from "./modules/utilit.js";
+import { updateUserIcon, displayUserCredits, getRandomItems, getRandomPosts } from "./modules/utilit.js";
 
 // Initialize user interface
 displayUserCredits();
 updateUserIcon();
 
-
-  // JavaScript to toggle mobile menu visibility
+// JavaScript to toggle mobile menu visibility
 const hamburgerIcon = document.getElementById('hamburger-icon');
 const mobileMenu = document.getElementById('mobile-menu');
 const closeMenu = document.getElementById('close-menu');
@@ -35,26 +24,14 @@ closeMenu.addEventListener('click', () => {
   mobileMenu.classList.add('hidden'); // Hide the menu
 });
 
-
-
-
-
 // Event listener for the "Load More" button
-document
-  .getElementById("load-more-listings")
-  .addEventListener("click", loadMoreListings);
-
-
-
+document.getElementById("load-more-listings").addEventListener("click", loadMoreListings);
 
 // Fetch auction listings and call top 3 newest listings (if implemented)
 fetchAuctionListings();
 
-
-
 // Fetch and display random posts
 getRandomPosts();
-
 
 // Search functionality
 document.addEventListener("DOMContentLoaded", () => {
@@ -64,70 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
 // Handle logout buttons
 handleAuthButtons();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let allListings = []; // Store all fetched listings globally
 let filteredListings = []; // Store filtered listings globally
 let currentPage = 1; // Track the current page (pagination)
 const listingsPerPage = 10; // Number of listings to show per page
-const totalListings = 100; // Total number of listings to fetch initially
 
 // Function to fetch auction listings
 async function fetchAuctionListing() {
@@ -135,7 +52,7 @@ async function fetchAuctionListing() {
   const loadMoreButton = document.getElementById("load-more-listings");
 
   try {
-    const response = await fetch(`${apiUrl}auction/listings?limit=${totalListings}`);
+    const response = await fetch(`${apiUrl}auction/listings?limit=100`);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -197,30 +114,7 @@ function filterListings(listings) {
   return filteredByStatus;
 }
 
-// Function to load listings (filtered and paginated)
-function loadMoreListings() {
-  const listingsContainer = document.getElementById("listings-container");
 
-  // Calculate how many listings are left to show
-  const totalShownSoFar = (currentPage - 1) * listingsPerPage;
-  const remainingListings = filteredListings.slice(totalShownSoFar);
-
-  // Determine the number of listings to load this time
-  const listingsToShow = remainingListings.slice(0, listingsPerPage);
-
-  // Display the listings
-  displayListings(listingsToShow);
-
-  // Update the current page
-  currentPage++;
-
-  // Check if there are more listings to load
-  if (remainingListings.length <= listingsPerPage) {
-    document.getElementById("load-more-listings").style.display = "none";
-  } else {
-    document.getElementById("load-more-listings").style.display = "block";
-  }
-}
 
 
 // Add event listeners for checkboxes to filter the listings
@@ -241,14 +135,87 @@ checkboxes.forEach((checkbox) => {
   });
 });
 
+// Function to load less listings (reverse of loadMoreListings)
+function loadLessListings() {
+  const listingsContainer = document.getElementById("listings-container");
+
+  // Calculate how many listings are currently shown
+  const totalShownSoFar = (currentPage - 1) * listingsPerPage;
+
+  // If we are showing fewer than 10 listings, do not load less
+  if (totalShownSoFar <= 10) {
+    document.getElementById("load-less-listings").style.display = "none"; // Hide "Load Less" button
+    return; // Stop function execution if fewer than 10 listings are left
+  }
+
+  // Calculate how many listings to remove (one page worth of listings)
+  const listingsToRemove = filteredListings.slice(totalShownSoFar - listingsPerPage, totalShownSoFar);
+
+  // Loop through the listings to remove them from the DOM
+  listingsToRemove.forEach((listing) => {
+    const listingElement = document.getElementById(`listing-${listing.id}`);
+    if (listingElement) {
+      listingsContainer.removeChild(listingElement);
+    }
+  });
+
+  // Update the current page
+  currentPage--;
+
+  // Check if we need to hide the "Load Less" button
+  if (totalShownSoFar - listingsPerPage <= 10) {
+    document.getElementById("load-less-listings").style.display = "none"; // Hide "Load Less" if no more pages to load
+  }
+
+  // Check if we need to show the "Load More" button
+  if (currentPage > 1) {
+    document.getElementById("load-more-listings").style.display = "block"; // Show "Load More"
+  }
+}
+
+
+// Event listener for the "Load Less" button
+document.getElementById("load-less-listings").addEventListener("click", loadLessListings);
+
+// Modify the loadMoreListings function to hide the "Load Less" button initially
+function loadMoreListings() {
+  const listingsContainer = document.getElementById("listings-container");
+
+  // Calculate how many listings are left to show
+  const totalShownSoFar = (currentPage - 1) * listingsPerPage;
+  const remainingListings = filteredListings.slice(totalShownSoFar);
+
+  // Determine the number of listings to load this time
+  const listingsToShow = remainingListings.slice(0, listingsPerPage);
+
+  // Display the listings
+  displayListings(listingsToShow);
+
+  // Update the current page
+  currentPage++;
+
+  // Check if there are more listings to load
+  if (remainingListings.length <= listingsPerPage) {
+    document.getElementById("load-more-listings").style.display = "none"; // Hide "Load More" if no listings left
+  } else {
+    document.getElementById("load-more-listings").style.display = "block"; // Show "Load More"
+  }
+
+  // Show "Load Less" button if there are listings to load less
+  if (currentPage > 2) {
+    document.getElementById("load-less-listings").style.display = "block";
+  }
+}
+
+
+
 // Event listener for the "Load More" button
-document
-  .getElementById("load-more-listings")
-  .addEventListener("click", loadMoreListings);
+document.getElementById("load-more-listings").addEventListener("click", loadMoreListings);
 
 // Fetch auction listings and display them
 fetchAuctionListing();
 
+// Function to display the listings on the page
 // Function to display the listings on the page
 function displayListings(listings) {
   const listingsContainer = document.getElementById("listings-container");
@@ -282,6 +249,7 @@ function displayListings(listings) {
       "max-w-sm",
       "h-full"
     );
+    listingElement.id = `listing-${listing.id}`; // Set unique id for each listing element
 
     const imageUrl = listing.media?.[0]?.url || null;
     const imageAlt = listing.media?.[0]?.alt || "Item Image";
@@ -292,9 +260,7 @@ function displayListings(listings) {
     const imageMarkup = getImageMarkup(imageUrl, imageAlt);
 
     listingElement.innerHTML = `
-    <a href="/templates/auth/posts/details.html?listingId=${
-      listing.id
-    }" class="block text-RoyalBlue break-words">
+    <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="block text-RoyalBlue break-words">
       <div class="relative flex justify-center">
         ${statusBar}
         <p class="BidBox">
@@ -307,16 +273,12 @@ function displayListings(listings) {
           <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis line-clamp-2 break-words">
             ${listing.title}
           </h3>
-          <p class="text-xs text-black mb-2">Tags: ${
-            listing.tags?.length ? listing.tags.join(", ") : "None"
-          }</p>
+          <p class="text-xs text-black mb-2">Tags: ${listing.tags?.length ? listing.tags.join(", ") : "None"}</p>
         </div>
         <div class="text-xs text-Boulder">
           <p>
             <span>Created: ${new Date(listing.created).toLocaleString()}</span>
-            <span> | Ends At: ${new Date(
-              listing.endsAt
-            ).toLocaleString()}</span>
+            <span> | Ends At: ${new Date(listing.endsAt).toLocaleString()}</span>
           </p>
         </div>
       </div>
@@ -326,3 +288,4 @@ function displayListings(listings) {
     listingsContainer.appendChild(listingElement);
   });
 }
+

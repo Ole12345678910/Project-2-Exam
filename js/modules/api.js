@@ -87,12 +87,17 @@ export async function placeBid(listingId, bidAmount, accessToken) {
     }
 
     const result = await response.json();
+    alert("Your bid has been placed successfully!");
+
+    // Reload the page to refresh the listing details
+    location.reload(); // This will reload the current page
+    
     return result;
   } catch (error) {
-    console.error('Error in placeBid:', error);
-    throw error; // This will propagate the error to the calling function
+    alert(error.message || 'An error occurred while placing the bid.');
   }
 }
+
 
 
 // Function to delete a listing
@@ -267,12 +272,13 @@ export async function fetchUserProfile(userName, accessToken) {
     );
 
     if (!response.ok) throw new Error("Error fetching user profile");
-    return await response.json();
+    return await response.json();  // Assuming this response contains the user's 'id' field
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
+
 
 // Fetch user wins
 export async function fetchUserWins(profileName, accessToken, page = 1) {

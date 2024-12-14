@@ -129,7 +129,7 @@
       </div>
 
       <!-- User Info Section -->
-      <div id="user-info" class="text-center mt-24">
+      <div id="user-info" class="text-center mt-24 shadow-lg">
         <h2 id="user-name" class="text-2xl font-semibold text-gray-800">
           John Doe
         </h2>
@@ -140,7 +140,7 @@
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
           consequat quam vitae tincidunt venenatis.
         </p>
-        <p id="user-credits-profile" class="text-RoyalBlue text-sm mt-4">
+        <p id="user-credits-profile" class="text-RoyalBlue text-sm mt-4 pb-4">
           Credits: 0
         </p>
       </div>
@@ -158,55 +158,60 @@
       </button>
     </div>
 
+
+
+
+
+
     <div
       id="edit-profile-modal"
       class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
-        <h2 class="text-2xl font-semibold text-gray-800">Edit Profile</h2>
+      <div class="formBox">
+        <h2 class="mainText">Edit Profile</h2>
         <!-- Form for updating bio, avatar, and banner -->
         <form id="edit-profile-form">
           <div class="mb-4">
-            <label for="bio" class="text-sm text-gray-600">Bio</label>
+            <label for="bio" class="secondaryText">Bio</label>
             <textarea
               id="bio"
-              class="w-full p-2 border border-gray-300 rounded-lg mt-2"
+              class="inputBoxFrom"
               placeholder="Enter your bio"
             ></textarea>
           </div>
           <div class="mb-4">
-            <label for="avatar-url" class="text-sm text-gray-600"
+            <label for="avatar-url" class="secondaryText"
               >Avatar URL</label
             >
             <input
               type="text"
               id="avatar-url"
-              class="w-full p-2 border border-gray-300 rounded-lg mt-2"
+              class="inputBoxFrom"
               placeholder="Enter avatar image URL"
             />
           </div>
           <div class="mb-4">
-            <label for="banner-url" class="text-sm text-gray-600"
+            <label for="banner-url" class="secondaryText"
               >Banner URL</label
             >
             <input
               type="text"
               id="banner-url"
-              class="w-full p-2 border border-gray-300 rounded-lg mt-2"
+              class="inputBoxFrom"
               placeholder="Enter banner image URL"
             />
           </div>
           <div class="flex justify-between items-center">
             <button
               type="submit"
-              class="px-4 py-2 bg-RoyalBlue text-white rounded-lg"
+              class="saveChange"
             >
               Save
             </button>
             <button
               type="button"
               id="close-modal"
-              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg"
+              class="exitStop"
             >
               Cancel
             </button>
@@ -215,64 +220,23 @@
       </div>
     </div>
 
-    <div
-      id="edit-modal"
-      class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
-    >
-      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-2xl font-semibold text-RoyalBlue mb-4">Edit Profile</h2>
-        <!-- Edit Form -->
-        <form id="edit-form">
-          <label class="block text-sm text-gray-700">Name</label>
-          <input
-            type="text"
-            id="edit-name"
-            value="John Doe"
-            class="w-full p-2 border border-gray-300 rounded mb-4"
-          />
 
-          <label class="block text-sm text-gray-700">Email</label>
-          <input
-            type="email"
-            id="edit-email"
-            value="johndoe@example.com"
-            class="w-full p-2 border border-gray-300 rounded mb-4"
-          />
 
-          <label class="block text-sm text-gray-700">Bio</label>
-          <textarea
-            id="edit-bio"
-            class="w-full p-2 border border-gray-300 rounded mb-4"
-          >
-Lorem ipsum dolor sit amet</textarea
-          >
 
-          <div class="flex justify-between">
-            <button
-              type="button"
-              class="bg-gray-500 text-white py-2 px-4 rounded"
-              id="close-modal"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="bg-RoyalBlue text-white py-2 px-4 rounded"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+
+
+
+
+
+
 
     <!-- Edit Listing Form (Initially hidden) -->
     <div
       id="edit-form-container"
-      class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
+      class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 class="text-xl font-semibold mb-4">Edit Listing</h2>
+      <div class="formBox">
+        <h2 class="mainText">Edit Listing</h2>
 
         <form id="edit-form">
           <!-- Hidden input for listing ID -->
@@ -282,13 +246,13 @@ Lorem ipsum dolor sit amet</textarea
           <div class="mb-4">
             <label
               for="edit-title"
-              class="block text-sm font-medium text-gray-700"
+              class="secondaryText"
               >Title</label
             >
             <input
               type="text"
               id="edit-title"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              class="inputBoxFrom"
               required
             />
           </div>
@@ -297,12 +261,12 @@ Lorem ipsum dolor sit amet</textarea
           <div class="mb-4">
             <label
               for="edit-description"
-              class="block text-sm font-medium text-gray-700"
+              class="secondaryText"
               >Description</label
             >
             <textarea
               id="edit-description"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              class="inputBoxFrom"
               required
             ></textarea>
           </div>
@@ -311,22 +275,22 @@ Lorem ipsum dolor sit amet</textarea
           <div class="mb-4">
             <label
               for="edit-media"
-              class="block text-sm font-medium text-gray-700"
+              class="secondaryText"
               >Media URL</label
             >
-            <input
-              type="url"
-              id="edit-media"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="https://url.com/image.jpg"
-            />
+            <textarea
+            id="edit-media"
+            class="inputBoxFrom"
+            placeholder="Enter one image URL per line"
+            rows="4"
+          ></textarea>
           </div>
 
           <!-- Save Button -->
           <button
             type="button"
             id="save-edit-button"
-            class="w-full py-2 px-4 bg-blue-500 text-white rounded-md shadow-sm hover:bg-RoyalBlue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="saveChange"
           >
             Save Changes
           </button>
@@ -335,7 +299,7 @@ Lorem ipsum dolor sit amet</textarea
           <button
             type="button"
             id="cancel-edit-button"
-            class="mt-4 w-full py-2 px-4 bg-gray-500 text-white rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            class="exitStop"
           >
             Cancel
           </button>
@@ -343,85 +307,95 @@ Lorem ipsum dolor sit amet</textarea
       </div>
     </div>
 
-    <!-- Listings List -->
-    <ul id="listings-list">
-      <!-- Listings will be dynamically populated here -->
-    </ul>
 
-    <div id="user-container">
-      <!-- User data and wins will be populated here -->
-    </div>
 
-    <div class="flex justify-center flex-col" id="wins-container"></div>
 
-    <!-- Button to open the Create Listing form -->
 
-    <!-- Create Listing Modal -->
-    <div
-      id="create-listing-modal"
-      class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center"
-    >
-      <div class="bg-white p-6 rounded-md shadow-lg">
-        <h2 class="text-xl font-semibold mb-4">Create New Listing</h2>
 
-        <form id="create-listing-form">
-          <!-- Title -->
-          <label for="title" class="block mb-2">Title:</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            class="w-full p-2 border rounded mb-4"
-            required
-          />
-
-          <!-- Description -->
-          <label for="description" class="block mb-2">Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            class="w-full p-2 border rounded mb-4"
-          ></textarea>
-
-          <!-- Tags -->
-          <label for="tags" class="block mb-2">Tags (comma separated):</label>
-          <input
-            type="text"
-            id="tags"
-            name="tags"
-            class="w-full p-2 border rounded mb-4"
-          />
-
-          <!-- Media URLs (Multiple Images) -->
-          <label for="media-urls" class="block mb-2"
-            >Image URLs (enter each URL on a new line):</label
-          >
-          <textarea
-            id="media-urls"
-            name="media-urls"
-            class="w-full p-2 border rounded mb-4"
-            rows="4"
-            placeholder="Enter one image URL per line"
-          ></textarea>
-
-          <!-- End Date -->
-          <label for="endsAt" class="block mb-2">End Date:</label>
-          <input
-            type="datetime-local"
-            id="endsAt"
-            name="endsAt"
-            class="w-full p-2 border rounded mb-4"
-            required
-          />
-
-          <!-- Submit Button -->
-          <button type="submit" class="btn-primary">Create Listing</button>
-          <button type="button" id="close-modal" class="btn-secondary">
-            Close
-          </button>
-        </form>
+        <!-- Create Listing Modal -->
+        <div
+        id="create-listing-modal"
+        class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+      >
+        <div class="formBox">
+          <h2 class="mainText">Create New Listing</h2>
+  
+          <form id="create-listing-form">
+            <!-- Title -->
+            <label for="title" class="secondaryText">Title:</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="inputBoxFrom"
+              required
+            />
+  
+            <!-- Description -->
+            <label for="description" class="secondaryText">Description:</label>
+            <textarea
+              id="description"
+              name="description"
+              class="inputBoxFrom"
+            ></textarea>
+  
+            <!-- Tags -->
+            <label for="tags" class="secondaryText">Tags (comma separated):</label>
+            <input
+              type="text"
+              id="tags"
+              name="tags"
+              class="inputBoxFrom"
+            />
+  
+            <!-- Media URLs (Multiple Images) -->
+            <label for="media-urls" class="secondaryText"
+              >Image URLs (enter each URL on a new line):</label
+            >
+            <textarea
+              id="media-urls"
+              name="media-urls"
+              class="inputBoxFrom"
+              rows="4"
+              placeholder="Enter one image URL per line"
+            ></textarea>
+  
+            <!-- End Date -->
+            <label for="endsAt" class="secondaryText">End Date:</label>
+            <input
+              type="datetime-local"
+              id="endsAt"
+              name="endsAt"
+              class="inputBoxFrom"
+              required
+            />
+  
+            <!-- Submit Button -->
+            <button type="submit" class="saveChange btn-primary">Create Listing</button>
+            <button type="button" id="close-create-listing-modal" class="exitStop btn-secondary">
+              Close
+            </button>            
+          </form>
+        </div>
       </div>
-    </div>
+
+
+
+      <div class="flex flex-col">
+        <div  id="listings-list">
+          <!-- Listings will be dynamically populated here -->
+        </div>
+      </div>
+
+      <div id="user-container">
+        <!-- User data and wins will be populated here -->
+      </div>
+
+      <div class="flex justify-center flex-col" id="wins-container"></div>
+
+      <!-- Button to open the Create Listing form -->
+
+
 
     <footer>
       <hr class="m-3" />

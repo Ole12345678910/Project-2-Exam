@@ -103,79 +103,73 @@ export function displayCarousel(listings) {
 export function displayListings(listings) {
   const listingsContainer = document.getElementById("listings-container");
 
-  // Utility function to format the status bar based on listing status
-  const getStatusBar = (isActive, isEnded) => {
-    if (isActive) {
-      return `<div class="isActive">Active</div>`;
-    }
-    if (isEnded) {
-      return `<div class="isEnded">Ended</div>`;
-    }
-    return "";
-  };
+  // Clear previous content
+  listingsContainer.innerHTML = "";
 
-  // Utility function to handle image rendering
-  const getImageMarkup = (imageUrl, imageAlt) => {
-    if (imageUrl) {
-      return `<img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover" />`;
-    }
-    return '<div class="w-full h-48 bg-gray-300 flex items-center justify-center text-gray-500">No Image Available</div>';
-  };
+  // Handle case of no listings
+  if (!listings || listings.length === 0) {
+    listingsContainer.innerHTML = `<p>No listings available.</p>`;
+    return;
+  }
 
-  // Iterate through each listing and create the HTML structure
-  listings.forEach((listing) => {
+  // Iterate over each listing and render it
+  listings.forEach((listing, index) => {
+    console.log(`Rendering Listing #${index}:`, listing);
+
     const listingElement = document.createElement("div");
-    listingElement.classList.add(
-      "shadow-lg",
-      "mb-6",
-      "w-full",
-      "max-w-sm",
-      "h-full"
-    );
+    listingElement.classList.add("shadow-lg", "mb-6", "w-full", "max-w-sm", "h-full");
 
-    const imageUrl = listing.media?.[0]?.url || null;
+    // Extract relevant data
+    const imageUrl = listing.media?.[0]?.url || "default-image.jpg"; // Fallback to default image
     const imageAlt = listing.media?.[0]?.alt || "Item Image";
     const isActive = new Date(listing.endsAt) > new Date();
     const isEnded = new Date(listing.endsAt) < new Date();
+    const sellerName = listing.seller?.name || "Seller information not available"; // Fallback for missing name
+    const sellerEmail = listing.seller?.email || "Email not available"; // Fallback for missing email
+
+    console.log(`Seller Name: ${sellerName}, Seller Email: ${sellerEmail}`); // Debugging seller data
 
     const statusBar = getStatusBar(isActive, isEnded);
     const imageMarkup = getImageMarkup(imageUrl, imageAlt);
 
+    // Render the listing
     listingElement.innerHTML = `
-    <a href="/templates/auth/posts/details.html?listingId=${
-      listing.id
-    }" class="block text-RoyalBlue break-words">
-      <div class="relative flex justify-center">
-        ${statusBar}
-        <p class="BidBox">
-          Bids: ${listing._count?.bids || 0}
-        </p>
-        ${imageMarkup}
-      </div>
-      <div class="p-3">
-        <div>
-          <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis">
-            ${listing.title}
-          </h3>
-          <p class="text-xs text-black mb-2">Tags: ${
-            listing.tags?.length ? listing.tags.join(", ") : "None"
-          }</p>
-        </div>
-        <div class=" text-xs text-Boulder">
-          <p>
-            <span>Created: ${new Date(listing.created).toLocaleString()}</span>
-            <span> | Ends At: ${new Date(
-              listing.endsAt
-            ).toLocaleString()}</span>
+      <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="block text-RoyalBlue break-words">
+        <div class="relative flex justify-center">
+          ${statusBar}
+          <p class="BidBox">
+            Bids: ${listing._count?.bids || 0}
           </p>
+          ${imageMarkup}
         </div>
-      </div>
-    </a>
+        <div class="p-3">
+          <div>
+            <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis">
+              ${listing.title}
+            </h3>
+            <p class="text-xs text-black mb-2">Tags: ${
+              listing.tags?.length ? listing.tags.join(", ") : "None"
+            }</p>
+          </div>
+          <div class="text-xs text-Boulder">
+            <p>
+              <span>Created: ${new Date(listing.created).toLocaleString()}</span>
+              <span> | Ends At: ${new Date(listing.endsAt).toLocaleString()}</span>
+            </p>
+          </div>
+          <!-- Seller details -->
+          <div class="mt-2 text-xs text-gray-700">
+            <p><strong>Seller Name:</strong> ${sellerName}</p>
+            <p><strong>Seller Email:</strong> ${sellerEmail}</p>
+          </div>
+        </div>
+      </a>
     `;
 
     listingsContainer.appendChild(listingElement);
   });
 }
+
 
 
 
@@ -270,6 +264,10 @@ function renderListingDetails(listing, isUserListing = false) {
   const createdDate = formatDate(listing.created);
   const updatedDate = formatDate(listing.updated);
 
+  // Fallback for seller name and email if they are missing
+  const sellerName = listing.seller?.name || "Seller information not available";
+  const sellerEmail = listing.seller?.email || "Email not available";
+
   return `
     <div class="p-6 shadow-lg max-w-4xl mx-auto">
       <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="block mb-6 text-center">
@@ -286,9 +284,17 @@ function renderListingDetails(listing, isUserListing = false) {
         <p><strong>Ends:</strong> ${endDate}</p>
         <p><strong>Bids:</strong> ${bidsCount}</p>
       </div>
+
+      <!-- Only display seller info if this is not a user listings view -->
+      ${!isUserListing ? `
+          <p><strong>Seller Name:</strong> ${sellerName}</p>
+          <p><strong>Seller Email:</strong> ${sellerEmail}</p>
+      ` : ""}
     </div>
   `;
 }
+
+
 
 function renderEditDeleteButtons(listing, shouldRender = false) {
   if (!shouldRender) {
@@ -296,7 +302,7 @@ function renderEditDeleteButtons(listing, shouldRender = false) {
   }
 
   return `
-    <div class="flex justify-between max-w-4xl mx-auto p-6 shadow-lg">
+    <div class="bg-Gallery flex justify-between max-w-4xl mx-auto p-6 shadow-lg">
       <button 
         class="bg-RoyalBlue text-white px-4 py-2 mt-2 hover:bg-blue-700"
         id="edit-btn-${listing.id}"
@@ -388,16 +394,20 @@ function openEditForm(listingId) {
 
   if (listing) {
     document.getElementById("listing-id").value = listing.id;
-    document.getElementById("edit-title").value = listing.title;
-    document.getElementById("edit-description").value = listing.description;
-    document.getElementById("edit-media").value =
-      listing.media && listing.media[0] ? listing.media[0].url : "";
+    document.getElementById("edit-title").value = listing.title || '';
+    document.getElementById("edit-description").value = listing.description || '';
+
+    // Add extra space between media URLs for readability
+    if (Array.isArray(listing.media) && listing.media.length > 0) {
+      const mediaUrls = listing.media.map((media) => media.url).join("\n\n");
+      document.getElementById("edit-media").value = mediaUrls;
+    } else {
+      document.getElementById("edit-media").value = ''; // Clear if no media
+    }
 
     document.getElementById("edit-form-container").classList.remove("hidden");
   } else {
-    console.log("Listing not found");
+    console.error("Listing not found");
     alert("Listing not found!");
   }
 }
-
-
