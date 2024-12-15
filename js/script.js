@@ -114,9 +114,6 @@ function filterListings(listings) {
   return filteredByStatus;
 }
 
-
-
-
 // Add event listeners for checkboxes to filter the listings
 const checkboxes = document.querySelectorAll(".filter-checkbox");
 checkboxes.forEach((checkbox) => {
@@ -173,7 +170,6 @@ function loadLessListings() {
   }
 }
 
-
 // Event listener for the "Load Less" button
 document.getElementById("load-less-listings").addEventListener("click", loadLessListings);
 
@@ -207,15 +203,12 @@ function loadMoreListings() {
   }
 }
 
-
-
 // Event listener for the "Load More" button
 document.getElementById("load-more-listings").addEventListener("click", loadMoreListings);
 
 // Fetch auction listings and display them
 fetchAuctionListing();
 
-// Function to display the listings on the page
 // Function to display the listings on the page
 function displayListings(listings) {
   const listingsContainer = document.getElementById("listings-container");
@@ -288,4 +281,3 @@ function displayListings(listings) {
     listingsContainer.appendChild(listingElement);
   });
 }
-

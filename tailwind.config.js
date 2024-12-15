@@ -1,9 +1,9 @@
 module.exports = {
   content: [
-    './**/*.html',    // Ensure all HTML files are included
-    './**/*.js',      // Ensure all JS files are included
-    './**/*.jsx',     // If you're using React or JSX files
-  ],
+    './**/*.html',            // Look through all HTML files
+    './**/*.js',              // Look through all JS files
+    '!./node_modules/**/*',   // Exclude node_modules directory
+], // Ensure TailwindCSS purges unused styles by looking through all HTML and JS files
   theme: {
     extend: {
       colors: {

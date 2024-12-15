@@ -180,11 +180,19 @@ export async function loginApi(email, password) {
 
   if (!response.ok) {
     const errorData = await response.json();
+    
+    // Specifically handle 401 Unauthorized errors
+    if (response.status === 401) {
+      throw new Error("Invalid email or password.");
+    }
+
+    // Handle other types of errors
     throw new Error(errorData.message || "Login failed.");
   }
 
   return await response.json();
 }
+
 
 // Update user profile
 // api.js
@@ -251,33 +259,13 @@ export async function createListing(accessToken, listingData) {
 
 
 
+
 export async function fetchAndStoreCredits(userName, accessToken) {
   const profile = await fetchUserProfile(userName, accessToken);
   const credits = profile.data?.credits || 0;
   localStorage.setItem("userCredits", credits);
 }
 
-// Fetch user profile
-export async function fetchUserProfile(userName, accessToken) {
-  try {
-    const response = await fetch(
-      `https://v2.api.noroff.dev/auction/profiles/${userName}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "X-Noroff-API-Key": apiKey,
-        },
-      }
-    );
-
-    if (!response.ok) throw new Error("Error fetching user profile");
-    return await response.json();  // Assuming this response contains the user's 'id' field
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
 
 
 // Fetch user wins
@@ -451,3 +439,23 @@ export async function fetchUserCreditsApi(userName, accessToken, apiKey) {
   }
 }
 
+export async function fetchUserProfile(userName, accessToken) {
+  try {
+    const response = await fetch(
+      `https://v2.api.noroff.dev/auction/profiles/${userName}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-Noroff-API-Key": apiKey,
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error("Error fetching user profile");
+    return await response.json();  // Assuming this response contains the user's 'id' field
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
