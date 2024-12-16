@@ -3,26 +3,14 @@ import { apiUrl } from "./constants/config.js";
 import { fetchSearchResults, fetchAuctionListings } from "./modules/api.js";
 import { initializeSearch } from "./modules/search.js";
 import { handleAuthButtons } from "./auth/logout.js";
-import { updateUserIcon, displayUserCredits, getRandomItems, getRandomPosts } from "./modules/utilit.js";
+import { updateUserIcon, displayUserCredits,
+    getRandomPosts,initMobileMenu } from "./modules/utilit.js";
 
 // Initialize user interface
 displayUserCredits();
 updateUserIcon();
+initMobileMenu();
 
-// JavaScript to toggle mobile menu visibility
-const hamburgerIcon = document.getElementById('hamburger-icon');
-const mobileMenu = document.getElementById('mobile-menu');
-const closeMenu = document.getElementById('close-menu');
-
-// Open the mobile menu
-hamburgerIcon.addEventListener('click', () => {
-  mobileMenu.classList.remove('hidden'); // Show the menu
-});
-
-// Close the mobile menu
-closeMenu.addEventListener('click', () => {
-  mobileMenu.classList.add('hidden'); // Hide the menu
-});
 
 // Event listener for the "Load More" button
 document.getElementById("load-more-listings").addEventListener("click", loadMoreListings);

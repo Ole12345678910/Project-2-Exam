@@ -1,24 +1,27 @@
-import { loginApi, fetchAndStoreCredits  } from "../modules/api.js";
+import { loginApi } from "../modules/api.js";
 
-// login.js
+// Function to handle the login process
 async function handleLogin(event) {
-  event?.preventDefault(); // Only prevent default if the event is provided
+  event?.preventDefault(); // Prevent default form submission
 
-  const email = document.getElementById("email")?.value.trim();
-  const password = document.getElementById("password")?.value.trim();
+  const email = document.getElementById("email")?.value.trim();  // Get email value
+  const password = document.getElementById("password")?.value.trim(); // Get password value
 
+  // If either email or password is missing, show an alert
   if (!email || !password) {
     alert("Please enter both email and password.");
     return;
   }
 
   try {
+    // Attempt to log in with email and password
     const loginResponse = await loginApi(email, password);
 
     const accessToken = loginResponse.data?.accessToken;
     const userName = loginResponse.data?.name;
     const userAvatar = loginResponse.data?.avatar?.url;
 
+    // If login is missing necessary info, show an error
     if (!accessToken || !userName) {
       alert("Login failed. Missing required information.");
       return;
@@ -32,22 +35,22 @@ async function handleLogin(event) {
     if (userAvatar) {
       localStorage.setItem("userAvatar", userAvatar);
     }
-    alert("Login successful!");
-    window.location.href = "/templates/index.html"; // Redirect after login
+
+    alert("Login successful!"); // Show success message
+    window.location.href = "/index.html"; // Redirect to homepage
   } catch (error) {
     console.error("Login error:", error);
-
-    // Show the specific error message from the API
-    alert(error.message || "An unexpected error occurred. Please try again.");
+    alert(error.message || "An unexpected error occurred.");
   }
 }
 
-export { handleLogin }; // Export the handleLogin function
+// Export the login function
+export { handleLogin };
 
-// Event listener for login form submission
+// Add event listener for login form submission
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   if (loginForm) {
-    loginForm.addEventListener("submit", handleLogin);
+    loginForm.addEventListener("submit", handleLogin); // Trigger handleLogin on submit
   }
 });

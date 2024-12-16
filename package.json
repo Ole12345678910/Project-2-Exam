@@ -3,17 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-"scripts": {
-  "build": "npx postcss css/style.css -o dist/style.css",
-  "watch": "npx tailwindcss -i ./css/style.css -o ./dist/style.css --watch"
-},
-
+  "scripts": {
+    "build": "npx postcss css/style.css -o dist/style.css",
+    "watch": "npx tailwindcss -i ./css/style.css -o ./dist/style.css --watch",
+    "serve": "live-server",
+    "dev": "concurrently \"npm run watch\" \"npm run serve\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.16"
+    "tailwindcss": "^3.0.0"
   }
 }

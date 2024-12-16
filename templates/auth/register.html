@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta tags for character set and responsive viewport -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Link to external stylesheets -->
     <link rel="stylesheet" href="/dist/style.css" />
     <link
       rel="stylesheet"
@@ -15,68 +18,80 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon for the site -->
     <link rel="icon" type="images/x-icon" href="/assets/logo.svg" />
-    <title>Diamondbid - Register</title>
+    
+    <!-- Title of the page -->
+    <title>Register</title>
   </head>
   <body class="flex flex-col min-h-screen">
+    <!-- External JavaScript for registration page -->
     <script defer type="module" src="/js/auth/register.js"></script>
+    
+    <!-- Header Section: Navigation back to homepage -->
     <header class="bg-Gallery py-3">
-      <a class="button-box" href="/templates/index.html">Back</a>
+      <a class="button-box" href="/index.html">Back</a>
     </header>
+
+    <!-- Main content wrapper: Greeting and Registration Form -->
     <div class="flex flex-col sm:flex-row flex-1">
-      <!-- Top Content: Logo, Title, and Text (Always on top) -->
+      
+      <!-- Left Side: Logo, Title, and Information Text -->
       <div class="greetingBox">
         <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-diamondbid" />
-        <h1 class="logoText">Diamondbid</h1>
+        <h1 class="logoText">Register</h1>
         <h2 class="greetingText">Register to Begin</h2>
         <h3 class="infoText">Set up your account to start bidding, keep track of your wins, and become part of the action.</h3>
       </div>
 
-      <!-- Divider Line between top content and form (Visible only on large screens) -->
+      <!-- Divider: Only visible on larger screens (line separating content) -->
       <div class="lineAuth"></div>
 
-      <!-- Register Form Section -->
+      <!-- Right Side: Registration Form Section -->
       <div class="flex-1 flex flex-col items-center justify-center">
         <div class="loginBox">
           <p class="loginLogoutText text-center">Create your account</p>
+          
           <div class="flex flex-col">
             <form id="register-form">
-              <!-- Name -->
+              
+              <!-- Input Field: Name -->
               <label for="uname">
                 <p class="formText">Name</p>
               </label>
               <input type="text" id="name" placeholder="Enter name" name="uname" required class="placeholder:text-xs focus:outline-none">
               <hr class="formLine">
 
-              <!-- Email -->
+              <!-- Input Field: Email -->
               <label for="email">
                 <p class="formText">E-mail Address</p>
               </label>
               <input type="email" id="email" placeholder="Enter e-mail" name="email" required class=" placeholder:text-xs focus:outline-none">
               <hr class="formLine">
 
-              <!-- Password -->
+              <!-- Input Field: Password -->
               <label for="psw">
                 <p class="formText">Password</p>
               </label>
               <input type="password" id="password" placeholder="Enter Password" name="psw" required class="placeholder:text-xs focus:outline-none">
               <hr class="formLine">
 
-              <!-- Bio -->
+              <!-- Textarea: Bio (Optional) -->
               <label for="bio">
                 <p class="formText">Bio (Optional)</p>
               </label>
               <textarea id="bio" placeholder="Tell us about yourself..." name="bio" class=" px-3 py-2 placeholder:text-xs focus:outline-none border border-gray-300"></textarea>
               <hr class="formLine">
 
-              <!-- Avatar -->
+              <!-- Input Field: Avatar URL (Optional) -->
               <label for="avatar">
                 <p class="formText">Avatar URL (Optional)</p>
               </label>
               <input type="url" id="avatar" placeholder="Enter Avatar URL" name="avatar" class="placeholder:text-xs focus:outline-none">
               <hr class="formLine">
 
-              <!-- Banner -->
+              <!-- Input Field: Banner URL (Optional) -->
               <label for="banner">
                 <p class="formText">Banner URL (Optional)</p>
               </label>
@@ -97,6 +112,8 @@
                 </button>
               </div>
             </form>
+            
+            <!-- Link for users who already have an account -->
             <p class="text-xs block">Already have an account?</p>
             <a class="text-xs font-bold text-RoyalBlue" href="/templates/auth/login.html">Login here</a>
           </div>
@@ -104,7 +121,7 @@
       </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer Section: Copyright and Information -->
     <footer class="footerAuth">
       <div>
         <p class="footerText">

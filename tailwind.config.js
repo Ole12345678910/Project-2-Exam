@@ -15,6 +15,10 @@ module.exports = {
         "Gallery": "#EFEFEF",
         "PersianBlue": "#1931bd",
         "Boulder": "#7B7B7B",
+        "AlizarinCrimson": "#DC2626",
+        "MountainMeadow": "#22C55E",
+        "WestSide": "#fc8c14",
+        "Sun": "#FAB615",
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'], // Inter font family
@@ -51,15 +55,6 @@ module.exports = {
           fontFamily: 'Inter, sans-serif',
           fontWeight: '400',
           fontStyle: 'normal',
-        },
-        '.button-box': {
-          padding: '0.375rem 1rem', // Equivalent to py-1.5 and px-4
-          margin: '0.5rem',         // Equivalent to m-2
-          backgroundColor: '#4169E1', // RoyalBlue
-          color: '#ffffff',        // White text
-          fontFamily: '"Open Sans", sans-serif',
-          fontSize: '0.875rem',    // Equivalent to text-sm
-          fontWeight: '500',       // Adjust if needed
         },
       });
     },

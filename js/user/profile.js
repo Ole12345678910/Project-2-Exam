@@ -1,5 +1,5 @@
 // Import statements
-import { apiKey } from "../constants/config.js"; // Correct path and extension
+import { apiKey } from "../constants/config.js"; // Import API key from config
 import {
   fetchUserProfileData,
   fetchUserWins,
@@ -8,37 +8,43 @@ import {
   updateListingApi,
   fetchUserCreditsApi,
   handleAvatar,
-} from "../modules/api.js";
-import {
-  fetchUserListings,
-} from "../pages/listings.js";
-import { initMobileMenu } from "../modules/utilit.js";
+  getUserProfileData,
+} from "../modules/api.js"; // Import various API functions
+import { fetchUserListings } from "../pages/listings.js"; // Import function to fetch user listings
+import { initMobileMenu } from "../modules/utilit.js"; // Import function to initialize mobile menu
 
 // Local storage variables
-const accessToken = localStorage.getItem("accessToken");
-const userName = localStorage.getItem("userName"); // Assuming userName is stored in localStorage
-let listingsArray = []; // Listings array
+const accessToken = localStorage.getItem("accessToken"); // Get access token from localStorage
+const userName = localStorage.getItem("userName"); // Get username from localStorage
+let listingsArray = []; // Initialize an empty array for user listings
 
 // Edit profile functionality
 async function editProfile() {
-  const editAvatarBtn = document.getElementById("edit-avatar-btn");
-  const editProfileModal = document.getElementById("edit-profile-modal");
-  const closeModalBtn = document.getElementById("close-modal");
-  const editProfileForm = document.getElementById("edit-profile-form");
+  const editAvatarBtn = document.getElementById("edit-avatar-btn"); // Button to edit avatar
+  const editProfileModal = document.getElementById("edit-profile-modal"); // Modal for editing profile
+  const closeModalBtn = document.getElementById("close-modal"); // Button to close modal
+  const editProfileForm = document.getElementById("edit-profile-form"); // Form to edit profile
 
+  // Show the profile edit modal when the edit avatar button is clicked
   editAvatarBtn.addEventListener("click", () =>
     editProfileModal.classList.remove("hidden")
   );
+
+  // Close the modal when the close button is clicked
   closeModalBtn.addEventListener("click", () =>
     editProfileModal.classList.add("hidden")
   );
 
+  // Handle form submission for editing the profile
   editProfileForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent default form submission
+
+    // Get values from the form inputs
     const bio = document.getElementById("bio").value;
     const avatarUrl = document.getElementById("avatar-url").value;
     const bannerUrl = document.getElementById("banner-url").value;
 
+    // Prepare the request body for updating the profile
     const requestBody = {
       bio: bio || "",
       avatar: { url: avatarUrl || "", alt: "Updated Avatar" },
@@ -46,6 +52,7 @@ async function editProfile() {
     };
 
     try {
+      // Make an API request to update the user profile
       const updatedProfile = await updateUserProfile(
         accessToken,
         userName,
@@ -53,6 +60,7 @@ async function editProfile() {
         requestBody
       );
 
+      // Update the displayed profile with new avatar and banner
       const newAvatarUrl =
         updatedProfile.avatar?.url || document.getElementById("avatar-img").src;
       const newBannerUrl =
@@ -63,14 +71,16 @@ async function editProfile() {
       document.getElementById("user-bio").textContent =
         updatedProfile.bio || "No bio available";
 
+      // Store the updated avatar and banner URLs in localStorage
       localStorage.setItem("userAvatar", newAvatarUrl);
       localStorage.setItem("userBanner", newBannerUrl);
 
+      // Hide the modal and alert the user of success
       editProfileModal.classList.add("hidden");
       alert("Profile updated successfully!");
-      location.reload();
+      location.reload(); // Reload the page to reflect the changes
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Error updating profile:", error); // Log any errors
       alert("An error occurred while updating the profile.");
     }
   });
@@ -78,41 +88,46 @@ async function editProfile() {
 
 // Handle credits
 async function fetchAndStoreCredits() {
+  // Check if the user is logged in
   if (!accessToken || !userName) {
     alert("You are not logged in. Please log in first.");
     return;
   }
 
   try {
+    // Fetch user credits from the API
     const credits = await fetchUserCreditsApi(userName, accessToken, apiKey);
-    localStorage.setItem("userCredits", credits || 0);
+    localStorage.setItem("userCredits", credits || 0); // Store the credits in localStorage
   } catch (error) {
-    console.error("Error fetching credits:", error);
+    console.error("Error fetching credits:", error); // Log any errors
     alert("There was an error fetching credits. Please try again.");
   }
 }
 
 // Create listing functionality
 async function createListing() {
-  const createListingBtn = document.getElementById("create-listing-btn");
-  const createListingModal = document.getElementById("create-listing-modal");
-  const closeCreateListingModalBtn = document.getElementById("close-create-listing-modal");
-  const createListingForm = document.getElementById("create-listing-form");
+  const createListingBtn = document.getElementById("create-listing-btn"); // Button to open the create listing modal
+  const createListingModal = document.getElementById("create-listing-modal"); // Modal to create listing
+  const closeCreateListingModalBtn = document.getElementById(
+    "close-create-listing-modal"
+  ); // Button to close the modal
+  const createListingForm = document.getElementById("create-listing-form"); // Form to submit listing details
 
-  // Open modal
+  // Open the create listing modal
   createListingBtn.addEventListener("click", () =>
     createListingModal.classList.remove("hidden")
   );
 
-  // Close modal
+  // Close the create listing modal
   closeCreateListingModalBtn.addEventListener("click", () =>
     createListingModal.classList.add("hidden")
   );
 
-  // Form submission logic
+  // Handle form submission for creating a new listing
   createListingForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent default form submission
 
+    // Get values from the form inputs
     const title = document.getElementById("title").value;
     const description = document.getElementById("description").value;
     const tags = document
@@ -126,9 +141,10 @@ async function createListing() {
       .filter((url) => url);
     let endsAt = document.getElementById("endsAt").value;
 
+    // Validate the 'Ends At' date
     const currentDate = new Date();
     const maxDate = new Date(currentDate);
-    maxDate.setFullYear(currentDate.getFullYear() + 1);
+    maxDate.setFullYear(currentDate.getFullYear() + 1); // Max date is one year from now
     const endsAtDate = new Date(endsAt);
 
     if (endsAtDate <= currentDate || endsAtDate > maxDate) {
@@ -136,12 +152,13 @@ async function createListing() {
       return;
     }
 
-    endsAt = endsAtDate.toISOString();
+    endsAt = endsAtDate.toISOString(); // Convert the endsAt date to ISO format
     const media =
       mediaUrls.length > 0
         ? mediaUrls.map((url) => ({ url, alt: "Listing Media" }))
-        : [];
+        : []; // Prepare media URLs for the listing
 
+    // Prepare the request body
     const requestBody = {
       title,
       description,
@@ -151,63 +168,69 @@ async function createListing() {
     };
 
     try {
+      // Make an API request to create the listing
       const result = await createListingApi(accessToken, apiKey, requestBody);
       alert("Listing created successfully!");
       createListingModal.classList.add("hidden");
-      location.reload();
+      location.reload(); // Reload the page to reflect the new listing
     } catch (error) {
-      console.error("Error creating listing:", error);
+      console.error("Error creating listing:", error); // Log any errors
       alert(error.message);
     }
   });
 }
 
-
 // Edit listing functionality
 async function updateListing(listingId) {
-    const title = document.getElementById("edit-title").value;
-    const description = document.getElementById("edit-description").value;
-  
-    // Split media URLs into an array
-    const mediaUrls = document.getElementById("edit-media").value
-      .split("\n")
-      .map((url) => url.trim())
-      .filter((url) => url);
-  
-    // Prepare the data object
-    const data = {
-      title,
-      description,
-      media: mediaUrls.map((url) => ({ url, alt: "Updated Image" })),
-    };
-  
-    try {
-      const responseData = await updateListingApi(listingId, accessToken, apiKey, data);
-      alert("Listing updated successfully!");
-      closeEditForm(); // Close the edit form
-      fetchUserListings(); // Refresh the listings on the page
-    } catch (error) {
-      console.error("Error updating listing:", error);
-      alert(`An error occurred: ${error.message}`);
-    }
-  }
-  
-  
-  // Function to close the edit form
-  function closeEditForm() {
-    document.getElementById("edit-form-container").classList.add("hidden");
-  }
-  
+  const title = document.getElementById("edit-title").value; // Get the new title
+  const description = document.getElementById("edit-description").value; // Get the new description
 
-// Initialize all functionalities
+  // Split media URLs into an array
+  const mediaUrls = document
+    .getElementById("edit-media")
+    .value.split("\n")
+    .map((url) => url.trim())
+    .filter((url) => url);
+
+  // Prepare the data object
+  const data = {
+    title,
+    description,
+    media: mediaUrls.map((url) => ({ url, alt: "Updated Image" })),
+  };
+
+  try {
+    // Make an API request to update the listing
+    const responseData = await updateListingApi(
+      listingId,
+      accessToken,
+      apiKey,
+      data
+    );
+    alert("Listing updated successfully!");
+    closeEditForm(); // Close the edit form
+    fetchUserListings(); // Refresh the listings on the page
+  } catch (error) {
+    console.error("Error updating listing:", error); // Log any errors
+    alert(`An error occurred: ${error.message}`);
+  }
+}
+
+// Function to close the edit form
+function closeEditForm() {
+  document.getElementById("edit-form-container").classList.add("hidden");
+}
+
+// Initialize all functionalities when the page is loaded
 document.addEventListener("DOMContentLoaded", () => {
-  fetchUserProfile();
-  handleAvatar();
-  editProfile();
-  fetchAndStoreCredits();
-  createListing();
-  fetchUserListings();
+  loadAndDisplayUserProfile(); // Load and display the user's profile
+  handleAvatar(); // Handle the user's avatar
+  editProfile(); // Initialize the profile editing functionality
+  fetchAndStoreCredits(); // Fetch and store the user's credits
+  createListing(); // Initialize the listing creation functionality
+  fetchUserListings(); // Fetch and display user listings
 
+  // Event listener for saving an edited listing
   const saveButton = document.getElementById("save-edit-button");
   if (saveButton) {
     saveButton.addEventListener("click", (event) => {
@@ -217,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Event listener for canceling an edit
   const cancelButton = document.getElementById("cancel-edit-button");
   if (cancelButton) {
     cancelButton.addEventListener("click", closeEditForm);
@@ -238,112 +262,136 @@ async function loadUserWins() {
 
 // Function to display auction wins
 export function displayWins(wins) {
-  
-    const winsContainer = document.getElementById('wins-container');
-    if (!winsContainer) {
-        console.error("Wins container not found in the DOM!");
-        return;
-    }
-  
-    // Clear the previous content in the container
-    winsContainer.innerHTML = '';
-  
-    // If no wins, display the new personalized message
-    if (!wins || wins.length === 0) {
-        winsContainer.innerHTML = '<p>You have no wins yet.</p>';
-        return;
-    }
-  
-    wins.forEach(win => {
-        const winElement = document.createElement('div');
-        winElement.classList.add('win-card', 'bg-white', 'shadow-lg', 'mb-6', 'p-3', 'flex', 'flex-col', 'h-full');
-  
-        // Handle missing media or fallback image
-        const imageUrl = (win.media && win.media.length > 0) ? win.media[0].url : 'default-image.jpg';
-        const imageAlt = win.title || 'Auction Item';
-        const listingId = win.id; // The listing ID for the link
-  
-        // Dynamically generate the URL for the listing details page
-        const listingUrl = `/templates/auth/posts/details.html?listingId=${listingId}`;
-  
-        winElement.innerHTML = `
+  const winsContainer = document.getElementById("wins-container");
+  if (!winsContainer) {
+    console.error("Wins container not found in the DOM!"); // Log if the container is not found
+    return;
+  }
+
+  // Clear the previous content in the container
+  winsContainer.innerHTML = "";
+
+  // If no wins, display the new personalized message
+  if (!wins || wins.length === 0) {
+    winsContainer.innerHTML = "<p>You have no wins yet.</p>";
+    return;
+  }
+
+  // Iterate over each win and display its details
+  wins.forEach((win) => {
+    const winElement = document.createElement("div");
+    winElement.classList.add(
+      "win-card",
+      "bg-white",
+      "shadow-lg",
+      "mb-6",
+      "p-3",
+      "flex",
+      "flex-col",
+      "h-full"
+    );
+
+    // Handle missing media or fallback image
+    const imageUrl =
+      win.media && win.media.length > 0
+        ? win.media[0].url
+        : "default-image.jpg";
+    const imageAlt = win.title || "Auction Item";
+    const listingId = win.id; // The listing ID for the link
+
+    // Dynamically generate the URL for the listing details page
+    const listingUrl = `/templates/auth/posts/details.html?listingId=${listingId}`;
+
+    // Construct the HTML content for the win
+    winElement.innerHTML = `
             <a href="${listingUrl}" class="win-link">
                 <div class="relative">
                     <!-- Won label -->
-                    <div class="absolute top-0 left-0 w-full bg-green-500 text-white text-xs font-bold px-4 py-1 text-center">
+                    <div class="winBar">
                         Won!
                     </div>
                     <img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover" />
                     <div class="win-info p-3">
-                        <h3 class="win-title text-xl font-semibold">${win.title}</h3>
+                        <h3 class="win-title text-xl font-semibold">${
+                          win.title
+                        }</h3>
                         <p class="win-description">${win.description}</p>
-                        <span class="win-created text-sm text-gray-500">Won on: ${new Date(win.created).toLocaleDateString()}</span>
+                        <span class="win-created text-sm text-gray-500">Won on: ${new Date(
+                          win.created
+                        ).toLocaleDateString()}</span>
                     </div>
                 </div>
             </a>
         `;
-  
-        winsContainer.appendChild(winElement);
-    });
+
+    // Append the win element to the container
+    winsContainer.appendChild(winElement);
+  });
+}
+
+// Load and display user profile when the page loads
+export async function loadAndDisplayUserProfile() {
+  if (!accessToken || !userName) {
+    alert("You are not logged in. Please log in first.");
+    return;
   }
 
+  try {
+    // Fetch the user profile data using the new API function
+    const profileData = await getUserProfileData(userName, accessToken);
 
-  export async function fetchUserProfile() {
-    if (!accessToken || !userName) {
-        alert("You are not logged in. Please log in first.");
-        return;
-    }
-  
-    try {
-        // Fetch profile data
-        const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${userName}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'X-Noroff-API-Key': apiKey,
-            },
-        });
-  
-        if (!response.ok) throw new Error('Error fetching user profile.');
-  
-        const profileData = await response.json();
-  
-  
-        const { name, bio, avatar, banner, listings, credits } = profileData.data;
-  
-        // Display the profile info
-        document.getElementById('user-credits-header').textContent = `Credits: ${credits || 0}`;
-        document.getElementById('user-credits-profile').textContent = `Credits: ${credits || 0}`;
-        document.getElementById('banner-img').src = banner?.url || '/templates/auth/posts/user/default-banner.jpg';
-        document.getElementById('avatar-img').src = avatar?.url || '/templates/auth/posts/user/default-avatar.jpg';
-        document.getElementById('user-name').textContent = name || 'Unknown Name';
-        document.getElementById('user-email').textContent = userName || 'Username not available';
-        document.getElementById('user-bio').textContent = bio || 'No bio available';
-  
-        // If listings are included in profile data, use them, else fetch them separately
-        const listingsList = document.getElementById('listings-list');
-        if (listings && listings.length > 0) {
-            listingsList.innerHTML = listings.map(listing => `
+    const { name, bio, avatar, banner, listings, credits } = profileData;
+
+    // Update the profile information on the page
+    document.getElementById("user-credits-header").textContent = `Credits: ${
+      credits || 0
+    }`;
+    document.getElementById("user-credits-profile").textContent = `Credits: ${
+      credits || 0
+    }`;
+    document.getElementById("banner-img").src =
+      banner?.url || "/templates/auth/posts/user/default-banner.jpg";
+    document.getElementById("avatar-img").src =
+      avatar?.url || "/templates/auth/posts/user/default-avatar.jpg";
+    document.getElementById("user-name").textContent = name || "Unknown Name";
+    document.getElementById("user-email").textContent =
+      userName || "Username not available";
+    document.getElementById("user-bio").textContent = bio || "No bio available";
+
+    // Display the user's listings
+    const listingsList = document.getElementById("listings-list");
+    if (listings && listings.length > 0) {
+      listingsList.innerHTML = listings
+        .map(
+          (listing) => `
                 <li class="listing-item">
-                    <div class="listing-title"><strong>${listing.title}</strong></div>
-                    <div class="listing-description">${listing.description || 'No description available'}</div>
-                    <div class="listing-created">Created: ${new Date(listing.created).toLocaleDateString()}</div>
-                    <div class="listing-endsAt">Ends: ${new Date(listing.endsAt).toLocaleDateString()}</div>
+                    <div class="listing-title"><strong>${
+                      listing.title
+                    }</strong></div>
+                    <div class="listing-description">${
+                      listing.description || "No description available"
+                    }</div>
+                    <div class="listing-created">Created: ${new Date(
+                      listing.created
+                    ).toLocaleDateString()}</div>
+                    <div class="listing-endsAt">Ends: ${new Date(
+                      listing.endsAt
+                    ).toLocaleDateString()}</div>
                 </li>
-            `).join('');
-        } else {
-            // If listings are not found, fetch them separately
-            await fetchUserListings();
-        }
-    } catch (error) {
-        console.error("Error fetching profile data:", error);
-        alert("There was an error loading your profile. Please try again.");
+            `
+        )
+        .join("");
+    } else {
+      await fetchUserListings(); // If no listings, fetch user listings from the API
     }
+  } catch (error) {
+    console.error("Error loading and displaying user profile:", error); // Log any errors
+    alert("There was an error loading your profile. Please try again.");
   }
-
-  
-  
+}
 
 // Call the function to load and display user wins when the page loads
 loadUserWins();
+
+// Initialize the mobile menu
 initMobileMenu();

@@ -1,13 +1,13 @@
 import { handleLogin } from "./login.js";
 import { apiUrl } from "../constants/config.js";
 
-// register.js
-
+// Register form handling
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("register-form");
 
+    // When the form is submitted
     form.addEventListener("submit", async (event) => {
-        event.preventDefault(); // Prevent page refresh
+        event.preventDefault(); // Prevent page reload
     
         // Collect form data
         const name = document.getElementById("name").value;
@@ -23,13 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Validate password length (at least 8 characters)
+        // Validate password length
         if (password.length < 8) {
             alert("Password must be at least 8 characters long.");
             return;
         }
     
-        // Validate URL lengths (max 300 characters)
+        // Validate avatar and banner URLs
         if (avatarUrl && avatarUrl.length > 300) {
             alert("Avatar URL cannot be greater than 300 characters.");
             return;
@@ -49,9 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
             banner: bannerUrl ? { url: bannerUrl } : undefined, // Optional banner
         };
     
-        console.log("Register Data:", registerData); // Log data for debugging
+        console.log("Register Data:", registerData); // For debugging
     
         try {
+            // Send registration request
             const response = await fetch(`${apiUrl}auth/register`, {
                 method: "POST",
                 headers: {
@@ -63,20 +64,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json(); // Get the response data
     
             if (response.ok) {
-                alert("Registration successful! Logging you in now...");
+                alert("Registration successful! Logging you in...");
                 console.log("User registered:", data);
                 
-                // Now automatically log the user in
-                // Call handleLogin function with the registered email and password
+                // Automatically log the user in after registration
                 await handleLogin({
-                    preventDefault: () => {}, // Mimic the event.preventDefault() function
+                    preventDefault: () => {}, // Mock preventDefault
                 });
 
-                // Redirect to the logged-in page
-                window.location.href = "/templates/index.html"; // or any other page you'd like to redirect to
+                // Redirect to the homepage
+                window.location.href = "/index.html";
             } else {
-                console.error("Error response:", data); // Log the full error response
-                handleErrors(data.errors || data.message);
+                console.error("Error response:", data); // Log error response
+                handleErrors(data.errors || data.message); // Handle specific errors
                 alert(`Registration failed: ${data.message || "Unknown error"}`);
             }
         } catch (error) {
@@ -86,10 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Function to handle errors and show user-friendly messages
+// Function to handle specific errors and display messages
 function handleErrors(errors) {
     if (typeof errors === 'string') {
-        // Handle single message error
         const userFriendlyMessage = getUserFriendlyMessage(errors.toLowerCase());
         if (userFriendlyMessage) {
             alert(userFriendlyMessage);
@@ -97,16 +96,15 @@ function handleErrors(errors) {
             console.error(`Error: ${errors}`);
         }
     } else if (Array.isArray(errors)) {
-        // Handle array of errors
         errors.forEach((error) => {
-            const errorMessage = error.message.toLowerCase(); // Normalize error message to handle case insensitivity
-            console.log("Handling Error:", errorMessage); // Debug log for each error
+            const errorMessage = error.message.toLowerCase();
+            console.log("Handling Error:", errorMessage);
             
             const userFriendlyMessage = getUserFriendlyMessage(errorMessage);
             if (userFriendlyMessage) {
                 alert(userFriendlyMessage);
             } else {
-                console.error(`Error: ${error.message}`); // Log any other error message
+                console.error(`Error: ${error.message}`);
             }
         });
     }
@@ -114,9 +112,8 @@ function handleErrors(errors) {
 
 // Function to map error messages to user-friendly messages
 function getUserFriendlyMessage(errorMessage) {
-    // Add mapping for specific error messages
     const errorMessages = {
-        "profile already exists": "This profile (username or email) already exists. Please try another one.",
+        "profile already exists": "This profile already exists. Please try another one.",
         "password too short": "Password must be at least 8 characters long."
     };
     
@@ -125,5 +122,5 @@ function getUserFriendlyMessage(errorMessage) {
             return message;
         }
     }
-    return null; // No matching error found
+    return null;
 }

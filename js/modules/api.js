@@ -1,23 +1,19 @@
 import { apiUrl, apiKey } from "../constants/config.js";
-import { displayCarousel } from "../pages/listings.js";
-import { accessToken, userName } from "../pages/listings.js";
-import { fetchUserListings } from "../pages/listings.js";
+import { displayCarousel, accessToken, userName, fetchUserListings } from "../pages/listings.js";
 
 // Fetch data from the API.
 // A generic function for API calls to reduce repetitive code.
 
 export async function fetchFromApi(
   endpoint,
-  { method = "GET", headers = {}, body, accessToken,} = {}
+  { method = "GET", headers = {}, body, accessToken } = {}
 ) {
-
-
   const requestHeaders = {
     "Content-Type": "application/json",
     ...headers,
-
   };
 
+  // Include Authorization header if accessToken is available
   if (accessToken) {
     requestHeaders.Authorization = `Bearer ${accessToken}`;
   }
@@ -29,6 +25,7 @@ export async function fetchFromApi(
   };
 
   try {
+    // Fetch the data from the API
     const response = await fetch(`${apiUrl}${endpoint}`, requestOptions);
     if (!response.ok) {
       const errorData = await response.json();
@@ -37,30 +34,28 @@ export async function fetchFromApi(
         errorData.errors?.[0]?.message || `Error: ${response.status}`
       );
     }
-    return await response.json();
+    return await response.json(); // Return the parsed response data
   } catch (error) {
     console.error(`Error in fetchFromApi(${endpoint}):`, error.message);
     throw error; // Rethrow to let the caller handle the error
   }
 }
 
-
-
-
 // Fetch search results from the API
 export async function fetchSearchResults(query) {
   const result = await fetchFromApi(
     `auction/listings/search?q=${encodeURIComponent(query)}`
   );
-  return Array.isArray(result.data) ? result.data : [];
+  return Array.isArray(result.data) ? result.data : []; // Ensure the result is an array
 }
 
 // Fetch auction listings
 export async function fetchAuctionListings() {
   const result = await fetchFromApi("auction/listings");
-  displayCarousel(getTop3NewestListings(result.data));
+  displayCarousel(getTop3NewestListings(result.data)); // Display the top 3 newest listings
 }
 
+// Helper function to get the top 3 newest listings
 function getTop3NewestListings(listings) {
   // Sort listings by the date (assuming `createdAt` is the property containing the creation date)
   return listings
@@ -68,22 +63,25 @@ function getTop3NewestListings(listings) {
     .slice(0, 3); // Get the top 3 newest listings
 }
 
-// Place a bid
+// Place a bid on a listing
 export async function placeBid(listingId, bidAmount, accessToken) {
   try {
-    const response = await fetch(`${apiUrl}auction/listings/${listingId}/bids`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-        'X-Noroff-API-Key': apiKey,
-      },
-      body: JSON.stringify({ amount: bidAmount }),
-    });
+    const response = await fetch(
+      `${apiUrl}auction/listings/${listingId}/bids`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "X-Noroff-API-Key": apiKey,
+        },
+        body: JSON.stringify({ amount: bidAmount }), // Send the bid amount
+      }
+    );
 
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(data.errors[0]?.message || 'Error placing bid');
+      throw new Error(data.errors[0]?.message || "Error placing bid");
     }
 
     const result = await response.json();
@@ -91,14 +89,12 @@ export async function placeBid(listingId, bidAmount, accessToken) {
 
     // Reload the page to refresh the listing details
     location.reload(); // This will reload the current page
-    
+
     return result;
   } catch (error) {
-    alert(error.message || 'An error occurred while placing the bid.');
+    alert(error.message || "An error occurred while placing the bid.");
   }
 }
-
-
 
 // Function to delete a listing
 export async function deleteListing(listingId) {
@@ -128,7 +124,7 @@ export async function deleteListing(listingId) {
   }
 }
 
-// Handle user avatar
+// Handle user avatar (display the user's profile icon)
 export async function handleAvatar() {
   const userIcon = document.getElementById("user-icon");
   if (!accessToken || !userName) {
@@ -140,6 +136,7 @@ export async function handleAvatar() {
   }
 
   try {
+    // Fetch the user's profile data
     const profileData = await fetchUserProfileData(
       accessToken,
       userName,
@@ -156,6 +153,7 @@ export async function handleAvatar() {
           onerror="this.src='/templates/auth/posts/user/default-avatar.jpg';">
       </a>`;
 
+    // Store the avatar URL in localStorage if available
     if (profileData.avatar?.url) {
       localStorage.setItem("avatar", profileData.avatar.url);
     }
@@ -180,7 +178,7 @@ export async function loginApi(email, password) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    
+
     // Specifically handle 401 Unauthorized errors
     if (response.status === 401) {
       throw new Error("Invalid email or password.");
@@ -193,10 +191,7 @@ export async function loginApi(email, password) {
   return await response.json();
 }
 
-
 // Update user profile
-// api.js
-
 export async function updateUserProfile(
   accessToken,
   userName,
@@ -220,7 +215,7 @@ export async function updateUserProfile(
     if (!response.ok) throw new Error("Failed to update profile.");
 
     const updatedProfile = await response.json();
-    return updatedProfile.data;
+    return updatedProfile.data; // Return updated profile data
   } catch (error) {
     throw new Error(`Error updating profile: ${error.message}`);
   }
@@ -236,7 +231,7 @@ export async function createListing(accessToken, listingData) {
         "X-Noroff-API-Key": apiKey,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(listingData),
+      body: JSON.stringify(listingData), // Send listing data
     });
 
     if (!response.ok) {
@@ -250,23 +245,19 @@ export async function createListing(accessToken, listingData) {
       );
     }
 
-    return await response.json();
+    return await response.json(); // Return the newly created listing
   } catch (error) {
     console.error("Error creating listing:", error);
     throw error;
   }
 }
 
-
-
-
+// Fetch and store credits
 export async function fetchAndStoreCredits(userName, accessToken) {
   const profile = await fetchUserProfile(userName, accessToken);
   const credits = profile.data?.credits || 0;
-  localStorage.setItem("userCredits", credits);
+  localStorage.setItem("userCredits", credits); // Store credits in localStorage
 }
-
-
 
 // Fetch user wins
 export async function fetchUserWins(profileName, accessToken, page = 1) {
@@ -277,7 +268,7 @@ export async function fetchUserWins(profileName, accessToken, page = 1) {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "X-Noroff-API-Key": apiKey, // Make sure apiKey is defined somewhere
+          "X-Noroff-API-Key": apiKey,
         },
       }
     );
@@ -294,8 +285,7 @@ export async function fetchUserWins(profileName, accessToken, page = 1) {
   }
 }
 
-
-
+// Fetch user profile from API
 export async function fetchUserProfileFromAPI(accessToken, userName, apiKey) {
   if (!accessToken || !userName) {
     throw new Error("You are not logged in. Please log in first.");
@@ -316,14 +306,13 @@ export async function fetchUserProfileFromAPI(accessToken, userName, apiKey) {
     if (!response.ok) throw new Error("Error fetching user profile.");
 
     const profileData = await response.json();
-    return profileData.data;
+    return profileData.data; // Return the profile data
   } catch (error) {
     throw new Error(`Error fetching profile data: ${error.message}`);
   }
 }
 
-// api.js
-
+// Fetch user profile data
 export async function fetchUserProfileData(accessToken, userName, apiKey) {
   if (!accessToken || !userName) {
     throw new Error("You are not logged in. Please log in first.");
@@ -344,14 +333,13 @@ export async function fetchUserProfileData(accessToken, userName, apiKey) {
     if (!response.ok) throw new Error("Error fetching profile data.");
 
     const profileData = await response.json();
-    return profileData.data;
+    return profileData.data; // Return the profile data
   } catch (error) {
     throw new Error(`Error fetching profile data: ${error.message}`);
   }
 }
 
-// api.js
-
+// Create a listing via API
 export async function createListingApi(accessToken, apiKey, requestBody) {
   try {
     const response = await fetch("https://v2.api.noroff.dev/auction/listings", {
@@ -361,7 +349,7 @@ export async function createListingApi(accessToken, apiKey, requestBody) {
         "X-Noroff-API-Key": apiKey,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody), // Send listing data
     });
 
     if (!response.ok) {
@@ -376,7 +364,7 @@ export async function createListingApi(accessToken, apiKey, requestBody) {
     }
 
     const result = await response.json();
-    return result;
+    return result; // Return the created listing data
   } catch (error) {
     throw new Error(
       `Network error occurred while creating the listing: ${error.message}`
@@ -384,8 +372,7 @@ export async function createListingApi(accessToken, apiKey, requestBody) {
   }
 }
 
-// api.js
-
+// Update a listing via API
 export async function updateListingApi(listingId, accessToken, apiKey, data) {
   try {
     const response = await fetch(
@@ -397,7 +384,7 @@ export async function updateListingApi(listingId, accessToken, apiKey, data) {
           "X-Noroff-API-Key": apiKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data), // Send updated listing data
       }
     );
 
@@ -406,13 +393,13 @@ export async function updateListingApi(listingId, accessToken, apiKey, data) {
       throw new Error(responseData.message || "Unknown error occurred");
     }
 
-    return responseData;
+    return responseData; // Return the updated listing data
   } catch (error) {
     throw new Error(`Error updating listing: ${error.message}`);
   }
 }
 
-
+// Fetch user credits via API
 export async function fetchUserCreditsApi(userName, accessToken, apiKey) {
   try {
     const response = await fetch(
@@ -439,6 +426,7 @@ export async function fetchUserCreditsApi(userName, accessToken, apiKey) {
   }
 }
 
+// Fetch user profile from API
 export async function fetchUserProfile(userName, accessToken) {
   try {
     const response = await fetch(
@@ -453,9 +441,30 @@ export async function fetchUserProfile(userName, accessToken) {
     );
 
     if (!response.ok) throw new Error("Error fetching user profile");
-    return await response.json();  // Assuming this response contains the user's 'id' field
+    return await response.json(); // Assuming this response contains the user's 'id' field
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+}
+
+// Get user profile data
+export async function getUserProfileData(userName, accessToken) {
+  try {
+    const response = await fetch(`https://v2.api.noroff.dev/auction/profiles/${userName}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "X-Noroff-API-Key": apiKey,
+        },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch user profile data.");
+
+    const profileData = await response.json();
+    return profileData.data; // Assuming the actual profile data is under `.data`
+  } catch (error) {
+    console.error("Error in getUserProfileData:", error);
     throw error;
   }
 }

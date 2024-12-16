@@ -6,18 +6,21 @@ import {
 } from "./details.js";
 import { deleteListing } from "../modules/api.js";
 
-let listingsArray = []; // Listings array
+let listingsArray = []; // Listings array to store fetched listings
 
+// Retrieve access token and user name from local storage
 export const accessToken = localStorage.getItem("accessToken");
-export const userName = localStorage.getItem("userName"); // Assuming userName is stored in localStorage
+export const userName = localStorage.getItem("userName");
 
-// Display posts dynamically
+// Function to display a list of posts dynamically
 export function displayPosts(posts) {
   const postsContainer = document.getElementById("random-posts-container");
+  
+  // Populate the container with posts dynamically
   postsContainer.innerHTML = posts
     .map((post) => {
-      const imageUrl = post.media?.[0]?.url || null;
-      if (!imageUrl) return "";
+      const imageUrl = post.media?.[0]?.url || null; // Get the image URL
+      if (!imageUrl) return ""; // Skip rendering if no image
       return `
         <div class="flex justify-center items-center">
           <a href="/templates/auth/posts/details.html?listingId=${post.id}" class="block transform transition-transform hover:scale-110">
@@ -28,14 +31,13 @@ export function displayPosts(posts) {
     .join("");
 }
 
-// Function to display the carousel for top 3 newest listings
-// listings.js
+// Function to display a carousel for top 3 newest listings
 export function displayCarousel(listings) {
   const carouselWrapper = document.querySelector(".carousel-wrapper");
   const carouselDots = document.getElementById("carousel-dots");
   let currentIndex = 0;
 
-  // Clear previous carousel items
+  // Clear any existing carousel items and dots
   carouselWrapper.innerHTML = "";
   carouselDots.innerHTML = "";
 
@@ -43,9 +45,7 @@ export function displayCarousel(listings) {
   const carouselItemsHTML = listings
     .map(
       (listing, index) => `
-  <a href="/templates/auth/posts/details.html?listingId=${
-    listing.id
-  }" class="carouselContainerMain">
+  <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="carouselContainerMain">
     <!-- Text Container -->
     <div class="textContainer">
       <h3 class="titleStylingCarousel">
@@ -79,11 +79,11 @@ export function displayCarousel(listings) {
     )
     .join("");
 
-  // Set the HTML for the carousel and dots
+  // Set the HTML for carousel items and dots
   carouselWrapper.innerHTML = carouselItemsHTML;
   carouselDots.innerHTML = carouselDotsHTML;
 
-  // Attach click event listeners to the dots
+  // Attach click event listeners to the dots for carousel navigation
   const dots = Array.from(carouselDots.children);
   dots.forEach((dot, index) => {
     dot.addEventListener("click", () => {
@@ -92,6 +92,7 @@ export function displayCarousel(listings) {
     });
   });
 
+  // Function to update the carousel position based on the current index
   function updateCarouselPosition() {
     const offset = -currentIndex * 100;
     carouselWrapper.style.transform = `translateX(${offset}%)`;
@@ -100,39 +101,41 @@ export function displayCarousel(listings) {
   updateCarouselPosition();
 }
 
+// Function to display listings in a container
 export function displayListings(listings) {
   const listingsContainer = document.getElementById("listings-container");
 
-  // Clear previous content
+  // Clear previous listings if any
   listingsContainer.innerHTML = "";
 
-  // Handle case of no listings
+  // Handle the case when there are no listings available
   if (!listings || listings.length === 0) {
     listingsContainer.innerHTML = `<p>No listings available.</p>`;
     return;
   }
 
-  // Iterate over each listing and render it
+  // Iterate through each listing and render it
   listings.forEach((listing, index) => {
     console.log(`Rendering Listing #${index}:`, listing);
 
     const listingElement = document.createElement("div");
     listingElement.classList.add("shadow-lg", "mb-6", "w-full", "max-w-sm", "h-full");
 
-    // Extract relevant data
-    const imageUrl = listing.media?.[0]?.url || "default-image.jpg"; // Fallback to default image
+    // Extract data for rendering, with fallbacks if values are missing
+    const imageUrl = listing.media?.[0]?.url || "default-image.jpg"; // Default image fallback
     const imageAlt = listing.media?.[0]?.alt || "Item Image";
     const isActive = new Date(listing.endsAt) > new Date();
     const isEnded = new Date(listing.endsAt) < new Date();
-    const sellerName = listing.seller?.name || "Seller information not available"; // Fallback for missing name
-    const sellerEmail = listing.seller?.email || "Email not available"; // Fallback for missing email
+    const sellerName = listing.seller?.name || "Seller information not available";
+    const sellerEmail = listing.seller?.email || "Email not available";
 
-    console.log(`Seller Name: ${sellerName}, Seller Email: ${sellerEmail}`); // Debugging seller data
+    console.log(`Seller Name: ${sellerName}, Seller Email: ${sellerEmail}`); // Debugging log for seller data
 
+    // Determine status of the listing based on the end date
     const statusBar = getStatusBar(isActive, isEnded);
     const imageMarkup = getImageMarkup(imageUrl, imageAlt);
 
-    // Render the listing
+    // Render the listing HTML
     listingElement.innerHTML = `
       <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="block text-RoyalBlue break-words">
         <div class="relative flex justify-center">
@@ -170,9 +173,7 @@ export function displayListings(listings) {
   });
 }
 
-
-
-
+// Function to initialize the carousel for listing images
 function initializeCarousel(carouselId, paginationId) {
   const carouselItems = document.getElementById(carouselId);
   const paginationButtons = document.querySelectorAll(`#${paginationId} .pagination-button`);
@@ -189,6 +190,7 @@ function initializeCarousel(carouselId, paginationId) {
 
   let currentIndex = 0;
 
+  // Function to update the carousel index
   function updateCarousel(index) {
     currentIndex = index;
     const offset = -currentIndex * 100;
@@ -197,14 +199,15 @@ function initializeCarousel(carouselId, paginationId) {
     paginationButtons.forEach((button, idx) => {
       if (idx === currentIndex) {
         button.classList.add("bg-RoyalBlue");
-        button.classList.remove("bg-gray-300");
+        button.classList.remove("bg-Gallery");
       } else {
-        button.classList.add("bg-gray-300");
+        button.classList.add("bg-Gallery");
         button.classList.remove("bg-RoyalBlue");
       }
     });
   }
 
+  // Add click listeners to pagination buttons for carousel navigation
   paginationButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const index = parseInt(button.getAttribute("data-index"));
@@ -212,18 +215,21 @@ function initializeCarousel(carouselId, paginationId) {
     });
   });
 
-  updateCarousel(0);
+  updateCarousel(0); // Initialize to first item
 }
 
+// Function to format dates
 function formatDate(date) {
   return date ? new Date(date).toLocaleString() : "Date not available";
 }
 
+// Function to retrieve images, fallback to default if empty
 function getImages(media) {
   const defaultImage = "default-image.jpg";
   return media && media.length > 0 ? media : [{ url: defaultImage, alt: "Image not available" }];
 }
 
+// Function to render the carousel HTML structure for listing images
 function renderCarousel(images, listingId) {
   return `
     <div class="relative">
@@ -255,6 +261,7 @@ function renderCarousel(images, listingId) {
   `;
 }
 
+// Function to render the full details for a listing
 function renderListingDetails(listing, isUserListing = false) {
   const title = listing.title || "No title available";
   const description = listing.description || "No description available";
@@ -294,8 +301,7 @@ function renderListingDetails(listing, isUserListing = false) {
   `;
 }
 
-
-
+// Function to render the edit and delete buttons for a listing
 function renderEditDeleteButtons(listing, shouldRender = false) {
   if (!shouldRender) {
     return "";
@@ -304,13 +310,13 @@ function renderEditDeleteButtons(listing, shouldRender = false) {
   return `
     <div class="bg-Gallery flex justify-between max-w-4xl mx-auto p-6 shadow-lg">
       <button 
-        class="bg-RoyalBlue text-white px-4 py-2 mt-2 hover:bg-blue-700"
+        class="editBtn"
         id="edit-btn-${listing.id}"
       >
         Edit
       </button>
       <button 
-        class="bg-red-500 text-white px-4 py-2 mt-2 hover:bg-red-600"
+        class="deleteBtn"
         id="delete-btn-${listing.id}"
       >
         Delete
@@ -319,7 +325,8 @@ function renderEditDeleteButtons(listing, shouldRender = false) {
   `;
 }
 
-export function displayListing(listing) {
+// Function to display the full details of a listing
+export function displayDetailsListing(listing) {
   const listingContainer = document.getElementById("listing-container");
   listingContainer.innerHTML = renderListingDetails(listing) + renderEditDeleteButtons(listing, false);
 
@@ -331,6 +338,7 @@ export function displayListing(listing) {
   }
 }
 
+// Fetch user's listings from API
 export async function fetchUserListings() {
   const apiUrl = `https://v2.api.noroff.dev/auction/profiles/${userName}/listings`;
 
@@ -389,6 +397,7 @@ export async function fetchUserListings() {
   }
 }
 
+// Function to open the edit form with the listing's details
 function openEditForm(listingId) {
   const listing = listingsArray.find((item) => item.id === listingId);
 

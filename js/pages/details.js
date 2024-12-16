@@ -1,40 +1,47 @@
 import { apiUrl, apiKey } from "../constants/config.js";
-import { 
-  updateUserIcon, 
+import {
+  updateUserIcon,
   displayUserCredits,
-  initMobileMenu 
+  initMobileMenu,
 } from "../modules/utilit.js";
 import { placeBid, fetchUserCreditsApi } from "../modules/api.js";
-import { initializeSearch  } from "../modules/search.js";
+import { initializeSearch } from "../modules/search.js";
 import { handleAuthButtons } from "../auth/logout.js";
-import { accessToken, displayListing } from "./listings.js";
+import { accessToken, displayDetailsListing } from "./listings.js";
+import { renderBidForm } from "../modules/utilit.js";
 
-// Move the error handler function to the top of the file
+// Move the error handler function to the top of the file for clarity
 function handleErrorInBidSubmission(error) {
   console.error("Error placing bid:", error);
   alert("There was an error placing your bid. Please try again.");
 }
 
-initMobileMenu();
+initMobileMenu(); // Initialize the mobile menu
 
-
-// Fetch listing details
 // Fetch listing details based on listingId
 export async function fetchListingDetails(listingId) {
-  const response = await fetch(`${apiUrl}auction/listings/${listingId}?_bids=true`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'X-Noroff-API-Key': apiKey,
-    },
-  });
+  try {
+    const response = await fetch(
+      `${apiUrl}auction/listings/${listingId}?_bids=true`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "X-Noroff-API-Key": apiKey,
+        },
+      }
+    );
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch listing! Status: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch listing! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.data; // Return data from the API
+  } catch (error) {
+    console.error("Error fetching listing details:", error);
+    throw error; // Rethrow the error for further handling
   }
-
-  const result = await response.json();
-  return result.data;  // Assuming your API returns an object with a `data` property
 }
 
 // Handle errors when fetching or displaying the bid form
@@ -49,29 +56,33 @@ export function setupBidSubmissionHandler(listingId, listing) {
   placeBidForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const bidAmount = getBidAmount();
+
     if (!validateBidAmount(bidAmount)) {
       alert("Please enter a valid bid amount between 1 and 1000.");
       return;
     }
+
     const accessToken = getAccessToken();
     if (!accessToken) {
       alert("You must be logged in to place a bid.");
       return;
     }
+
     try {
       const currentHighestBid = getCurrentHighestBid(listing);
       if (!isBidHigherThanCurrent(bidAmount, currentHighestBid)) {
-        alert(`Your bid must be higher than the current bid of ${currentHighestBid}.`);
+        alert(
+          `Your bid must be higher than the current bid of ${currentHighestBid}.`
+        );
         return;
       }
-      await placeBid(listingId, bidAmount, accessToken); // This will trigger the API call to place the bid
+
+      await placeBid(listingId, bidAmount, accessToken);
     } catch (error) {
-      handleErrorInBidSubmission(error);  // Ensure this is used correctly
+      handleErrorInBidSubmission(error);
     }
   });
 }
-
-
 
 // Get bid amount from input field
 function getBidAmount() {
@@ -91,7 +102,7 @@ function getAccessToken() {
 // Get the current highest bid from the listing
 function getCurrentHighestBid(listing) {
   return listing.bids && listing.bids.length > 0
-    ? Math.max(...listing.bids.map(bid => bid.amount))
+    ? Math.max(...listing.bids.map((bid) => bid.amount))
     : 0;
 }
 
@@ -107,8 +118,6 @@ function updateUserCreditsDisplay(updatedCredits) {
     userCreditsHeader.textContent = `Credits: ${updatedCredits}`;
   }
 }
-
-
 
 // Display the bid form for a specific listing
 async function displayBidForm() {
@@ -128,19 +137,6 @@ async function displayBidForm() {
   } catch (error) {
     handleErrorInBidForm(error, bidFormContainer);
   }
-
-
-}
-
-// Render the bid form for active auctions
-export function renderBidForm(container) {
-  container.innerHTML = `
-    <form id="place-bid-form">
-      <label for="bid-amount">Enter your bid amount:</label>
-      <input type="number" id="bid-amount" name="bid-amount" required min="1" step="any" />
-      <button class="bg-RoyalBlue p-2 text-white" type="submit">Place Bid</button>
-    </form>
-  `;
 }
 
 
@@ -157,6 +153,7 @@ export function displayAuctionEndedMessage(container) {
   `;
 }
 
+// Show login prompt if user is not logged in
 function showLoginPrompt() {
   const bidsContainer = document.getElementById("bids-container");
   bidsContainer.innerHTML = `
@@ -167,24 +164,21 @@ function showLoginPrompt() {
   `;
 }
 
-// Display bids for the listing
-
+// Get listingId from URL parameters
 function getListingIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get("listingId");
 }
 
+// Fetch and display the listing
 export async function fetchAndDisplayListing() {
-  const listingId = getListingIdFromUrl(); // Get listingId from URL
-  
-  // Check if listingId exists, and if not, log an error and return early
+  const listingId = getListingIdFromUrl();
   if (!listingId) {
-    return;
+    return; // Early return if listingId is not available
   }
 
   try {
     const listingUrl = `${apiUrl}auction/listings/${listingId}?_bids=true&_seller=true`;
-
 
     const response = await fetch(listingUrl);
     if (!response.ok) {
@@ -194,17 +188,16 @@ export async function fetchAndDisplayListing() {
     const result = await response.json();
     const listing = result.data;
 
-    // Only proceed if the listing data is complete
+    // Ensure complete listing data before displaying
     if (listing && listing.title && listing.description && listing.endsAt && listing.media) {
-      displayListing(listing);
+      displayDetailsListing(listing);
 
-      // Check if user is logged in to decide whether to display bids or a login button
       const accessToken = localStorage.getItem("accessToken");
       if (accessToken) {
         displayBids(listing); // Display bids
-        displayBidForm(); // Display bidding bar
+        displayBidForm(); // Display bid form
       } else {
-        showLoginPrompt(); // Display login prompt
+        showLoginPrompt(); // Show login prompt if not logged in
       }
     } else {
       console.error("Incomplete data received:", listing);
@@ -214,6 +207,7 @@ export async function fetchAndDisplayListing() {
   }
 }
 
+// Display bids for the listing
 export function displayBids(listing) {
   const bidsContainer = document.getElementById("bids-container");
 
@@ -223,9 +217,8 @@ export function displayBids(listing) {
   }
 
   const sortedBids = [...listing.bids].sort((a, b) => b.amount - a.amount);
-  let displayedBidsCount = 3; // Number of bids currently displayed
+  let displayedBidsCount = 3;
 
-  // Function to create a single bid element
   function createBidElement(bid) {
     const bidElement = document.createElement("div");
     bidElement.classList.add("bid-item");
@@ -239,43 +232,23 @@ export function displayBids(listing) {
     return bidElement;
   }
 
-  // Function to create the toggle button
   function createToggleButton() {
     const toggleButton = document.createElement("button");
     const remainingBids = sortedBids.length - displayedBidsCount;
 
-    toggleButton.textContent =
-      remainingBids > 0
-        ? `See More Bids (${Math.min(remainingBids, 3)} more)`
-        : "Show Less";
-    toggleButton.classList.add(
-      "toggle-btn",
-      "bg-RoyalBlue",
-      "text-white",
-      "py-2",
-      "px-4",
-      "rounded",
-      "hover:bg-blue-700"
-    );
+    toggleButton.textContent = remainingBids > 0 ? `See More Bids (${remainingBids} more)` : "Show Less";
+    toggleButton.classList.add("toggle-btn", "bg-RoyalBlue", "text-white", "py-2", "px-4", "rounded", "hover:bg-blue-700");
 
     toggleButton.addEventListener("click", () => {
-      if (remainingBids > 0) {
-        displayedBidsCount = Math.min(
-          displayedBidsCount + 3,
-          sortedBids.length
-        );
-      } else {
-        displayedBidsCount = 3; // Reset to show the initial 3 bids
-      }
+      displayedBidsCount = remainingBids > 0 ? Math.min(displayedBidsCount + 3, sortedBids.length) : 3;
       renderBids();
     });
 
     return toggleButton;
   }
 
-  // Function to render bids and the toggle button
   function renderBids() {
-    bidsContainer.innerHTML = ""; // Clear previous content
+    bidsContainer.innerHTML = ""; // Clear previous bids
 
     const bidsToDisplay = sortedBids.slice(0, displayedBidsCount);
     bidsToDisplay.forEach((bid) => {
@@ -283,7 +256,6 @@ export function displayBids(listing) {
       bidsContainer.appendChild(bidElement);
     });
 
-    // Add the toggle button only if there are more than 3 bids
     if (sortedBids.length > 3) {
       const toggleButton = createToggleButton();
       bidsContainer.appendChild(toggleButton);
@@ -292,7 +264,6 @@ export function displayBids(listing) {
 
   renderBids(); // Initial render
 }
-
 
 // Initialize UI updates and fetch listing details
 displayUserCredits();
@@ -305,14 +276,13 @@ document.addEventListener("DOMContentLoaded", () => {
 handleAuthButtons();
 
 document.addEventListener("DOMContentLoaded", () => {
-  initializeSearch("search-bar", "search-btn", "dropdown-container", "dropdown-list");
+  initializeSearch(
+    "search-bar",
+    "search-btn",
+    "dropdown-container",
+    "dropdown-list"
+  );
 });
-
-
-
-
-
-
 
 // Handle credits fetching and storage
 async function fetchAndStoreCredits() {
@@ -320,25 +290,23 @@ async function fetchAndStoreCredits() {
   const userName = localStorage.getItem("userName");
 
   if (!accessToken || !userName) {
-    return;
+    return; // User is not logged in, no need to fetch credits
   }
 
   try {
-    // Fetch credits from the API
     const credits = await fetchUserCreditsApi(userName, accessToken, apiKey);
-
-    // Store the credits in localStorage
     localStorage.setItem("userCredits", credits || 0);
 
-    // Update the UI with the fetched credits
-    document.getElementById('user-credits-header').textContent = `Credits: ${credits || 0}`;
+    const creditsHeader = document.getElementById("user-credits-header");
+    if (creditsHeader) {
+      creditsHeader.textContent = `Credits: ${credits || 0}`;
+    }
   } catch (error) {
     console.error("Error fetching credits:", error);
     alert("There was an error fetching credits. Please try again.");
   }
 }
 
-// Call fetchAndStoreCredits when the page loads
 document.addEventListener("DOMContentLoaded", () => {
-  fetchAndStoreCredits(); // Fetch and update credits on page load
+  fetchAndStoreCredits();
 });

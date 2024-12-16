@@ -1,40 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta tags for character set and responsive design -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Link to external stylesheet for page styling -->
     <link rel="stylesheet" href="/dist/style.css" />
+    
+    <!-- Link to Font Awesome for icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
+    
+    <!-- Link to Google Fonts for typography -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon for the site -->
     <link rel="icon" type="images/x-icon" href="/assets/logo.svg" />
-    <title>Diamondbid</title>
+    
+    <!-- Title of the page -->
+    <title>Details</title>
   </head>
   <body>
+    <!-- JavaScript for the page functionality -->
     <script defer type="module" src="/js/user/profile.js"></script>
-    <script defer type="module" src="/js/auth/logout.js"></script>
+    
+    <!-- Header Section: Contains logo, search bar, and user information -->
     <header class="custom-header">
       <!-- Column 1: Logo -->
-      <a href="/templates/index.html" class="custom-logo">
+      <a href="/index.html" class="custom-logo">
         <img src="/assets/logo.svg" alt="logo-ballbid" class="custom-logo-img" />
         <h1 class="custom-logo-title">Diamondbid</h1>
       </a>
     
-      <!-- Hamburger Icon (Only on small screens) -->
+      <!-- Hamburger Menu (Only visible on small screens) -->
       <div class="hamburger-menu">
         <button id="hamburger-icon" class="hamburger-button">
           <i class="fas fa-bars"></i>
@@ -43,65 +50,75 @@
     
       <!-- Column 2: Search Bar -->
       <div
-      class="relative flex justify-center col-span-3 md:col-span-1 md:mt-0 mt-2 row-start-2 md:row-start-auto"
-    >
-      <div class="w-full max-w-[20rem] relative w-full">
-        <input
-          id="search-bar"
-          class="w-full px-4 py-1 pr-12 m-1 bg-Gallery text-black focus:outline-none text-md"
-          type="text"
-          placeholder="Search for listings..."
-        />
-        <i
-          id="search-btn"
-          class="fas fa-search text-base absolute top-1/2 right-4 transform -translate-y-1/2 text-RoyalBlue cursor-pointer"
-        ></i>
-        <div
-          id="dropdown-container"
-          class="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto"
-        >
-          <ul id="dropdown-list" class="list-none m-0 p-0"></ul>
+        class="relative flex justify-center col-span-3 md:col-span-1 md:mt-0 mt-2 row-start-2 md:row-start-auto"
+      >
+        <div class="w-full max-w-[20rem] relative w-full">
+          <!-- Search input field -->
+          <input
+            id="search-bar"
+            class="w-full px-4 py-1 pr-12 m-1 bg-Gallery text-black focus:outline-none text-md"
+            type="text"
+            placeholder="Search for listings..."
+          />
+          <!-- Search icon (clickable) -->
+          <i
+            id="search-btn"
+            class="fas fa-search text-base absolute top-1/2 right-4 transform -translate-y-1/2 text-RoyalBlue cursor-pointer"
+          ></i>
+          <!-- Dropdown for search suggestions -->
+          <div
+            id="dropdown-container"
+            class="absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto"
+          >
+            <ul id="dropdown-list" class="list-none m-0 p-0"></ul>
+          </div>
         </div>
       </div>
-    </div>
     
-      <!-- Column 3: User Info -->
+      <!-- Column 3: User Info Section -->
       <div class="user-info">
         <div id="user-credits-header" class="user-credits">
-          Credits: 0
+          Credits: 0 <!-- Displaying user credits -->
         </div>
         <div id="user-icon" class="user-icon">
+          <!-- User icon (default icon for not logged in users) -->
           <i class="fa-regular fa-user"></i>
         </div>
+        <!-- Sign in button (visible if the user is not logged in) -->
         <a class="sign-in-btn button-box block sm:w-auto sm:text-center sm:mt-2" href="/templates/auth/login.html">Sign in</a>
+        <!-- Log out button (visible if the user is logged in) -->
         <a class="log-out-btn button-box block hidden sm:w-auto sm:text-center sm:mt-2" href="#">Log Out</a>
       </div>
     </header>
-    
-
-<!-- Mobile Navbar (hamburger menu) -->
-<div id="mobile-menu">
-  <!-- Close Button -->
-  <div class="flex justify-end p-4">
-    <button id="close-menu">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <div class="flex flex-col items-center space-y-4 py-8">
-    <div class="flex flex-col items-center space-y-4">
-      <div id="mobile-user-icon"></div>
-      <div id="mobile-user-credits">
-        Credits: 0
+    <!-- Mobile Navbar (hamburger menu) -->
+    <div id="mobile-menu">
+      <!-- Close Button -->
+      <div class="flex justify-end p-4">
+        <button id="close-menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="flex flex-col items-center space-y-4 py-8">
+        <div class="flex flex-col items-center space-y-4">
+          <div id="mobile-user-icon"></div>
+          <div id="mobile-user-credits">Credits: 0</div>
+        </div>
+        <a
+          href="/index.html"
+          class="text-lg font-semibold text-RoyalBlue hover:underline text-center"
+        >
+          Home
+        </a>
+        <a
+          href="/templates/auth/login.html"
+          class="sign-in-btn button-box block text-center mt-2"
+          >Sign in</a
+        >
+        <a href="#" class="log-out-btn button-box block hidden text-center mt-2"
+          >Log Out</a
+        >
       </div>
     </div>
-    <a href="/templates/index.html" class="text-lg font-semibold text-RoyalBlue hover:underline text-center">
-      Home
-    </a>
-    <a href="/templates/auth/login.html" class="sign-in-btn button-box block text-center mt-2">Sign in</a>
-    <a href="#" class="log-out-btn button-box block hidden text-center mt-2">Log Out</a>
-  </div>
-</div>
-
     <!-- User Profile Page -->
     <div class="mx-auto bg-white shadow-lg mt-1">
       <!-- Profile Banner -->
@@ -111,7 +128,6 @@
           alt="Banner Image"
           class="w-full h-full object-cover"
         />
-
         <!-- Profile Avatar with Border -->
         <div
           class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2"
@@ -127,7 +143,6 @@
           ></i>
         </div>
       </div>
-
       <!-- User Info Section -->
       <div id="user-info" class="text-center mt-24 shadow-lg">
         <h2 id="user-name" class="text-2xl font-semibold text-gray-800">
@@ -144,11 +159,11 @@
           Credits: 0
         </p>
       </div>
-
       <!-- User Listings -->
       <div id="listing-container" class="mt-10 flex flex-col justify-center">
-        
-        <h3 class="p-3 text-xl max-w-4xl mx-auto font-semibold mb-4 ">Your Listings</h3>
+        <h3 class="p-3 text-xl max-w-4xl mx-auto font-semibold mb-4">
+          Your Listings
+        </h3>
         <ul id="listings-list" class="space-y-4"></ul>
       </div>
     </div>
@@ -157,12 +172,6 @@
         Create Listing
       </button>
     </div>
-
-
-
-
-
-
     <div
       id="edit-profile-modal"
       class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
@@ -180,9 +189,7 @@
             ></textarea>
           </div>
           <div class="mb-4">
-            <label for="avatar-url" class="secondaryText"
-              >Avatar URL</label
-            >
+            <label for="avatar-url" class="secondaryText">Avatar URL</label>
             <input
               type="text"
               id="avatar-url"
@@ -191,9 +198,7 @@
             />
           </div>
           <div class="mb-4">
-            <label for="banner-url" class="secondaryText"
-              >Banner URL</label
-            >
+            <label for="banner-url" class="secondaryText">Banner URL</label>
             <input
               type="text"
               id="banner-url"
@@ -202,34 +207,14 @@
             />
           </div>
           <div class="flex justify-between items-center">
-            <button
-              type="submit"
-              class="saveChange"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              id="close-modal"
-              class="exitStop"
-            >
+            <button type="submit" class="saveChange">Save</button>
+            <button type="button" id="close-modal" class="exitStop">
               Cancel
             </button>
           </div>
         </form>
       </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
     <!-- Edit Listing Form (Initially hidden) -->
     <div
       id="edit-form-container"
@@ -244,24 +229,12 @@
 
           <!-- Title Input -->
           <div class="mb-4">
-            <label
-              for="edit-title"
-              class="secondaryText"
-              >Title</label
-            >
-            <input
-              type="text"
-              id="edit-title"
-              class="inputBoxFrom"
-              required
-            />
+            <label for="edit-title" class="secondaryText">Title</label>
+            <input type="text" id="edit-title" class="inputBoxFrom" required />
           </div>
-
           <!-- Description Input -->
           <div class="mb-4">
-            <label
-              for="edit-description"
-              class="secondaryText"
+            <label for="edit-description" class="secondaryText"
               >Description</label
             >
             <textarea
@@ -273,170 +246,139 @@
 
           <!-- Media URL Input -->
           <div class="mb-4">
-            <label
-              for="edit-media"
-              class="secondaryText"
-              >Media URL</label
-            >
+            <label for="edit-media" class="secondaryText">Media URL</label>
             <textarea
-            id="edit-media"
-            class="inputBoxFrom"
-            placeholder="Enter one image URL per line"
-            rows="4"
-          ></textarea>
+              id="edit-media"
+              class="inputBoxFrom"
+              placeholder="Enter one image URL per line"
+              rows="4"
+            ></textarea>
           </div>
 
           <!-- Save Button -->
-          <button
-            type="button"
-            id="save-edit-button"
-            class="saveChange"
-          >
+          <button type="button" id="save-edit-button" class="saveChange">
             Save Changes
           </button>
 
           <!-- Cancel Button -->
-          <button
-            type="button"
-            id="cancel-edit-button"
-            class="exitStop"
-          >
+          <button type="button" id="cancel-edit-button" class="exitStop">
             Cancel
           </button>
         </form>
       </div>
     </div>
+    <!-- Create Listing Modal -->
+    <div
+      id="create-listing-modal"
+      class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="formBox">
+        <h2 class="mainText">Create New Listing</h2>
 
+        <form id="create-listing-form">
+          <!-- Title -->
+          <label for="title" class="secondaryText">Title:</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            class="inputBoxFrom"
+            required
+          />
 
+          <!-- Description -->
+          <label for="description" class="secondaryText">Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            class="inputBoxFrom"
+          ></textarea>
 
+          <!-- Tags -->
+          <label for="tags" class="secondaryText"
+            >Tags (comma separated):</label
+          >
+          <input type="text" id="tags" name="tags" class="inputBoxFrom" />
 
+          <!-- Media URLs (Multiple Images) -->
+          <label for="media-urls" class="secondaryText"
+            >Image URLs (enter each URL on a new line):</label
+          >
+          <textarea
+            id="media-urls"
+            name="media-urls"
+            class="inputBoxFrom"
+            rows="4"
+            placeholder="Enter one image URL per line"
+          ></textarea>
 
+          <!-- End Date -->
+          <label for="endsAt" class="secondaryText">End Date:</label>
+          <input
+            type="datetime-local"
+            id="endsAt"
+            name="endsAt"
+            class="inputBoxFrom"
+            required
+          />
 
-        <!-- Create Listing Modal -->
-        <div
-        id="create-listing-modal"
-        class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
-      >
-        <div class="formBox">
-          <h2 class="mainText">Create New Listing</h2>
-  
-          <form id="create-listing-form">
-            <!-- Title -->
-            <label for="title" class="secondaryText">Title:</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              class="inputBoxFrom"
-              required
-            />
-  
-            <!-- Description -->
-            <label for="description" class="secondaryText">Description:</label>
-            <textarea
-              id="description"
-              name="description"
-              class="inputBoxFrom"
-            ></textarea>
-  
-            <!-- Tags -->
-            <label for="tags" class="secondaryText">Tags (comma separated):</label>
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              class="inputBoxFrom"
-            />
-  
-            <!-- Media URLs (Multiple Images) -->
-            <label for="media-urls" class="secondaryText"
-              >Image URLs (enter each URL on a new line):</label
-            >
-            <textarea
-              id="media-urls"
-              name="media-urls"
-              class="inputBoxFrom"
-              rows="4"
-              placeholder="Enter one image URL per line"
-            ></textarea>
-  
-            <!-- End Date -->
-            <label for="endsAt" class="secondaryText">End Date:</label>
-            <input
-              type="datetime-local"
-              id="endsAt"
-              name="endsAt"
-              class="inputBoxFrom"
-              required
-            />
-  
-            <!-- Submit Button -->
-            <button type="submit" class="saveChange btn-primary">Create Listing</button>
-            <button type="button" id="close-create-listing-modal" class="exitStop btn-secondary">
-              Close
-            </button>            
-          </form>
-        </div>
+          <!-- Submit Button -->
+          <button type="submit" class="saveChange btn-primary">
+            Create Listing
+          </button>
+          <button
+            type="button"
+            id="close-create-listing-modal"
+            class="exitStop btn-secondary"
+          >
+            Close
+          </button>
+        </form>
       </div>
-
-
-
-      <div class="flex flex-col">
-        <div  id="listings-list">
-          <!-- Listings will be dynamically populated here -->
-        </div>
+    </div>
+    <div class="flex flex-col">
+      <div id="listings-list">
+        <!-- Listings will be dynamically populated here -->
       </div>
+    </div>
 
-      <div id="user-container">
-        <!-- User data and wins will be populated here -->
-      </div>
+    <div id="user-container">
+      <!-- User data and wins will be populated here -->
+    </div>
 
-      <div class="flex justify-center flex-col" id="wins-container"></div>
+    <div class="flex justify-center flex-col" id="wins-container"></div>
 
-      <!-- Button to open the Create Listing form -->
-
-
-
+    <!-- Footer Section -->
     <footer>
-      <hr class="m-3" />
+      <hr class="m-3"/>
       <div class="flex items-center text-white justify-between h-full">
         <div>
-          <!-- Sign In button -->
-          <a
-            class="sign-in-btn button-box block"
-            href="/templates/auth/login.html"
-            >Sign in</a
-          >
-          <a class="log-out-btn button-box block hidden" href="#">Log Out</a>
-
-          <!-- Register button -->
-          <a href="/templates/auth/register.html" class="button-box block"
-            >Register</a
-          >
+          <!-- Sign-in and Register links in the footer -->
+          <a href="/templates/auth/login.html" class="button-box block">Sign in</a>
+          <a href="/templates/auth/register.html" class="button-box block">Register</a>
         </div>
+        <!-- Description text in the footer -->
         <p class="m-4 text-xs text-black">
-          Discover and bid on thousands of unique items weekly, curated by top
-          experts worldwide
+          Discover and bid on thousands of unique items weekly, curated by top experts worldwide
         </p>
       </div>
-      <hr class="m-3" />
+      <hr class="m-3"/>
       <div class="flex items-center justify-start">
+        <!-- Logo and title in the footer linking to the homepage -->
         <a class="inline-flex items-center space-x-2" href="index.html">
-          <img
-            class="w-14 h-14 p-2"
-            src="/assets/logo.svg"
-            alt="logo-ballbid"
-          />
+          <img class="w-14 h-14 p-2" src="/assets/logo.svg" alt="logo-ballbid" />
           <p class="font-logo text-2xl text-RoyalBlue">Diamondbid</p>
         </a>
-      </div>
+      </div>      
       <div class="flex justify-center text-Boulder mb-4">
+        <!-- Social media icons in the footer -->
         <i class="fa-brands fa-facebook-f px-5"></i>
         <i class="fa-brands fa-twitter px-5"></i>
         <i class="fa-brands fa-instagram px-5"></i>
         <i class="fa-brands fa-twitch px-5"></i>
       </div>
       <div class="bg-Gallery text-Boulder">
+        <!-- Copyright text -->
         <p class="text-center p-2 text-xxs">
           © 2024 Diamondbid. All rights reserved.
         </p>

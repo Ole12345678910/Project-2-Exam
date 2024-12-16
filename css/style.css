@@ -4,6 +4,12 @@
 
 
 /* styles.css */
+
+.button-box {
+    @apply py-1.5 px-4 m-2 bg-RoyalBlue text-white font-sans text-sm font-medium;
+  }
+  
+
 .custom-header {
     @apply grid grid-cols-3 py-1 mb-4 items-center shadow md:grid-cols-3 md:grid-rows-1;
   }
@@ -17,7 +23,7 @@
   }
   
   .custom-logo-title {
-    @apply font-logo text-2xl text-RoyalBlue; /* Use Tailwind theme colors */
+    @apply font-logo text-2xl text-RoyalBlue;
   }
   
   .hamburger-menu {
@@ -94,11 +100,11 @@
 
 
   .isActive {
-    @apply absolute bottom-0 left-0 w-full bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-400 text-white text-xs font-bold px-4 py-1 text-center
+    @apply absolute bottom-0 left-0 w-full bg-gradient-to-r from-Sun via-WestSide to-Sun text-white text-xs font-bold px-4 py-1 text-center
   }
 
   .isEnded {
-    @apply absolute bottom-0 left-0 w-full bg-red-600 text-white text-xs font-bold px-4 py-1 text-center
+    @apply absolute bottom-0 left-0 w-full bg-AlizarinCrimson text-white text-xs font-bold px-4 py-1 text-center
   }
 
   .BidBox {
@@ -211,3 +217,26 @@
   .secondaryText {
     @apply text-sm text-gray-600
   }
+
+
+/*bid input*/
+
+.bidInput {
+    @apply border-2 border-Boulder p-2 focus:border-RoyalBlue focus:ring-1 focus:ring-RoyalBlue;
+}
+
+/*delete/edit*/
+
+ .deleteBtn {
+    @apply bg-AlizarinCrimson text-white px-4 py-2 mt-2 hover:bg-red-700;
+ }
+
+ .editBtn {
+    @apply bg-RoyalBlue text-white px-4 py-2 mt-2 hover:bg-blue-700;
+ }
+
+ /*win bar*/ 
+
+ .winBar {
+    @apply absolute top-0 left-0 w-full bg-MountainMeadow text-white text-xs font-bold px-4 py-1 text-center;
+ }
