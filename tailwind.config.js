@@ -6,6 +6,9 @@ module.exports = {
 ], // Ensure TailwindCSS purges unused styles by looking through all HTML and JS files
   theme: {
     extend: {
+      fontSize: {
+        'clamped': 'clamp(0.875rem, 2.5vw, 1.25rem)', // Defining a custom class
+      },
       colors: {
         "RoyalBlue": "#2563EB", 
         "White": "#FFFFFF",

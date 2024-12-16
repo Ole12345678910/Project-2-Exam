@@ -272,7 +272,7 @@ function renderListingDetails(listing, isUserListing = false) {
     <div class="p-6 shadow-lg max-w-4xl mx-auto">
       <a href="/templates/auth/posts/details.html?listingId=${listing.id}" class="block mb-6 text-center">
         <h2 class="text-2xl font-bold text-gray-800 mb-2 break-words line-clamp-2">${title}</h2>
-        <p class="text-gray-600 break-words line-clamp-2">${description}</p>
+        <p class="text-gray-600">${description}</p>
       </a>
 
       ${renderCarousel(getImages(listing.media), listing.id)}

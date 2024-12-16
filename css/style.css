@@ -109,24 +109,30 @@
   /* carousel main */
 
   .carouselContainerMain {
-    @apply block flex flex-shrink-0 w-full transition-transform duration-500 ease-in-out md:flex-row flex-col space-y-4 items-center max-w-full
+    @apply flex flex-shrink-0 w-full transition-transform duration-500 ease-in-out md:flex-row flex-col space-y-4 items-center max-w-full;
   }
-
+  
   .textContainer {
-    @apply w-full p-6 flex flex-col text-left md:w-1/2 text-center md:text-left space-y-4 max-w-full overflow-hidden break-words whitespace-normal text-ellipsis
+    @apply w-full p-6 flex flex-col text-left md:w-1/2 text-center md:text-center space-y-4 max-w-full break-words whitespace-normal;
+    word-break: break-word;
   }
-
+  
   .titleStylingCarousel {
-    @apply font-semibold mb-4 font-Graduate text-lg md:text-4xl text-[clamp(1.5rem,5vw,3rem)] max-w-full text-RoyalBlue
+    @apply font-semibold mb-4 font-Graduate text-lg md:text-3xl text-[clamp(1.5rem,5vw,2rem)] max-w-full text-RoyalBlue whitespace-normal break-words;
   }
-
+  
   .textStylingCarousel {
-    @apply text-sm text-Boulder mb-4 md:text-base text-[clamp(0.875rem,2.5vw,1.25rem)] max-w-full break-words whitespace-normal overflow-hidden
+    @apply text-sm text-Boulder mb-4 md:text-base text-[clamp(0.875rem,2.5vw,1.25rem)] max-w-full break-words whitespace-normal;
+  
+    /* Apply line-clamp on small screens */
+    @apply line-clamp-2; /* Line-clamp for small screens */
+    @apply md:line-clamp-none; /* Remove line-clamp for medium and larger screens */
   }
-
+  
   .imageCarousel {
-    @apply w-full max-h-64 object-cover px-3
+    @apply w-full max-h-64 object-cover px-3;
   }
+  
 
   /*Login.html styling*/ 
 

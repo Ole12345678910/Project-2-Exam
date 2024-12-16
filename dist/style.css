@@ -1692,7 +1692,6 @@ video {
 /* carousel main */
 
 .carouselContainerMain {
-  display: block;
   display: flex;
   width: 100%;
   max-width: 100%;
@@ -1733,8 +1732,6 @@ video {
 }
 
 .textContainer {
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: normal;
   overflow-wrap: break-word;
   padding: 1.5rem;
@@ -1745,17 +1742,23 @@ video {
 @media (min-width: 768px) {
   .textContainer {
     width: 50%;
-    text-align: left;
+    text-align: center;
   }
+}
+
+.textContainer {
+  word-break: break-word;
 }
 
 .titleStylingCarousel {
   margin-bottom: 1rem;
   max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
   font-family: Graduate, serif;
   font-size: 1.125rem;
   line-height: 1.75rem;
-  font-size: clamp(1.5rem,5vw,3rem);
+  font-size: clamp(1.5rem,5vw,2rem);
   font-weight: 600;
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity, 1));
@@ -1763,15 +1766,14 @@ video {
 
 @media (min-width: 768px) {
   .titleStylingCarousel {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
   }
 }
 
 .textStylingCarousel {
   margin-bottom: 1rem;
   max-width: 100%;
-  overflow: hidden;
   white-space: normal;
   overflow-wrap: break-word;
   font-size: 0.875rem;
@@ -1786,6 +1788,28 @@ video {
     font-size: 1rem;
     line-height: 1.5rem;
   }
+}
+
+.textStylingCarousel {
+  /* Apply line-clamp on small screens */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  /* Line-clamp for small screens */
+}
+
+@media (min-width: 768px) {
+  .textStylingCarousel {
+    overflow: visible;
+    display: block;
+    -webkit-box-orient: horizontal;
+    -webkit-line-clamp: none;
+  }
+}
+
+.textStylingCarousel {
+  /* Remove line-clamp for medium and larger screens */
 }
 
 .imageCarousel {
