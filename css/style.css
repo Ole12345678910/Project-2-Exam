@@ -5,238 +5,255 @@
 
 /* styles.css */
 
+/* Button Box Styling */
 .button-box {
-    @apply py-1.5 px-4 m-2 bg-RoyalBlue text-white font-sans text-sm font-medium;
-  }
-  
-
-.custom-header {
-    @apply grid grid-cols-3 py-1 mb-4 items-center shadow md:grid-cols-3 md:grid-rows-1;
-  }
-  
-  .custom-logo {
-    @apply flex items-center col-span-1 row-start-1 md:row-start-1;
-  }
-  
-  .custom-logo-img {
-    @apply w-14 h-14 p-2;
-  }
-  
-  .custom-logo-title {
-    @apply font-logo text-2xl text-RoyalBlue;
-  }
-  
-  .hamburger-menu {
-    @apply sm:hidden flex justify-end col-span-2 px-5;
-  }
-  
-  .hamburger-button {
-    @apply text-RoyalBlue text-2xl;
-  }
-  
-  .search-bar-container {
-    @apply relative flex justify-center col-span-3 md:col-span-1 md:mt-0 mt-2 row-start-2 md:row-start-auto;
-  }
-  
-  .search-bar {
-    @apply w-full max-w-md px-4 py-1 pr-12 m-1 bg-gray-100 text-black focus:outline-none text-md;
-  }
-  
-  .search-icon {
-    @apply absolute top-1/2 right-4 transform -translate-y-1/2 text-RoyalBlue cursor-pointer;
-  }
-  
-  .dropdown {
-    @apply absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto;
-  }
-  
-  .dropdown-list {
-    @apply list-none m-0 p-0;
-  }
-  
-  .user-info {
-    @apply flex justify-end items-center col-span-3 md:col-span-1 sm:col-span-2 sm:justify-end sm:mt-0 mt-2 row-start-1 sm:row-start-auto hidden sm:flex;
-  }
-  
-  .user-credits {
-    @apply text-RoyalBlue px-2 text-sm;
-  }
-  
-  .user-icon {
-    @apply text-xl text-RoyalBlue;
-  }
-  
-
-  /* In your CSS file */
-#mobile-menu {
-    @apply md:hidden fixed top-0 right-[-100%] h-screen w-1/2 bg-white shadow-md z-50 transition-all duration-300 ease-in-out;
-  }
-  
-  #close-menu {
-    @apply text-RoyalBlue text-2xl;
-  }
-  
-  #mobile-user-credits {
-    @apply text-RoyalBlue text-sm;
-  }
-  
-
-  /*Filter box styling*/
-
-  .filter-box {
-    @apply flex items-center space-x-2 m-2 p-2 bg-Gallery hover:bg-gray-100 border shadow-sm transition
-  }
-
-  .textNameStyling {
-    @apply text-sm font-medium text-gray-700
-  }
-
-
-  .listing-box {
-   @apply p-6 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center
-  }
-
-  /* Styling listing card main */
-
-
-  .isActive {
-    @apply absolute bottom-0 left-0 w-full bg-gradient-to-r from-Sun via-WestSide to-Sun text-white text-xs font-bold px-4 py-1 text-center
-  }
-
-  .isEnded {
-    @apply absolute bottom-0 left-0 w-full bg-AlizarinCrimson text-white text-xs font-bold px-4 py-1 text-center
-  }
-
-  .BidBox {
-    @apply absolute top-0 left-0 bg-RoyalBlue text-white text-xs font-bold px-4 py-2 shadow
-  }
-
-
-  /* carousel main */
-
-  .carouselContainerMain {
-    @apply flex flex-shrink-0 w-full transition-transform duration-500 ease-in-out md:flex-row flex-col space-y-4 items-center max-w-full;
-  }
-  
-  .textContainer {
-    @apply w-full p-6 flex flex-col text-left md:w-1/2 text-center md:text-center space-y-4 max-w-full break-words whitespace-normal;
-    word-break: break-word;
-  }
-  
-  .titleStylingCarousel {
-    @apply font-semibold mb-4 font-Graduate text-lg md:text-3xl text-[clamp(1.5rem,5vw,2rem)] max-w-full text-RoyalBlue whitespace-normal break-words;
-  }
-  
-  .textStylingCarousel {
-    @apply text-sm text-Boulder mb-4 md:text-base text-[clamp(0.875rem,2.5vw,1.25rem)] max-w-full break-words whitespace-normal;
-  
-    /* Apply line-clamp on small screens */
-    @apply line-clamp-2; /* Line-clamp for small screens */
-    @apply md:line-clamp-none; /* Remove line-clamp for medium and larger screens */
-  }
-  
-  .imageCarousel {
-    @apply w-full max-h-64 object-cover px-3;
-  }
-  
-
-  /*Login.html styling*/ 
-
-  .greetingBox {
-    @apply flex-1 flex flex-col items-center justify-center text-center mt-4 sm:mt-0
-  }
-
-  .logoText {
-    @apply font-logo text-4xl text-RoyalBlue mb-5
-  }
-
-  .greetingText {
-    @apply text-3xl font-Graduate text-RoyalBlue font-bold
-  }
-
-  .infoText {
-    @apply m-4 text-xs text-black max-w-72
-  }
-
-  .loginBox {
-    @apply p-6 m-4 flex flex-col items-center justify-center
-  }
-
-  .loginLogoutText {
-    @apply flex justify-center font-Graduate text-RoyalBlue text-2xl mb-5
-  }
-
-  .formText {
-    @apply text-sm text-RoyalBlue font-semibold
-  }
-
-  .formLine {
-    @apply mb-5 border-t-2 border-RoyalBlue
-  }
-
-  .rememberLogin {
-    @apply mx-1 w-3 h-3 text-RoyalBlue border-2 border-RoyalBlue peer-checked:bg-RoyalBlue peer-checked:border-transparent
-  }
-
-  .footerAuth {
-    @apply bg-Gallery text-Boulder mt-auto
-  }
-
-  .footerText {
-    @apply text-center p-2 text-xxs
-  }
-
-  .lineAuth {
-    @apply hidden sm:block w-1 bg-RoyalBlue
-  }
-
-  /*Form box profile/listings/create*/
-
-
-
-  .formBox {
-    @apply bg-white p-6 shadow-lg max-w-md w-full
-  }
-
-  .inputBoxFrom {
-    @apply mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm
-  }
-
-  .saveChange {
-    @apply mt-4 mx-1 w-full py-2 px-4 bg-blue-500 text-white shadow-sm hover:bg-RoyalBlue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-  }
-
-  .exitStop {
-    @apply mt-4 mx-1 w-full py-2 px-4 bg-gray-500 text-white shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
-  }
-
-  .mainText {
-    @apply text-2xl font-semibold text-gray-800
-  }
-
-  .secondaryText {
-    @apply text-sm text-gray-600
-  }
-
-
-/*bid input*/
-
-.bidInput {
-    @apply border-2 border-Boulder p-2 focus:border-RoyalBlue focus:ring-1 focus:ring-RoyalBlue;
+  @apply py-1.5 px-4 m-2 bg-RoyalBlue text-white font-sans text-sm font-medium;
 }
 
-/*delete/edit*/
+/* Custom Header Layout and Styling */
+.custom-header {
+  @apply grid grid-cols-3 py-1 mb-4 items-center shadow md:grid-cols-3 md:grid-rows-1;
+}
 
- .deleteBtn {
-    @apply bg-AlizarinCrimson text-white px-4 py-2 mt-2 hover:bg-red-700;
- }
+/* Logo Section in Header */
+.custom-logo {
+  @apply flex items-center col-span-1 row-start-1 md:row-start-1;
+}
 
- .editBtn {
-    @apply bg-RoyalBlue text-white px-4 py-2 mt-2 hover:bg-blue-700;
- }
+/* Logo Image Styling */
+.custom-logo-img {
+  @apply w-14 h-14 p-2;
+}
 
- /*win bar*/ 
+/* Logo Title Styling */
+.custom-logo-title {
+  @apply font-logo text-2xl text-RoyalBlue;
+}
 
- .winBar {
-    @apply absolute top-0 left-0 w-full bg-MountainMeadow text-white text-xs font-bold px-4 py-1 text-center;
- }
+/* Hamburger Menu Styling for Mobile */
+.hamburger-menu {
+  @apply sm:hidden flex justify-end col-span-2 px-5;
+}
+
+/* Hamburger Button Styling */
+.hamburger-button {
+  @apply text-RoyalBlue text-2xl;
+}
+
+/* Search Bar Container Styling */
+.search-bar-container {
+  @apply relative flex justify-center col-span-3 md:col-span-1 md:mt-0 mt-2 row-start-2 md:row-start-auto;
+}
+
+/* Search Bar Input Styling */
+.search-bar {
+  @apply w-full max-w-md px-4 py-1 pr-12 m-1 bg-gray-100 text-black focus:outline-none text-md;
+}
+
+/* Search Icon Styling inside Search Bar */
+.search-icon {
+  @apply absolute top-1/2 right-4 transform -translate-y-1/2 text-RoyalBlue cursor-pointer;
+}
+
+/* Dropdown Menu Styling */
+.dropdown {
+  @apply absolute left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg hidden z-10 max-h-60 overflow-y-auto;
+}
+
+/* Dropdown List Styling */
+.dropdown-list {
+  @apply list-none m-0 p-0;
+}
+
+/* User Info Section on Header */
+.user-info {
+  @apply flex justify-end items-center col-span-3 md:col-span-1 sm:col-span-2 sm:justify-end sm:mt-0 mt-2 row-start-1 sm:row-start-auto hidden sm:flex;
+}
+
+/* User Credits Styling */
+.user-credits {
+  @apply text-RoyalBlue px-2 text-sm;
+}
+
+/* User Icon Styling */
+.user-icon {
+  @apply text-xl text-RoyalBlue;
+}
+
+/* Mobile Menu Styling */
+#mobile-menu {
+  @apply md:hidden fixed top-0 right-[-100%] h-screen w-1/2 bg-white shadow-md z-50 transition-all duration-300 ease-in-out;
+}
+
+/* Close Button for Mobile Menu */
+#close-menu {
+  @apply text-RoyalBlue text-2xl;
+}
+
+/* Mobile User Credits Styling */
+#mobile-user-credits {
+  @apply text-RoyalBlue text-sm;
+}
+
+/* Filter Box Styling */
+.filter-box {
+  @apply flex items-center space-x-2 m-2 p-2 bg-Gallery hover:bg-gray-100 border shadow-sm transition;
+}
+
+/* Text Styling for Filter Box */
+.textNameStyling {
+  @apply text-sm font-medium text-gray-700;
+}
+
+/* Listing Box Grid Layout */
+.listing-box {
+  @apply p-6 w-full mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center;
+}
+
+/* Active Status for Listing */
+.isActive {
+  @apply absolute bottom-0 left-0 w-full bg-gradient-to-r from-Sun via-WestSide to-Sun text-white text-xs font-bold px-4 py-1 text-center;
+}
+
+/* Ended Status for Listing */
+.isEnded {
+  @apply absolute bottom-0 left-0 w-full bg-AlizarinCrimson text-white text-xs font-bold px-4 py-1 text-center;
+}
+
+/* Bid Box for Listings */
+.BidBox {
+  @apply absolute top-0 left-0 bg-RoyalBlue text-white text-xs font-bold px-4 py-2 shadow;
+}
+
+/* Carousel Container for Images */
+.carouselContainerMain {
+  @apply flex flex-shrink-0 w-full transition-transform duration-500 ease-in-out md:flex-row flex-col space-y-4 items-center max-w-full;
+}
+
+/* Text Container for Carousel */
+.textContainer {
+  @apply w-full p-6 flex flex-col text-left md:w-1/2 text-center md:text-center space-y-4 max-w-full break-words whitespace-normal;
+  word-break: break-word;
+}
+
+/* Carousel Title Styling */
+.titleStylingCarousel {
+  @apply font-semibold mb-4 font-Graduate text-lg md:text-3xl text-[clamp(1.5rem,5vw,2rem)] max-w-full text-RoyalBlue whitespace-normal break-words;
+}
+
+/* Carousel Text Styling */
+.textStylingCarousel {
+  @apply text-sm text-Boulder mb-4 md:text-base text-[clamp(0.875rem,2.5vw,1.25rem)] max-w-full break-words whitespace-normal;
+  @apply line-clamp-2; /* Apply line-clamp on small screens */
+  @apply md:line-clamp-none; /* Remove line-clamp on larger screens */
+}
+
+/* Carousel Image Styling */
+.imageCarousel {
+  @apply w-full max-h-64 object-cover px-3;
+}
+
+/* Login Page Styling */
+.greetingBox {
+  @apply flex-1 flex flex-col items-center justify-center text-center mt-4 sm:mt-0;
+}
+
+/* Logo Text Styling on Login */
+.logoText {
+  @apply font-logo text-4xl text-RoyalBlue mb-5;
+}
+
+/* Greeting Text Styling */
+.greetingText {
+  @apply text-3xl font-Graduate text-RoyalBlue font-bold;
+}
+
+/* Info Text Styling on Login */
+.infoText {
+  @apply m-4 text-xs text-black max-w-72;
+}
+
+/* Login Form Box Styling */
+.loginBox {
+  @apply p-6 m-4 flex flex-col items-center justify-center;
+}
+
+/* Login/Logout Text Styling */
+.loginLogoutText {
+  @apply flex justify-center font-Graduate text-RoyalBlue text-2xl mb-5;
+}
+
+/* Form Text Styling */
+.formText {
+  @apply text-sm text-RoyalBlue font-semibold;
+}
+
+/* Line Styling Between Form Elements */
+.formLine {
+  @apply mb-5 border-t-2 border-RoyalBlue;
+}
+
+/* Footer Styling for Auth Pages */
+.footerAuth {
+  @apply bg-Gallery text-Boulder mt-auto;
+}
+
+/* Footer Text Styling */
+.footerText {
+  @apply text-center p-2 text-xxs;
+}
+
+/* Line Between Auth Footer Text */
+.lineAuth {
+  @apply hidden sm:block w-1 bg-RoyalBlue;
+}
+
+/* Form Box Styling for Profile/Listing/Create Pages */
+.formBox {
+  @apply bg-white p-6 shadow-lg max-w-md w-full;
+}
+
+/* Input Box Styling for Forms */
+.inputBoxFrom {
+  @apply mt-1 block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+}
+
+/* Save Changes Button Styling */
+.saveChange {
+  @apply mt-4 mx-1 w-full py-2 px-4 bg-blue-500 text-white shadow-sm hover:bg-RoyalBlue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+}
+
+/* Exit/Cancel Button Styling */
+.exitStop {
+  @apply mt-4 mx-1 w-full py-2 px-4 bg-gray-500 text-white shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+}
+
+/* Main Text Styling */
+.mainText {
+  @apply text-2xl font-semibold text-gray-800;
+}
+
+/* Secondary Text Styling */
+.secondaryText {
+  @apply text-sm text-gray-600;
+}
+
+/* Bid Input Field Styling */
+.bidInput {
+  @apply border-2 border-Boulder p-2 focus:border-RoyalBlue focus:ring-1 focus:ring-RoyalBlue;
+}
+
+/* Delete Button Styling */
+.deleteBtn {
+  @apply bg-AlizarinCrimson text-white px-4 py-2 mt-2 hover:bg-red-700;
+}
+
+/* Edit Button Styling */
+.editBtn {
+  @apply bg-RoyalBlue text-white px-4 py-2 mt-2 hover:bg-blue-700;
+}
+
+/* Win Bar Styling */
+.winBar {
+  @apply absolute top-0 left-0 w-full bg-MountainMeadow text-white text-xs font-bold px-4 py-1 text-center;
+}
