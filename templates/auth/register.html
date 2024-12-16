@@ -2,32 +2,30 @@
 <html lang="en">
   <head>
     <!-- Meta tags for character set and responsive viewport -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Link to external stylesheets -->
     <link rel="stylesheet" href="/dist/style.css" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
     
     <!-- Favicon for the site -->
-    <link rel="icon" type="images/x-icon" href="/assets/logo.svg" />
+    <link rel="icon" type="images/x-icon" href="/assets/logo.svg">
     
     <!-- Title of the page -->
     <title>Register</title>
   </head>
   <body class="flex flex-col min-h-screen">
     <!-- External JavaScript for registration page -->
-    <script defer type="module" src="/js/auth/register.js"></script>
+    <script type="module" src="/js/auth/register.js"></script>
     
     <!-- Header Section: Navigation back to homepage -->
     <header class="bg-Gallery py-3">
@@ -39,8 +37,8 @@
       
       <!-- Left Side: Logo, Title, and Information Text -->
       <div class="greetingBox">
-        <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-diamondbid" />
-        <h1 class="logoText">Register</h1>
+        <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-diamondbid">
+        <h1 class="logoText">Diamondbid</h1>
         <h2 class="greetingText">Register to Begin</h2>
         <h3 class="infoText">Set up your account to start bidding, keep track of your wins, and become part of the action.</h3>
       </div>
@@ -55,64 +53,44 @@
           
           <div class="flex flex-col">
             <form id="register-form">
-              
+  
               <!-- Input Field: Name -->
-              <label for="uname">
-                <p class="formText">Name</p>
-              </label>
-              <input type="text" id="name" placeholder="Enter name" name="uname" required class="placeholder:text-xs focus:outline-none">
+              <p class="formText" id="name-label">Name</p>
+              <input type="text" id="name" placeholder="Enter name" name="uname" required class="placeholder:text-xs focus:outline-none" aria-labelledby="name-label">
               <hr class="formLine">
-
+            
               <!-- Input Field: Email -->
-              <label for="email">
-                <p class="formText">E-mail Address</p>
-              </label>
-              <input type="email" id="email" placeholder="Enter e-mail" name="email" required class=" placeholder:text-xs focus:outline-none">
+              <p class="formText" id="email-label">E-mail Address</p>
+              <input type="email" id="email" placeholder="Enter e-mail" name="email" required class="placeholder:text-xs focus:outline-none" aria-labelledby="email-label">
               <hr class="formLine">
-
+            
               <!-- Input Field: Password -->
-              <label for="psw">
-                <p class="formText">Password</p>
-              </label>
-              <input type="password" id="password" placeholder="Enter Password" name="psw" required class="placeholder:text-xs focus:outline-none">
+              <p class="formText" id="password-label">Password</p>
+              <input type="password" id="password" placeholder="Enter Password" name="psw" required class="placeholder:text-xs focus:outline-none" aria-labelledby="password-label">
               <hr class="formLine">
-
+            
               <!-- Textarea: Bio (Optional) -->
-              <label for="bio">
-                <p class="formText">Bio (Optional)</p>
-              </label>
-              <textarea id="bio" placeholder="Tell us about yourself..." name="bio" class=" px-3 py-2 placeholder:text-xs focus:outline-none border border-gray-300"></textarea>
+              <p class="formText" id="bio-label">Bio (Optional)</p>
+              <textarea id="bio" placeholder="Tell us about yourself..." name="bio" class="px-3 py-2 placeholder:text-xs focus:outline-none border border-gray-300" aria-labelledby="bio-label"></textarea>
               <hr class="formLine">
-
+            
               <!-- Input Field: Avatar URL (Optional) -->
-              <label for="avatar">
-                <p class="formText">Avatar URL (Optional)</p>
-              </label>
-              <input type="url" id="avatar" placeholder="Enter Avatar URL" name="avatar" class="placeholder:text-xs focus:outline-none">
+              <p class="formText" id="avatar-label">Avatar URL (Optional)</p>
+              <input type="url" id="avatar" placeholder="Enter Avatar URL" name="avatar" class="placeholder:text-xs focus:outline-none" aria-labelledby="avatar-label">
               <hr class="formLine">
-
+            
               <!-- Input Field: Banner URL (Optional) -->
-              <label for="banner">
-                <p class="formText">Banner URL (Optional)</p>
-              </label>
-              <input type="url" id="banner" placeholder="Enter Banner URL" name="banner" class="placeholder:text-xs focus:outline-none">
+              <p class="formText" id="banner-label">Banner URL (Optional)</p>
+              <input type="url" id="banner" placeholder="Enter Banner URL" name="banner" class="placeholder:text-xs focus:outline-none" aria-labelledby="banner-label">
               <hr class="formLine">
-
-              <!-- Remember Me Checkbox -->
-              <label class="flex items-center my-5">
-                <input type="checkbox" class="peer hidden" name="remember">
-                <span class="rememberLogin"></span>
-                <p class="text-sm text-RoyalBlue">Remember this login</p>
-              </label>
-
+            
               <!-- Submit Button -->
               <div class="flex justify-center">
                 <button type="submit" class="button-box hover:bg-PersianBlue">
                   Create
                 </button>
               </div>
-            </form>
-            
+            </form>            
             <!-- Link for users who already have an account -->
             <p class="text-xs block">Already have an account?</p>
             <a class="text-xs font-bold text-RoyalBlue" href="/templates/auth/login.html">Login here</a>
