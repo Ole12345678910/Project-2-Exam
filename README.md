@@ -2,7 +2,6 @@
 
 
 ```
-.
 ├── index.html               // Main HTML file (entry point for the website)
 ├── .gitignore               // Specifies files and directories for Git to ignore
 ├── package.json             // Project metadata and dependency manager
