@@ -12,8 +12,8 @@
 │   └── logo.svg             // Website logo in SVG format
 ├── css/                     // Stylesheets
 │   └── style.css            // Main stylesheet
-│   └── dist/                // Compiled CSS output
-│       └── style.css        // Output of the build process
+├── dist/                    // Compiled CSS output
+│   └── style.css            // Output of the build process
 ├── js/                      // JavaScript logic
 │   ├── auth/                // Authentication logic
 │   │   ├── login.js         // Handles user login
@@ -83,6 +83,11 @@ Follow these steps to install and run the project on your local machine:
 - **Edit your CSS** in `css/style.css`. Tailwind CSS automatically updates the `dist/style.css` file.
 - **Open the project** in the browser with Live Server.
 - **Make changes** to HTML, JavaScript, or CSS files, and see them reflected live.
+
+## Notes
+- Ensure all changes to JavaScript modules and CSS files are reflected appropriately in the final build.
+- Use `.gitignore` to exclude unnecessary files or folders from version control.
+
 
 ## Notes
 - Ensure all changes to JavaScript modules and CSS files are reflected appropriately in the final build.
