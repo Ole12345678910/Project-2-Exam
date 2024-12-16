@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta tags for character set and responsive viewport -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Link to external stylesheets -->
     <link rel="stylesheet" href="/dist/style.css" />
     <link
       rel="stylesheet"
@@ -15,62 +18,87 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Graduate&family=Karantina:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon for the site -->
     <link rel="icon" type="images/x-icon" href="/assets/logo.svg" />
-    <title>Diamondbid</title>
+    
+    <!-- Title of the page -->
+    <title>Login</title>
   </head>
-  <body>
+  <body class="flex flex-col min-h-screen">
+    <!-- External JavaScript for login functionality -->
     <script defer type="module" src="/js/auth/login.js"></script>
-    <header>
+    
+    <!-- Header Section: Navigation back to homepage -->
+    <header class="bg-Gallery py-3">
+      <a class="button-box" href="/index.html">Back</a>
     </header>
-    <a class="button-box" href="/templates/index.html">Back</a>
-    <div class="flex h-screen max-w-5/12">
-        <div class="flex-1 flex flex-col items-center justify-center text-center">
-            <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-ballbid" />
-            <h1 class="font-logo text-4xl text-RoyalBlue mb-5">Diamondbid</h1>
-            <h2 class="text-3xl font-Graduate text-RoyalBlue font-bold">Welcome back</h2>
-            <h3 class="m-4 text-xs text-black max-w-72">Log in to stay ahead, track your bids, and secure the items you’ve been  waiting for. The competition is fierce—let’s get started!</h3>
+
+    <!-- Main content wrapper: Greeting and Login Form -->
+    <div class="flex flex-col sm:flex-row flex-1">
+      
+      <!-- Left Side: Logo, Title, and Information Text -->
+      <div class="greetingBox">
+        <img class="w-16 h-16" src="/assets/logo.svg" alt="logo-ballbid" />
+        <h1 class="logoText">Diamondbid</h1>
+        <h2 class="greetingText">Welcome back</h2>
+        <h3 class="infoText">Log in to stay ahead, track your bids, and secure the items you’ve been waiting for. The competition is fierce—let’s get started!</h3>
+      </div>
+
+      <!-- Divider: Only visible on larger screens (line separating content) -->
+      <div class="lineAuth"></div>
+
+      <!-- Right Side: Login Form Section -->
+      <div class="flex-1 flex flex-col items-center justify-center">
+        <div class="loginBox">
+          <p class="loginLogoutText">Login</p>
+          
+          <div class="flex flex-col">
+            <form id="login-form">
+              
+              <!-- Input Field: Email Address -->
+              <label for="uname">
+                  <p class="formText">E-mail Address</p>
+              </label>
+              <input type="email" id="email" placeholder="Enter e-mail" name="uname" required class="placeholder:text-xs focus:outline-none">
+              
+              <!-- Horizontal line inside the form to separate fields -->
+              <hr class="formLine">
+
+              <!-- Input Field: Password -->
+              <label for="psw">
+                  <p class="formText">Password</p>
+              </label>
+              <input type="password" id="password" placeholder="Enter Password" name="psw" required class="placeholder:text-xs focus:outline-none">
+              
+              <!-- Horizontal line inside the form to separate fields -->
+              <hr class="formLine">
+              
+              <!-- Remember Me Checkbox -->
+              <label class="flex items-center my-5">
+                  <input class="peer hidden" type="checkbox" id="remember" name="remember">
+                  <span class="rememberLogin"></span>
+                  <p class="text-sm text-RoyalBlue">Remember this login</p>
+              </label>
+              
+              <!-- Submit Button for Login -->
+              <div class="flex justify-center">
+                  <button class="button-box hover:bg-PersianBlue" type="submit">Login</button>
+              </div>
+            </form>
+            
+            <!-- Link for users who don't have an account -->
+            <p class="mt-3 text-xs">Don't have an account?</p>
+            <a class="text-xs font-bold text-RoyalBlue" href="/templates/auth/register.html">Create here</a>
+          </div>
         </div>
-        <div class="h-full w-1 bg-RoyalBlue"></div>  
-        <div class="flex-1">
-            <div class="p-6 m-4 flex flex-col items-center h-screen justify-center">
-                <p class="flex justify-center font-Graduate text-RoyalBlue text-2xl mb-5">Login</p>
-                <div class="flex flex-col">
-                  
-                  <form id="login-form">
-                    <label for="uname">
-                        <p class="text-sm text-RoyalBlue font-semibold">E-mail Address</p>
-                    </label>
-                    <input type="email" id="email" placeholder="Enter e-mail" name="uname" required class="placeholder:text-xs focus:outline-none">
-                    <hr class="mb-5 border-t-2 border-RoyalBlue">
-                
-                    <label for="psw">
-                        <p class="text-sm font-semibold text-RoyalBlue">Password</p>
-                    </label>
-                    <input type="password" id="password" placeholder="Enter Password" name="psw" required class="placeholder:text-xs focus:outline-none">
-                    <hr class="mb-5 border-t-2 border-RoyalBlue">
-                    
-                    <label class="flex items-center my-5">
-                        <input type="checkbox" id="remember" name="remember">
-                        <span class="mx-1 w-3 h-3 text-RoyalBlue border-2 border-RoyalBlue peer-checked:bg-RoyalBlue peer-checked:border-transparent"></span>
-                        <p class="text-sm text-RoyalBlue">Remember this login</p>
-                    </label>
-                    
-                    <div class="flex justify-center">
-                        <button class="button-box" type="submit">Login</button>
-                    </div>
-                </form>
-                
-                    <p class="text-xs">Don't have an account?</p>
-                    <a class="text-xs font-bold text-RoyalBlue" href="/templates/auth/register.html">Create here</a>
-                  </div>
-            </div>
-        </div> 
+      </div>
     </div>
-    <footer>
-      <div class="bg-Gallery text-Boulder">
-        <p class="text-center p-2 text-xxs">
-          © 2024 Diamondbid. All rights reserved.
-        </p>
+
+    <!-- Footer Section: Copyright and Information -->
+    <footer class="footerAuth">
+      <div class="footerText">
+        © 2024 Diamondbid. All rights reserved.
       </div>
     </footer>
   </body>

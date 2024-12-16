@@ -1,0 +1,28 @@
+# Node.js dependencies
+node_modules/
+
+# Log files
+npm-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+
+# Tailwind and PostCSS configuration files (optional to ignore)
+tailwind.config.js
+postcss.config.js
+
+# Build and distribution folders
+/dist/
+/build/
+
+# OS-specific files
+.DS_Store         # macOS
+Thumbs.db         # Windows
+
+# IDE/editor files (optional)
+.vscode/
+.idea/
+
+# Temporary files
+*.swp

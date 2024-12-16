@@ -1,21 +1,33 @@
 module.exports = {
-  content: ["./**/*.html", "./**/*.js"], // Ensure TailwindCSS purges unused styles by looking through all HTML and JS files
+  content: [
+    './**/*.html',            // Look through all HTML files
+    './**/*.js',              // Look through all JS files
+    '!./node_modules/**/*',   // Exclude node_modules directory
+], // Ensure TailwindCSS purges unused styles by looking through all HTML and JS files
   theme: {
     extend: {
+      fontSize: {
+        'clamped': 'clamp(0.875rem, 2.5vw, 1.25rem)', // Defining a custom class
+      },
       colors: {
         "RoyalBlue": "#2563EB", 
         "White": "#FFFFFF",
         "Gallery": "#EFEFEF",
         "PersianBlue": "#1931bd",
         "Boulder": "#7B7B7B",
+        "AlizarinCrimson": "#DC2626",
+        "MountainMeadow": "#22C55E",
+        "WestSide": "#fc8c14",
+        "Sun": "#FAB615",
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'], // Inter font family
-        Graduate: ['Graduate', 'serif'], // Inter font family
+        Graduate: ['Graduate', 'serif'], // Graduate font family
       },
-      fontSize:{
+      fontSize: {
         'xxs': '0.5rem',  // Custom size smaller than xs
-      }
+        'md': '1rem',     // Custom medium size (optional, if you need text-md)
+      },
     },
   },
   plugins: [
@@ -43,15 +55,6 @@ module.exports = {
           fontFamily: 'Inter, sans-serif',
           fontWeight: '400',
           fontStyle: 'normal',
-        },
-        '.button-box': {
-          padding: '0.375rem 1rem', // Equivalent to py-1.5 and px-4
-          margin: '0.5rem',         // Equivalent to m-2
-          backgroundColor: '#4169E1', // RoyalBlue
-          color: '#ffffff',        // White text
-          fontFamily: '"Open Sans", sans-serif',
-          fontSize: '0.875rem',    // Equivalent to text-sm
-          fontWeight: '500',       // Adjust if needed
         },
       });
     },
