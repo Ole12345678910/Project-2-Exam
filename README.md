@@ -89,8 +89,3 @@ Follow these steps to install and run the project on your local machine:
 - Use `.gitignore` to exclude unnecessary files or folders from version control.
 
 
-## Notes
-- Ensure all changes to JavaScript modules and CSS files are reflected appropriately in the final build.
-- Use `.gitignore` to exclude unnecessary files or folders from version control.
-
-
